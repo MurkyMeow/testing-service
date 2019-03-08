@@ -1,0 +1,19 @@
+.Header {
+  display: flex;
+  background: #100e17;
+  padding: 15px;
+  color: white;
+
+  & .nav {
+    margin-left: auto;
+
+    & > *:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  & .logo {
+    font-weight: bold;
+    font-style: italic;
+  }
+}
