@@ -5,7 +5,7 @@
   "scripts": {
     "elm-live": "elm-live ./src/Main.elm -- --output ./dist/index.js --debug",
     "build-css": "node-sass --importer node_modules/node-sass-glob-importer/dist/cli.js ./src/style.scss -o ./dist",
-    "watch-css": "chokidar ./src/Component/*.scss ./src/Page/*.scss -c \"npm run build-css\""
+    "watch-css": "chokidar ./src/**/*.scss -c \"npm run build-css\""
   },
   "keywords": [],
   "author": "",
