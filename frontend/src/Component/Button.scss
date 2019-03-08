@@ -3,7 +3,7 @@
   border-radius: 5px;
   color: white;
   cursor: pointer;
-  background: linear-gradient(90deg, #fc6572, #ff805a, #ff9747);
+  background: var(--orange-gradient);
   transition: .3s box-shadow;
   text-decoration: none;
 }
