@@ -3,16 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "postcss": "postcss ./src/Page/*.css ./src/Component/*.css -o ./dist/style.css -w",
-    "elm-live": "elm-live ./src/Main.elm -- --output ./dist/index.js --debug"
+    "elm-live": "elm-live ./src/Main.elm -- --output ./dist/index.js --debug",
+    "build-css": "node-sass --importer node_modules/node-sass-glob-importer/dist/cli.js ./src/style.scss -o ./dist",
+    "watch-css": "chokidar ./src/Component/*.scss ./src/Page/*.scss -c \"npm run build-css\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "chokidar-cli": "^1.2.2",
     "elm": "^0.19.0-bugfix6",
     "elm-live": "^3.4.0",
-    "postcss-cli": "^6.1.2",
-    "precss": "^4.0.0"
-  }
+    "node-sass": "^4.11.0",
+    "node-sass-glob-importer": "^5.3.0"
+  },
+  "dependencies": {}
 }
