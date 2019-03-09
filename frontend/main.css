@@ -1,6 +1,3 @@
-@import './Page/*.scss';
-@import './Component/*.scss';
-
 :root {
   --black: #100e17;
   --black-lighter: #312d3c;
