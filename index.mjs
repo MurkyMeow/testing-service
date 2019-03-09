@@ -6,11 +6,11 @@ import auth from './controllers/auth';
 const app = express();
 app.use(bodyParser.json());
 
+app.use('/auth', auth);
+
 app.use((err, req, res, next) => {
   res.status(err.status).json({ message: err.message });
 });
-
-app.use('/auth', auth);
 
 app.get('/', (request, response) => {
   response.send('Working');
