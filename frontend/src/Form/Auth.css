@@ -1,5 +1,5 @@
 ._auth {
-  width: 500px;
+  display: inline-block;
   color: white;
   margin: 50px;
 
@@ -7,24 +7,26 @@
     text-align: center;
     background: var(--orange-gradient);
     padding: 5px 0;
-    border-radius: 5px 5px 0 0;
   }
 
   & form {
     display: flex;
     flex-direction: column;
     background: var(--black);
-    padding: 15px 0;
-    border-radius: 0 0 5px 5px;
+    padding: 15px;
   }
 
   & input {
     border: none;
     display: block;
     color: inherit;
-    margin: 8px auto;
+    margin: 8px 0;
     padding: 5px 10px;
     border-radius: 5px;
     background: var(--black-lighter);
+  }
+
+  & .submit {
+    margin-right: auto;
   }
 }
