@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import 'express-async-errors';
 
 import auth from './controllers/auth';
 
