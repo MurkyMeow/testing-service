@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import db from '../database';
+import env from '../env';
 import { APIError, assert } from '../util/error';
 
 const router = express.Router();
@@ -22,7 +23,7 @@ router.post('/signin', async (req, res) => {
   const [user] = await db('Accounts').where({ email });
   assert(user, new APIError(400, 'Invalid login'));
   assert(bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid password'));
-  const token = jwt.sign({ id: user.id }, process.env.SECRET, {
+  const token = jwt.sign({ id: user.id }, env.secret, {
     expiresIn: 86400
   });
   res.json({ token });
