@@ -1,5 +1,4 @@
 import express from 'express';
-import 'express-async-errors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
