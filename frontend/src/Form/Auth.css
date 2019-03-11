@@ -1,7 +1,7 @@
 ._auth {
+  width: 400px;
   display: inline-block;
-  color: white;
-  margin: 50px;
+  box-shadow: var(--shadow);
 
   & .header {
     text-align: center;
@@ -13,7 +13,8 @@
     display: flex;
     flex-direction: column;
     background: var(--black);
-    padding: 15px;
+    padding: 20px;
+    margin-bottom: 0;
   }
 
   & input {
@@ -27,6 +28,6 @@
   }
 
   & .submit {
-    margin-right: auto;
+    margin-left: auto;
   }
 }
