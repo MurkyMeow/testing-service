@@ -3,7 +3,7 @@
     "es6": true,
     "node": true
   },
-  "extends": "standard",
+  "extends": "airbnb-base",
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -13,6 +13,6 @@
     "sourceType": "module"
   },
   "rules": {
-    "semi": [2, "always"]
+    "comma-dangle": "off"
   }
 }

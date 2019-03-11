@@ -3,7 +3,7 @@ export const assert = (cond, error) => {
 };
 
 export class APIError extends Error {
-  constructor (status, message) {
+  constructor(status, message) {
     super(message);
     this.status = status;
   }
