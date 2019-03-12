@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -e js,gql ."
+    "start": "nodemon --ignore ./frontend -e js,gql ."
   },
   "keywords": [],
   "author": "",
