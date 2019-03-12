@@ -14,5 +14,5 @@ view =
         [ Button.link "/signin" "Создать аккаунт"
         , Button.regular "Войти"
         ]
-    , Modal.view <| AuthForm.view True
+    , Modal.view <| AuthForm.view
     ]
