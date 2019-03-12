@@ -1,0 +1,4 @@
+type Query {
+  signup(email: String, password: String): String
+  signin(email: String, password: String): String
+}
