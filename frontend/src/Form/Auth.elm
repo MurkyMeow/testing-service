@@ -1,11 +1,11 @@
-module Form.Auth exposing (view)
+module Form.Auth exposing (Model, Msg(..), view, submit, update)
 
 import Html exposing (Html, form, input, label, text, div)
 import Html.Attributes exposing (class, placeholder, type_, value, required)
 import Html.Events exposing (onInput, onSubmit)
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Http
-import Browser exposing (element)
 import Platform.Cmd as Cmd
 
 type alias Model =
@@ -21,11 +21,17 @@ type Msg
   | Response (Result Http.Error String)
 
 submit =
-  Http.post
-    { url = "http://localhost:3000/api/signin"
-    , body = Http.emptyBody
-    , expect = Http.expectJson Response (Decode.field "message" Decode.string)
-    }
+  let
+    body = Encode.object
+      [ ("query", Encode.string "hello")
+      ]
+      |> Http.jsonBody
+  in
+    Http.post
+      { url = "http://localhost:3000/api?query={hello}"
+      , body = body
+      , expect = Http.expectJson Response (Decode.field "data" (Decode.field "hello" Decode.string))
+      }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -40,12 +46,13 @@ update msg model =
       case result of
         Ok message ->
           ({ model | message = message }, Cmd.none)
-        Err _ ->
-          ({ model | message = "ошибка"}, Cmd.none)
+        Err err ->
+          ({ model | message = "Ошибка" }, Cmd.none)
 
-view =
+view : Model -> Html Msg
+view model =
   div [ class "_auth" ]
-    [ div [ class "header" ] [ text "Логин" ]
+    [ div [ class "header" ] [ text model.message ]
     , form [ onSubmit Submit ]
         [ input [ placeholder "Email", onInput SetEmail, required True ] []
         , input [ placeholder "Пароль", onInput SetPassword, required True ] []

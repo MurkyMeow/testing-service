@@ -7,12 +7,12 @@ import Component.Button as Button
 import Component.Modal as Modal
 import Form.Auth as AuthForm
 
-view =
+view model =
   div [ class "_header" ]
     [ div [ class "logo" ] [ text "Hello world" ]
     , div [ class "nav" ]
         [ Button.link "/signin" "Создать аккаунт"
         , Button.regular "Войти"
         ]
-    , Modal.view <| AuthForm.view
+    , Modal.view <| AuthForm.view model
     ]
