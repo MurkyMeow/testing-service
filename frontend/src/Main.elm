@@ -1,6 +1,6 @@
 import Browser exposing (element)
 import Html exposing (Html, div, text)
-import Html.Attributes
+import Html.Attributes exposing (rel, href)
 import Platform.Cmd as Cmd
 import Tuple
 
@@ -36,4 +36,5 @@ view model =
   div []
   [ Html.map LoginForm (Header.view model.loginForm)
   , Page.view
+  , Html.node "link" [ rel "stylesheet", href "/main.css" ] []
   ]
