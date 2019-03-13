@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const { fileLoader, mergeTypes, mergeResolvers } = require('merge-graphql-schemas');
@@ -7,6 +8,8 @@ const app = express();
 
 const types = mergeTypes(fileLoader(`${__dirname}/schema/*.gql`), { all: true });
 const resolvers = mergeResolvers(fileLoader(`${__dirname}/schema/*.js`));
+
+app.use(cors());
 
 app.use('/api', graphqlHTTP({
   schema: buildSchema(types),
