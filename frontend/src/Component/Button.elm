@@ -1,10 +1,7 @@
-module Component.Button exposing (regular, link)
+module Component.Button exposing (view)
 
-import Html exposing (Html, a, button, text)
-import Html.Attributes exposing (class, href)
+import Html exposing (a, text)
+import Html.Attributes exposing (class)
 
-regular slot =
-  a [ class "_button" ] [ text slot ]
-
-link path slot =
-  a [ class "_button", href path ] [ text slot ]
+view attributes slot =
+  a (attributes ++ [ class "_button" ]) [ text slot ]

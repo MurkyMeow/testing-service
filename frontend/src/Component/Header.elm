@@ -11,8 +11,8 @@ view model =
   div [ class "_header" ]
     [ div [ class "logo" ] [ text "Hello world" ]
     , div [ class "nav" ]
-        [ Button.link "/signin" "Создать аккаунт"
-        , Button.regular "Войти"
+        [ Button.view [ href "/signin" ] "Создать аккаунт"
+        , Button.view [] "Войти"
         ]
     , Modal.view <| AuthForm.view model
     ]
