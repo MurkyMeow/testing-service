@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "elm reactor './src/Main.elm",
+    "start": "elm reactor",
     "postcss": "postcss ./src/**/*.css -d ./dist -w -u precss",
     "concat-css": "node ./scripts/concat-css.js"
   },
