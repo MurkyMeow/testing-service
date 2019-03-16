@@ -18,6 +18,7 @@ type alias Model =
   , signinOpen : Bool
   , email : String
   , password : String
+  , passwordAgain : String
   , message : String
   }
 
@@ -29,6 +30,7 @@ type Msg
   = SetOpenState Modal Bool
   | SetEmail String
   | SetPassword String
+  | SetPasswordAgain String
   | Submit
   | Response (Result Http.Error String)
 
@@ -36,6 +38,7 @@ init : () -> (Model, Cmd Msg)
 init _ =
   ({ email = ""
    , password = ""
+   , passwordAgain = ""
    , signupOpen = False
    , signinOpen = False
    , message = ""
@@ -72,6 +75,8 @@ update msg model =
       ({ model | email = email }, Cmd.none)
     SetPassword password ->
       ({ model | password = password }, Cmd.none)
+    SetPasswordAgain password ->
+      ({ model | passwordAgain = password }, Cmd.none)
     Response result ->
       case result of
         Ok message ->
@@ -97,15 +102,22 @@ viewHeader signinOpen signupOpen =
         [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
         , Button.view [ onClick (SetOpenState Signin True) ] "Войти"
         ]
-    , Modal.view signinOpen viewSignupForm
+    , Modal.view signinOpen (viewForm Signup)
+    , Modal.view signupOpen (viewForm Signin)
     ]
 
-viewSignupForm =
+viewForm : Modal -> Html Msg
+viewForm kind =
   div [ class "_auth" ]
-    [ div [ class "header" ] [ text "Заполните поля" ]
+    [ div [ class "header" ] [text "Заполните поля" ]
     , form [ onSubmit Submit ]
         [ input [ placeholder "Email", onInput SetEmail, required True ] []
         , input [ placeholder "Пароль", onInput SetPassword, required True ] []
+        , case kind of
+            Signup ->
+              input [ placeholder "Повторите пароль", onInput SetPasswordAgain, required True ] []
+            Signin ->
+              text ""
         , input [ class "submit", type_ "submit", value "Войти" ] []
         ]
     ]
