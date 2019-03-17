@@ -7,8 +7,7 @@ const { APIError, assert } = require('../util/error');
 module.exports = {
   async signin({ email, password }) {
     const [user] = await db('Accounts').where({ email });
-    assert(user, new APIError(400, 'Invalid login'));
-    assert(bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid password'));
+    assert(user && bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid login'));
     const token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '24h' });
     return token;
   },
