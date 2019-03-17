@@ -102,8 +102,8 @@ viewHeader signinOpen signupOpen =
         [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
         , Button.view [ onClick (SetOpenState Signin True) ] "Войти"
         ]
-    , Modal.view signinOpen (viewForm Signup)
-    , Modal.view signupOpen (viewForm Signin)
+    , Modal.view signinOpen (SetOpenState Signup) (viewForm Signup)
+    , Modal.view signupOpen (SetOpenState Signin) (viewForm Signin)
     ]
 
 viewForm : Modal -> Html Msg
