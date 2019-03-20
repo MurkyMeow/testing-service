@@ -20,7 +20,12 @@ type alias Model =
   , password : String
   , passwordAgain : String
   , message : String
+  , user : User
   }
+
+type User
+  = Guest
+  | Authorized String
 
 type Modal
   = Signin
@@ -31,6 +36,7 @@ type Msg
   | SetEmail String
   | SetPassword String
   | SetPasswordAgain String
+  | Signout
   | Submit
   | Response (Result Http.Error String)
 
@@ -42,6 +48,7 @@ init _ =
    , signupOpen = False
    , signinOpen = False
    , message = ""
+   , user = Authorized "Meow"
    }
   , Cmd.none
   )
@@ -85,11 +92,13 @@ update msg model =
           ({ model | message = "Ошибка" }, Cmd.none)
     Submit ->
       (model, submit)
+    Signout ->
+      ({ model | user = Guest }, Cmd.none)
 
 view : Model -> Html Msg
 view model =
   div []
-    [ viewHeader
+    [ viewHeader model.user
     , Page.view
     , text model.message
     , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
@@ -97,13 +106,20 @@ view model =
     , Html.node "link" [ rel "stylesheet", href "/main.css" ] []
     ]
 
-viewHeader =
+viewHeader user =
   div [ class "_header" ]
     [ div [ class "logo" ] [ text "Hello world" ]
-    , div [ class "nav" ]
-        [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
-        , Button.view [ onClick (SetOpenState Signin True) ] "Войти"
-        ]
+    , case user of
+        Authorized name ->
+          div [ class "nav" ]
+            [ Button.view [] ("Здравствуйте, " ++ name)
+            , Button.view [ onClick Signout ] "Выйти"
+            ]
+        Guest ->
+          div [ class "nav" ]
+            [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
+            , Button.view [ onClick (SetOpenState Signin True) ] "Войти"
+            ]
     ]
 
 viewForm : Modal -> Html Msg
