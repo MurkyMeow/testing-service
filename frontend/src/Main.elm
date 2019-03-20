@@ -89,21 +89,21 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ viewHeader model.signinOpen model.signupOpen
+    [ viewHeader
     , Page.view
     , text model.message
+    , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
+    , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
     , Html.node "link" [ rel "stylesheet", href "/main.css" ] []
     ]
 
-viewHeader signinOpen signupOpen =
+viewHeader =
   div [ class "_header" ]
     [ div [ class "logo" ] [ text "Hello world" ]
     , div [ class "nav" ]
         [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
         , Button.view [ onClick (SetOpenState Signin True) ] "Войти"
         ]
-    , Modal.view signinOpen (SetOpenState Signup) (viewForm Signup)
-    , Modal.view signupOpen (SetOpenState Signin) (viewForm Signin)
     ]
 
 viewForm : Modal -> Html Msg
