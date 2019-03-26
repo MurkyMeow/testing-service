@@ -1,4 +1,4 @@
-module Component.Modal exposing(view)
+module UI.Modal exposing(view)
 
 import Html exposing (div, text)
 import Html.Attributes exposing (class)
