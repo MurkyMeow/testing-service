@@ -1,4 +1,4 @@
-module UI.Button exposing (view)
+module Button exposing (view)
 
 import Html exposing (a, text)
 import Html.Attributes exposing (class)

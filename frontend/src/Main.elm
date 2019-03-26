@@ -8,8 +8,8 @@ import Json.Encode as Encode
 import Json.Decode as Decode
 
 import Page.Index as Page
-import UI.Button as Button
-import UI.Modal as Modal
+import Button
+import Modal
 
 -- TODO: decompose Msg Model and update into small pieces?
 
