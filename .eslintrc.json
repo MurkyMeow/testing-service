@@ -16,6 +16,7 @@
     "comma-dangle": "off",
     "camelcase": "off",
     "no-console": "off",
-    "arrow-parens": "off"
+    "arrow-parens": "off",
+    "implicit-arrow-linebreak": "off"
   }
 }
