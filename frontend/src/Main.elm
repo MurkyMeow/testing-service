@@ -7,7 +7,7 @@ import Http
 import Json.Encode as Encode
 import Json.Decode as Decode
 
-import Page.Index as Page
+import Page.Index as Index
 import Button
 import Modal
 
@@ -99,7 +99,7 @@ view : Model -> Html Msg
 view model =
   div []
     [ viewHeader model.user
-    , Page.view
+    , Index.view
     , text model.message
     , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
     , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
@@ -112,7 +112,7 @@ viewHeader user =
     , case user of
         Authorized name ->
           div [ class "nav" ]
-            [ Button.view [] ("Здравствуйте, " ++ name)
+            [ Button.view [] name
             , Button.view [ onClick Signout ] "Выйти"
             ]
         Guest ->
