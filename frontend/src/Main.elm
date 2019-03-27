@@ -103,7 +103,6 @@ view model =
     , text model.message
     , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
     , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
-    , Html.node "link" [ rel "stylesheet", href "/main.css" ] []
     ]
 
 viewHeader user =

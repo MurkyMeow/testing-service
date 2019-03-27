@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "elm reactor",
+    "elm-live": "elm-live ./src/Main.elm -- --output ./dist/index.js --debug",
     "postcss": "postcss ./src/**/*.css -d ./dist -w -u precss",
     "concat-css": "node ./scripts/concat-css.js"
   },
