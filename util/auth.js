@@ -1,12 +1,15 @@
 const jwt = require('jsonwebtoken');
 const env = require('../env');
+const { APIError } = require('./error');
 
 const authorizedOnly = resolver => (root, args, context) => {
   const { token } = context.headers;
-  if (jwt.verify(token, env.secret)) {
+  try {
+    jwt.verify(token, env.secret);
     return resolver(root, args, context);
+  } catch (err) {
+    throw new APIError(403, 'Access denied');
   }
-  throw new Error('Access denied');
 };
 
 module.exports = authorizedOnly;
