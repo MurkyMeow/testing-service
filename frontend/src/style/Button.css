@@ -1,9 +1,11 @@
 ._button {
-  padding: 5px 15px;
-  border-radius: 5px;
+  padding: 8px 15px;
+  border-radius: 15px;
   color: white;
   cursor: pointer;
   background: var(--orange-gradient);
   transition: .3s box-shadow;
   text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
 }
