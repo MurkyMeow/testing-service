@@ -9,11 +9,13 @@ const knex = require('knex');
 const env = require('./env');
 const config = require('./knexfile');
 const auth = require('./schema/auth');
+const testing = require('./schema/testing');
 
 Model.knex(knex(config.development));
 
 const modules = [
-  auth
+  auth,
+  testing
 ].reduce((acc, el) => ({
   schema: acc.schema + el.typeDefs,
   rootValue: { ...acc.typeDefs, ...el.resolvers }
