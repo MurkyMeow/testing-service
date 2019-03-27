@@ -1,9 +1,8 @@
 ._header {
   display: flex;
-  background: var(--black);
+  background: var(--violet-gradient);
   padding: 15px;
   color: white;
-  box-shadow: var(--shadow);
 
   & .nav {
     margin-left: auto;
