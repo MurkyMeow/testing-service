@@ -17,6 +17,7 @@
     "camelcase": "off",
     "no-console": "off",
     "arrow-parens": "off",
-    "implicit-arrow-linebreak": "off"
+    "implicit-arrow-linebreak": "off",
+    "max-statements-per-line": ["error", { "max": 1 }]
   }
 }
