@@ -29,6 +29,10 @@ module.exports = {
       questions(test_id: Int): [Question]
       test(id: Int): Test
     }
+
+    type Mutation {
+      answer(question_id: Int, answer_ids: [Int]): String
+    }
     `,
   resolvers: {
     Query: {
@@ -52,6 +56,20 @@ module.exports = {
         const questions = await db('Questions').where({ id });
         assert(questions.length, new APIError(400, 'Questions not found'));
         return questions;
+      })
+    },
+    Mutation: {
+      answer: authorizedOnly(async (_, { question_id, answer_ids }, context) => {
+        const check = await db('Answers').whereIn('id', answer_ids).where({ question_id });
+        assert(check.length === answer_ids.length, new APIError(400, 'No matching answer for this question'));
+        const rows = answer_ids.map(id => ({
+          account_id: context.userid,
+          question_id,
+          answer_id: id,
+          time_answer: Date.now()
+        }));
+        await db('Accounts_progress').insert(rows);
+        return 'OK';
       })
     }
   }
