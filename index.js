@@ -1,10 +1,10 @@
 const { ApolloServer } = require('apollo-server');
-const test = require('./schema/auth');
+const auth = require('./schema/auth');
 
 new ApolloServer({
   context: ({ req }) => ({ headers: req.headers }),
   modules: [
-    test
+    auth
   ]
 })
   .listen()
