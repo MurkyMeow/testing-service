@@ -53,7 +53,7 @@ module.exports = {
     },
     Test: {
       questions: authorizedOnly(async ({ id }) => {
-        const questions = await db('Questions').where({ id });
+        const questions = await db('Questions').where({ test_id: id });
         assert(questions.length, new APIError(400, 'Questions not found'));
         return questions;
       })
