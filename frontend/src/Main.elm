@@ -1,5 +1,5 @@
 import Browser exposing (element)
-import Html exposing (Html, div, text, form, input)
+import Html exposing (Html, div, text, form, input, label)
 import Html.Attributes exposing (rel, href, class, placeholder, required, type_, value)
 import Html.Events exposing (onClick, onSubmit, onInput)
 import Platform.Cmd as Cmd
@@ -11,7 +11,16 @@ import Page.Index as Index
 import Button
 import Modal
 
--- TODO: decompose Msg Model and update into small pieces?
+type alias Answer =
+  { id : Int
+  , text : String
+  }
+
+type alias Question =
+  { id : Int
+  , text : String
+  , answers : List Answer
+  }
 
 type alias Model =
   { signupOpen : Bool
@@ -21,6 +30,8 @@ type alias Model =
   , passwordAgain : String
   , message : String
   , user : User
+  , answers : List (Int, Int)
+  , questions : List Question
   }
 
 type User
@@ -36,6 +47,7 @@ type Msg
   | SetEmail String
   | SetPassword String
   | SetPasswordAgain String
+  | ToggleAnswer (Int, Int)
   | Signout
   | Submit
   | Response (Result Http.Error String)
@@ -49,6 +61,13 @@ init _ =
    , signinOpen = False
    , message = ""
    , user = Authorized "Meow"
+   , answers = []
+   , questions =
+      [ Question 0 "foo?" [ Answer 0 "bar", Answer 1 "baz" ]
+      , Question 1 "qux?" [ Answer 2 "quux", Answer 3 "cat" ]
+      , Question 2 "qux?" [ Answer 4 "quux", Answer 6 "car" ]
+      , Question 3 "qux?" [ Answer 5 "zzzz", Answer 7 "zxcz" ]
+      ]
    }
   , Cmd.none
   )
@@ -84,6 +103,14 @@ update msg model =
       ({ model | password = password }, Cmd.none)
     SetPasswordAgain password ->
       ({ model | passwordAgain = password }, Cmd.none)
+    ToggleAnswer (questionid, answerid) ->
+      let
+        answers = List.filter (\(_, id) -> id /= answerid) model.answers
+      in
+        if List.length answers /= List.length model.answers then
+          ({ model | answers = answers }, Cmd.none)
+        else
+          ({ model | answers = (questionid, answerid) :: model.answers }, Cmd.none)
     Response result ->
       case result of
         Ok message ->
@@ -99,10 +126,10 @@ view : Model -> Html Msg
 view model =
   div []
     [ viewHeader model.user
-    , Index.view
     , text model.message
     , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
     , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
+    , viewTest model.questions
     ]
 
 viewHeader user =
@@ -136,3 +163,18 @@ viewForm kind =
         , input [ class "submit", type_ "submit", value "Войти" ] []
         ]
     ]
+
+viewAnswer onToggle answer =
+  label [ class "answer" ]
+    [ input [ type_ "checkbox", onInput (\s -> onToggle answer.id)] [], text answer.text
+    ]
+
+viewQuestion question =
+  div [ class "_question" ]
+    [ div [ class "header" ] [ text question.text ]
+    , div [ class "answer-list" ] (List.map (viewAnswer ( \id -> ToggleAnswer (question.id, id) )) question.answers)
+    ]
+
+viewTest questions =
+  div [ class "_test" ]
+    (List.map viewQuestion questions ++ [ Button.view [] "Закончить" ])
