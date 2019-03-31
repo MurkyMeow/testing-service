@@ -30,7 +30,7 @@ module.exports = {
       test(id: Int): Test
     }
 
-    type Mutation {
+    extend type Mutation {
       answer(question_id: Int, answer_ids: [Int]): String
     }
     `,
