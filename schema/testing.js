@@ -48,6 +48,7 @@ module.exports = {
       }),
       test: authorizedOnly(async (_, { id }) => {
         const [test] = await db('Tests').where({ id });
+        assert(test, new APIError(400, 'Test does not exist'));
         return test;
       })
     },
