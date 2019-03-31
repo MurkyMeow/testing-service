@@ -25,7 +25,7 @@ module.exports = {
 
     extend type Query {
       categories: [Category]
-      tests: [Test]
+      tests(category_id: Int): [Test]
       questions(test_id: Int): [Question]
       test(id: Int): Test
     }
@@ -41,8 +41,8 @@ module.exports = {
         assert(categories.length, new APIError(400, 'Category not found'));
         return categories;
       }),
-      tests: authorizedOnly(async () => {
-        const tests = await db('Tests');
+      tests: authorizedOnly(async (_, { category_id }) => {
+        const tests = await db('Tests').where({ category_id });
         assert(tests.length, new APIError(400, 'Tests not found'));
         return tests;
       }),
