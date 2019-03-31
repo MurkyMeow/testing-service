@@ -35,6 +35,7 @@ type alias Model =
   , passwordAgain : String
   , message : String
   , user : User
+  , activeCategory : Category
   , categories : List Category
   , answers : List (Int, Int)
   , questions : List Question
@@ -54,6 +55,7 @@ type Msg
   | SetPassword String
   | SetPasswordAgain String
   | ToggleAnswer (Int, Int)
+  | SetCategory Category
   | Signout
   | Submit
   | Response (Result Http.Error String)
@@ -73,6 +75,7 @@ init _ =
       , Category 1 "cat2"
       , Category 2 "cat3"
       ]
+   , activeCategory = Category 3 "tes"
    , questions =
       [ Question 0 "foo?" [ Answer 0 "bar", Answer 1 "baz" ]
       , Question 1 "qux?" [ Answer 2 "quux", Answer 3 "cat" ]
@@ -122,6 +125,8 @@ update msg model =
           ({ model | answers = answers }, Cmd.none)
         else
           ({ model | answers = (questionid, answerid) :: model.answers }, Cmd.none)
+    SetCategory category ->
+      ({ model | activeCategory = category }, Cmd.none)
     Response result ->
       case result of
         Ok message ->
@@ -140,7 +145,7 @@ view model =
     , text model.message
     , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
     , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
-    , viewCategories model.categories
+    , viewCategories model.categories model.activeCategory
     , viewTest model.questions
     ]
 
@@ -191,9 +196,9 @@ viewTest questions =
   div [ class "_test" ]
     (List.map viewQuestion questions ++ [ Button.view [] "Закончить" ])
 
-viewCategory category =
-  div [ class "category" ] [ text category.name ]
+viewCategory category active clicked =
+  div [ class ("category" ++ if active then " active" else ""), onClick clicked ] [ text category.name ]
 
-viewCategories categories =
+viewCategories categories activeCategory =
   div [ class "_categories" ]
-    (List.map viewCategory categories)
+    (List.map (\c -> viewCategory c (activeCategory == c) (SetCategory c)) categories)
