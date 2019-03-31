@@ -11,6 +11,11 @@ import Page.Index as Index
 import Button
 import Modal
 
+type alias Category =
+  { id : Int
+  , name : String
+  }
+
 type alias Answer =
   { id : Int
   , text : String
@@ -30,6 +35,7 @@ type alias Model =
   , passwordAgain : String
   , message : String
   , user : User
+  , categories : List Category
   , answers : List (Int, Int)
   , questions : List Question
   }
@@ -62,6 +68,11 @@ init _ =
    , message = ""
    , user = Authorized "Meow"
    , answers = []
+   , categories =
+      [ Category 0 "cat1"
+      , Category 1 "cat2"
+      , Category 2 "cat3"
+      ]
    , questions =
       [ Question 0 "foo?" [ Answer 0 "bar", Answer 1 "baz" ]
       , Question 1 "qux?" [ Answer 2 "quux", Answer 3 "cat" ]
@@ -129,6 +140,7 @@ view model =
     , text model.message
     , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
     , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
+    , viewCategories model.categories
     , viewTest model.questions
     ]
 
@@ -178,3 +190,10 @@ viewQuestion question =
 viewTest questions =
   div [ class "_test" ]
     (List.map viewQuestion questions ++ [ Button.view [] "Закончить" ])
+
+viewCategory category =
+  div [ class "category" ] [ text category.name ]
+
+viewCategories categories =
+  div [ class "_categories" ]
+    (List.map viewCategory categories)

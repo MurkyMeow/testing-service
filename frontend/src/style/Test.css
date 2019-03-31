@@ -37,3 +37,18 @@
     }
   }
 }
+
+._categories {
+  display: flex;
+  justify-content: center;
+
+  & .category {
+    padding: 25px;
+    margin: 0 10px;
+    background: #ff9648;
+
+    &.active {
+      background: #fc6771;
+    }
+  }
+}
