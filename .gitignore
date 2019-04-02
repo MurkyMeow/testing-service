@@ -4,3 +4,4 @@ elm-stuff
 dist
 *.bak
 *~
+system-testing.sqlite
