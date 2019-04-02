@@ -1,9 +1,5 @@
 const { gql } = require('apollo-server');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const db = require('../database');
-const env = require('../env');
-const { APIError, assert } = require('../util/error');
+const User = require('../models/user');
 
 module.exports = {
   typeDefs: gql`
@@ -15,16 +11,11 @@ module.exports = {
   resolvers: {
     Query: {
       async signin(_, { email, password }) {
-        const [user] = await db('Accounts').where({ email });
-        assert(user && bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid login'));
-        const token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '24h' });
+        const token = await User.signin(email, password);
         return token;
       },
       async signup(_, { email, password }) {
-        const [user] = await db('Accounts').where({ email });
-        assert(!user, new APIError(400, 'That email is busy'));
-        const hash = bcrypt.hashSync(password, 8);
-        await db('Accounts').insert({ email, password: hash, account_created: Date.now() });
+        await User.signup(email, password);
         return 'Ok';
       }
     }
