@@ -2,11 +2,25 @@ const { Model } = require('objection');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const env = require('../env');
+const Answer = require('./answer');
 const { APIError, assert } = require('../util/error');
 
 module.exports = class extends Model {
   static get tableName() {
     return 'user';
+  }
+
+  static get relationMappings() {
+    return {
+      answers: {
+        relation: Model.HasManyRelation,
+        classModel: Answer,
+        join: {
+          from: 'user.id',
+          to: 'answer.user_id'
+        }
+      }
+    };
   }
 
   static async signup(email, password) {
