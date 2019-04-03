@@ -28,6 +28,7 @@ module.exports = {
       tests(category_id: Int): [Test]
       questions(test_id: Int): [Question]
       test(id: Int): Test
+      result(test_id: Int): Float
     }
 
     extend type Mutation {
@@ -50,6 +51,27 @@ module.exports = {
         const [test] = await db('Tests').where({ id });
         assert(test, new APIError(400, 'Test does not exist'));
         return test;
+      }),
+      result: authorizedOnly(async (_, { test_id }, context) => {
+        const amount = await db('Answers')
+          .innerJoin('Questions', 'Questions.id', '=', 'question_id')
+          .innerJoin('Tests', 'Tests.id', '=', 'Questions.test_id')
+          .where({ 'Questions.test_id': test_id, 'Answers.flag': 1 })
+          .count('flag');
+        console.log(amount);
+        const answered = await db('Accounts_progress')
+          .join('Answers', 'Answers.id', '=', 'Accounts_progress.answer_id')
+          .join('Questions', 'Questions.id', '=', 'Accounts_progress.question_id')
+          .where({ 'Accounts_progress.account_id': context.userid, 'Questions.test_id': test_id, 'Answers.flag': 1 })
+          .countDistinct('Accounts_progress.answer_id');
+        console.log(answered);
+        console.log(answered[0]['count(distinct `Accounts_progress`.`answer_id`)']);
+        console.log(amount[0]['count(`flag`)']);
+        const precents = ((answered[0]['count(distinct `Accounts_progress`.`answer_id`)']) / (amount[0]['count(`flag`)']));
+        console.log(precents);
+
+        // const result = await db('Results').
+        return precents;
       })
     },
     Test: {
