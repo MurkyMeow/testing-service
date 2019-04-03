@@ -8,7 +8,7 @@ module.exports = class extends Model {
 
   static get relationMappings() {
     return {
-      test: {
+      question: {
         relation: Model.BelongsToOneRelation,
         modelClass: Question,
         join: {
