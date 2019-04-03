@@ -3,18 +3,11 @@ import Html exposing (Html, div, text, form, input, label)
 import Html.Attributes exposing (rel, href, class, placeholder, required, type_, value)
 import Html.Events exposing (onClick, onSubmit, onInput)
 import Platform.Cmd as Cmd
+import Api exposing (Category, getCategories)
 import Http
-import Json.Encode as Encode
-import Json.Decode as Decode
-
 import Page.Index as Index
 import Button
 import Modal
-
-type alias Category =
-  { id : Int
-  , name : String
-  }
 
 type alias Answer =
   { id : Int
@@ -56,9 +49,7 @@ type Msg
   | SetPasswordAgain String
   | ToggleAnswer (Int, Int)
   | SetCategory Category
-  | Signout
-  | Submit
-  | Response (Result Http.Error String)
+  | GotCategories (Result Http.Error (List Category))
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -83,24 +74,11 @@ init _ =
       , Question 3 "qux?" [ Answer 5 "zzzz", Answer 7 "zxcz" ]
       ]
    }
-  , Cmd.none
+  , getCategories GotCategories
   )
 
 main =
   element { init = init, update = update, view = view, subscriptions = \_ -> Sub.none }
-
-submit =
-  let
-    body = Encode.object
-      [ ("query", Encode.string "{ hello }")
-      ]
-      |> Http.jsonBody
-  in
-    Http.post
-      { url = "http://localhost:3000/api"
-      , body = body
-      , expect = Http.expectJson Response (Decode.field "data" (Decode.field "hello" Decode.string))
-      }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -127,16 +105,12 @@ update msg model =
           ({ model | answers = (questionid, answerid) :: model.answers }, Cmd.none)
     SetCategory category ->
       ({ model | activeCategory = category }, Cmd.none)
-    Response result ->
+    GotCategories result ->
       case result of
-        Ok message ->
-          ({ model | message = message }, Cmd.none)
-        _ ->
-          ({ model | message = "Ошибка" }, Cmd.none)
-    Submit ->
-      (model, submit)
-    Signout ->
-      ({ model | user = Guest }, Cmd.none)
+        Ok categories ->
+          ({ model | categories = categories }, Cmd.none)
+        Err _ ->
+          (model, Cmd.none)
 
 view : Model -> Html Msg
 view model =
@@ -156,7 +130,7 @@ viewHeader user =
         Authorized name ->
           div [ class "nav" ]
             [ Button.view [] name
-            , Button.view [ onClick Signout ] "Выйти"
+            , Button.view [] "Выйти"
             ]
         Guest ->
           div [ class "nav" ]
@@ -169,7 +143,7 @@ viewForm : Modal -> Html Msg
 viewForm kind =
   div [ class "_auth" ]
     [ div [ class "header" ] [text "Заполните поля" ]
-    , form [ onSubmit Submit ]
+    , form []
         [ input [ placeholder "Email", onInput SetEmail, required True ] []
         , input [ placeholder "Пароль", onInput SetPassword, required True ] []
         , case kind of
