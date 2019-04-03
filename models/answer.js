@@ -1,5 +1,5 @@
 const { Model } = require('objection');
-const Test = require('./test');
+const Question = require('./question');
 
 module.exports = class extends Model {
   static get tableName() {
@@ -10,10 +10,10 @@ module.exports = class extends Model {
     return {
       test: {
         relation: Model.BelongsToOneRelation,
-        modelClass: Test,
+        modelClass: Question,
         join: {
-          from: 'answer.test_id',
-          to: 'test.id'
+          from: 'answer.question_id',
+          to: 'question.id'
         }
       }
     };
