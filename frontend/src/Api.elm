@@ -5,7 +5,7 @@ import Json.Encode as Encode
 import Json.Decode as Decode
 
 apiEndpoint =
-  "http://localhost:4000"
+  "http://localhost:4000?query="
 
 query msg decoder body =
   let
@@ -14,9 +14,8 @@ query msg decoder body =
       ]
       |> Http.jsonBody
   in
-    Http.post
-      { url = apiEndpoint
-      , body = encodedBody
+    Http.get
+      { url = apiEndpoint ++ body
       , expect = Http.expectJson msg (Decode.field "data" decoder)
       }
 
