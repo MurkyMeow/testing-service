@@ -33,8 +33,9 @@ categoriesDecoder =
   )
 
 getCategories msg =
-  query msg categoriesDecoder """
+  query msg categoriesDecoder """{
     categories {
+      id
       name
     }
-  """
+  }"""
