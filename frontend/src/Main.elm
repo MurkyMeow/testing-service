@@ -170,9 +170,15 @@ viewTest questions =
   div [ class "_test" ]
     (List.map viewQuestion questions ++ [ Button.view [] "Закончить" ])
 
-viewCategory category active clicked =
-  div [ class ("category" ++ if active then " active" else ""), onClick clicked ] [ text category.name ]
-
 viewCategories categories activeCategory =
   div [ class "_categories" ]
-    (List.map (\c -> viewCategory c (activeCategory == c) (SetCategory c)) categories)
+    (List.map (\category ->
+      div
+        [ class "category"
+        , class (if category == activeCategory then "active" else "")
+        , onClick (SetCategory category)
+        ]
+        [ text category.name ]
+      )
+      categories
+    )
