@@ -155,15 +155,15 @@ viewForm kind =
         ]
     ]
 
-viewAnswer onToggle answer =
-  label [ class "answer" ]
-    [ input [ type_ "checkbox", onInput (\s -> onToggle answer.id)] [], text answer.text
-    ]
-
 viewQuestion question =
   div [ class "_question" ]
     [ div [ class "header" ] [ text question.text ]
-    , div [ class "answer-list" ] (List.map (viewAnswer ( \id -> ToggleAnswer (question.id, id) )) question.answers)
+    , div [ class "answer-list" ]
+        (List.map (\answer ->
+          label [ class "answer" ]
+            [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] [], text answer.text
+            ]
+        ) question.answers)
     ]
 
 viewTest questions =
