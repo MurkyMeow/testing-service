@@ -7,7 +7,7 @@ import Json.Decode as Decode
 apiEndpoint =
   "http://localhost:4000?query="
 
-query msg decoder body =
+query msg body decoder =
   let
     encodedBody = Encode.object
       [ ("query", Encode.string body)
@@ -24,18 +24,17 @@ type alias Category =
   , name : String
   }
 
-categoriesDecoder =
-  Decode.field "categories" (Decode.list
-    (Decode.map2 Category
-      (Decode.field "id" Decode.int)
-      (Decode.field "name" Decode.string)
-    )
-  )
-
 getCategories msg =
-  query msg categoriesDecoder """{
+  query msg
+  """{
     categories {
       id
       name
     }
   }"""
+  <| Decode.field "categories" (Decode.list
+    (Decode.map2 Category
+      (Decode.field "id" Decode.int)
+      (Decode.field "name" Decode.string)
+    )
+  )
