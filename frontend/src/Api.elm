@@ -5,17 +5,14 @@ import Json.Encode as Encode
 import Json.Decode as Decode
 
 apiEndpoint =
-  "http://localhost:4000?query="
+  "http://localhost:4000?"
 
-query msg body decoder =
+query msg body vars decoder =
   let
-    encodedBody = Encode.object
-      [ ("query", Encode.string body)
-      ]
-      |> Http.jsonBody
+    encodedVars = Encode.encode 0 (Encode.object vars)
   in
     Http.get
-      { url = apiEndpoint ++ body
+      { url = apiEndpoint ++ "query=" ++ body ++ "&variables=" ++ encodedVars
       , expect = Http.expectJson msg (Decode.field "data" decoder)
       }
 
@@ -32,9 +29,11 @@ getCategories msg =
       name
     }
   }"""
-  <| Decode.field "categories" (Decode.list
+  []
+  (Decode.field "categories" (Decode.list
     (Decode.map2 Category
       (Decode.field "id" Decode.int)
       (Decode.field "name" Decode.string)
     )
-  )
+  ))
+
