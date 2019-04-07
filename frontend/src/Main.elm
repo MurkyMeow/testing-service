@@ -50,6 +50,9 @@ type Msg
   | ToggleAnswer (Int, Int)
   | SetCategory Category
   | GotCategories (Result Http.Error (List Category))
+  | SignupSubmit
+  | SignupResponse (Result Http.Error String)
+  | Signout
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -59,7 +62,7 @@ init _ =
    , signupOpen = False
    , signinOpen = False
    , message = ""
-   , user = Authorized "Meow"
+   , user = Guest
    , answers = []
    , categories =
       [ Category 0 "cat1"
@@ -111,6 +114,17 @@ update msg model =
           ({ model | categories = categories }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
+    SignupSubmit ->
+      (model, Api.signup model.email model.password SignupResponse)
+    SignupResponse result ->
+      case result of
+        Ok token ->
+          (model, Cmd.none)
+        Err _ ->
+          (model, Cmd.none)
+    Signout ->
+      ({ model | user = Guest }, Cmd.none)
+
 
 view : Model -> Html Msg
 view model =
@@ -130,7 +144,7 @@ viewHeader user =
         Authorized name ->
           div [ class "nav" ]
             [ Button.view [] name
-            , Button.view [] "Выйти"
+            , Button.view [ onClick Signout ] "Выйти"
             ]
         Guest ->
           div [ class "nav" ]
@@ -143,7 +157,7 @@ viewForm : Modal -> Html Msg
 viewForm kind =
   div [ class "_auth" ]
     [ div [ class "header" ] [text "Заполните поля" ]
-    , form []
+    , form [ onSubmit SignupSubmit ]
         [ input [ placeholder "Email", onInput SetEmail, required True ] []
         , input [ placeholder "Пароль", onInput SetPassword, required True ] []
         , case kind of
