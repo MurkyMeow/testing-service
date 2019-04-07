@@ -1,4 +1,4 @@
-module Api exposing (Category, getCategories)
+module Api exposing (Category, getCategories, signup)
 
 import Http
 import Json.Encode as Encode
@@ -37,3 +37,10 @@ getCategories msg =
     )
   ))
 
+signup email password msg =
+  query msg
+  """{
+    signup(email: $email, password: $password)
+  }"""
+  [("email", Encode.string email), ("password", Encode.string password)]
+  (Decode.field "signup" Decode.string)
