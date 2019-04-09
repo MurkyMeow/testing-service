@@ -13,7 +13,7 @@ module.exports = {
       async signin(_, { email, password }, context) {
         const id = await User.signin(email, password);
         // eslint-disable-next-line no-param-reassign
-        context.setToken(id);
+        context.session.userid = id;
         return 'Ok';
       },
       async signup(_, { email, password }) {
