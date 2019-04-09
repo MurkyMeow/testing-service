@@ -31,7 +31,7 @@ module.exports = class extends Model {
     assert(id, new APIError(500, ''));
   }
 
-  static async singin(email, password) {
+  static async signin(email, password) {
     const [user] = await this.query().where({ email });
     assert(user && bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid login'));
     const token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '24h' });
