@@ -39,8 +39,10 @@ getCategories msg =
 
 signup email password msg =
   query msg
-  """{
+  """
+  query ($email: String, $password: String) {
     signup(email: $email, password: $password)
-  }"""
+  }
+  """
   [("email", Encode.string email), ("password", Encode.string password)]
   (Decode.field "signup" Decode.string)
