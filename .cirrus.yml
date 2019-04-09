@@ -4,5 +4,6 @@ container:
 lint_task:      
   node_modules_cache:
     folder: node_modules
-    populate_script: npm i
+    fingerprint_script: cat package-lock.json
+    populate_script: npm ci
   test_script: npm run lint
