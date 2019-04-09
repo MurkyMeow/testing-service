@@ -52,6 +52,8 @@ type Msg
   | GotCategories (Result Http.Error (List Category))
   | SignupSubmit
   | SignupResponse (Result Http.Error String)
+  | SigninSubmit
+  | SigninResponse (Result Http.Error String)
   | Signout
 
 init : () -> (Model, Cmd Msg)
@@ -122,6 +124,14 @@ update msg model =
           (model, Cmd.none)
         Err _ ->
           (model, Cmd.none)
+    SigninSubmit ->
+      (model, Api.authorize Api.Signin model.email model.password SignupResponse)
+    SigninResponse result ->
+      case result of
+        Ok token ->
+          (model, Cmd.none)
+        Err _ ->
+          (model, Cmd.none)
     Signout ->
       ({ model | user = Guest }, Cmd.none)
 
@@ -155,19 +165,23 @@ viewHeader user =
 
 viewForm : Modal -> Html Msg
 viewForm kind =
-  div [ class "_auth" ]
-    [ div [ class "header" ] [text "Заполните поля" ]
-    , form [ onSubmit SignupSubmit ]
-        [ input [ placeholder "Email", onInput SetEmail, required True ] []
-        , input [ placeholder "Пароль", onInput SetPassword, required True ] []
-        , case kind of
-            Signup ->
-              input [ placeholder "Повторите пароль", onInput SetPasswordAgain, required True ] []
-            Signin ->
-              text ""
-        , input [ class "submit", type_ "submit", value "Войти" ] []
-        ]
-    ]
+  let
+    (handleSubmit, passwordAgain) =
+      case kind of
+        Signup ->
+          (SignupSubmit, input [ placeholder "Повторите пароль", onInput SetPasswordAgain, required True ] [])
+        Signin ->
+          (SigninSubmit, text "")
+  in
+    div [ class "_auth" ]
+      [ div [ class "header" ] [text "Заполните поля" ]
+      , form [ onSubmit handleSubmit ]
+          [ input [ placeholder "Email", onInput SetEmail, required True ] []
+          , input [ placeholder "Пароль", onInput SetPassword, required True ] []
+          , passwordAgain
+          , input [ class "submit", type_ "submit", value "Войти" ] []
+          ]
+      ]
 
 viewQuestion question =
   div [ class "_question" ]
