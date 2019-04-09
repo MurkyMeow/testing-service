@@ -10,9 +10,11 @@ module.exports = {
   `,
   resolvers: {
     Query: {
-      async signin(_, { email, password }) {
-        const token = await User.signin(email, password);
-        return token;
+      async signin(_, { email, password }, context) {
+        const id = await User.signin(email, password);
+        // eslint-disable-next-line no-param-reassign
+        context.setToken(id);
+        return 'Ok';
       },
       async signup(_, { email, password }) {
         await User.signup(email, password);
