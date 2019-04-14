@@ -90,9 +90,9 @@ update msg model =
     SetOpenState modal state ->
       case modal of
         Signin ->
-          ({ model | signupOpen = state }, Cmd.none)
-        Signup ->
           ({ model | signinOpen = state }, Cmd.none)
+        Signup ->
+          ({ model | signupOpen = state }, Cmd.none)
     SetEmail email ->
       ({ model | email = email }, Cmd.none)
     SetPassword password ->
@@ -122,7 +122,7 @@ update msg model =
     SignupResponse result ->
       case result of
         Ok token ->
-          (model, Cmd.none)
+          ({ model | signupOpen = False }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
     SigninSubmit ->
@@ -130,7 +130,7 @@ update msg model =
     SigninResponse result ->
       case result of
         Ok user ->
-          ({ model | user = Just user }, Cmd.none)
+          ({ model | user = Just user, signinOpen = False }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
     Signout ->
@@ -142,8 +142,8 @@ view model =
   div []
     [ viewHeader model.user
     , text model.message
-    , Modal.view model.signinOpen (SetOpenState Signup) (viewForm Signup)
-    , Modal.view model.signupOpen (SetOpenState Signin) (viewForm Signin)
+    , Modal.view model.signupOpen (SetOpenState Signup) (viewForm Signup)
+    , Modal.view model.signinOpen (SetOpenState Signin) (viewForm Signin)
     , viewCategories model.categories model.activeCategory
     , viewTest model.questions
     ]
