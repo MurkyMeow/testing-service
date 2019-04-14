@@ -26,6 +26,7 @@ type alias Model =
   , email : String
   , password : String
   , passwordAgain : String
+  , name : String
   , message : String
   , user : Maybe Api.User
   , activeCategory : Category
@@ -43,6 +44,7 @@ type Msg
   | SetEmail String
   | SetPassword String
   | SetPasswordAgain String
+  | SetName String
   | ToggleAnswer (Int, Int)
   | SetCategory Category
   | GotCategories (Result Http.Error (List Category))
@@ -57,6 +59,7 @@ init _ =
   ({ email = ""
    , password = ""
    , passwordAgain = ""
+   , name = ""
    , signupOpen = False
    , signinOpen = False
    , message = ""
@@ -96,6 +99,8 @@ update msg model =
       ({ model | password = password }, Cmd.none)
     SetPasswordAgain password ->
       ({ model | passwordAgain = password }, Cmd.none)
+    SetName name ->
+      ({ model | name = name }, Cmd.none)
     ToggleAnswer (questionid, answerid) ->
       let
         answers = List.filter (\(_, id) -> id /= answerid) model.answers
@@ -162,21 +167,25 @@ viewHeader user =
 viewForm : Modal -> Html Msg
 viewForm kind =
   let
-    (handleSubmit, passwordAgain) =
+    baseFields =
+      [ input [ placeholder "Email", onInput SetEmail, required True ] []
+      , input [ placeholder "Пароль", onInput SetPassword, required True ] []
+      ]
+    (handleSubmit, fields) =
       case kind of
         Signup ->
-          (SignupSubmit, input [ placeholder "Повторите пароль", onInput SetPasswordAgain, required True ] [])
+          (SignupSubmit,
+            [ input [ placeholder "Ваше имя", onInput SetName, required True ] [] ]
+            ++ baseFields
+            ++ [ input [ placeholder "Повторите пароль", onInput SetPasswordAgain, required True ] [] ]
+          )
         Signin ->
-          (SigninSubmit, text "")
+          (SigninSubmit, baseFields)
   in
     div [ class "_auth" ]
-      [ div [ class "header" ] [text "Заполните поля" ]
+      [ div [ class "header" ] [ text "Заполните поля" ]
       , form [ onSubmit handleSubmit ]
-          [ input [ placeholder "Email", onInput SetEmail, required True ] []
-          , input [ placeholder "Пароль", onInput SetPassword, required True ] []
-          , passwordAgain
-          , input [ class "submit", type_ "submit", value "Войти" ] []
-          ]
+          (fields ++ [ input [ class "submit", type_ "submit", value "Войти" ] [] ])
       ]
 
 viewQuestion question =
