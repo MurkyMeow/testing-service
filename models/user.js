@@ -21,11 +21,11 @@ module.exports = class extends Model {
     };
   }
 
-  static async signup(email, password) {
+  static async signup(name, email, password) {
     const [user] = await this.query().where({ email });
     assert(!user, new APIError(400, 'That email is busy'));
     const hash = bcrypt.hashSync(password, 8);
-    const { id } = await this.query().insert({ email, password: hash });
+    const { id } = await this.query().insert({ name, email, password: hash });
     assert(id, new APIError(500, ''));
   }
 

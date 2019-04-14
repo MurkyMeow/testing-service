@@ -7,7 +7,7 @@ module.exports = {
     }
 
     type Query {
-      signup(email: String, password: String): String
+      signup(name: String, email: String, password: String): String
       signin(email: String, password: String): User
     }
   `,
@@ -18,8 +18,8 @@ module.exports = {
       req.session.userid = user.id;
       return { name: user.name };
     },
-    async signup({ email, password }) {
-      await User.signup(email, password);
+    async signup({ name, email, password }) {
+      await User.signup(name, email, password);
       return 'Ok';
     }
   }
