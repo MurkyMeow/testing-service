@@ -75,7 +75,7 @@ signup name email password =
     signup(name: $name, email: $email, password: $password)
   }
   """
-  [ ("name", Encode.string email)
+  [ ("name", Encode.string name)
   , ("email", Encode.string email)
   , ("password", Encode.string password)
   ]
