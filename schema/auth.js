@@ -2,17 +2,21 @@ const User = require('../models/user');
 
 module.exports = {
   typeDefs: `
+    type User {
+      name: String
+    }
+
     type Query {
       signup(email: String, password: String): String
-      signin(email: String, password: String): String
+      signin(email: String, password: String): User
     }
   `,
   resolvers: {
     async signin({ email, password }, { req }) {
-      const id = await User.signin(email, password);
+      const user = await User.signin(email, password);
       // eslint-disable-next-line no-param-reassign
-      req.session.userid = id;
-      return 'Ok';
+      req.session.userid = user.id;
+      return { name: user.name };
     },
     async signup({ email, password }) {
       await User.signup(email, password);

@@ -32,6 +32,6 @@ module.exports = class extends Model {
   static async signin(email, password) {
     const [user] = await this.query().where({ email });
     assert(user && bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid login'));
-    return user.id;
+    return user;
   }
 };
