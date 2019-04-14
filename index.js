@@ -1,6 +1,8 @@
-const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
+const graphqlHTTP = require('express-graphql');
+const { buildSchema } = require('graphql');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const { Model } = require('objection');
 const knex = require('knex');
 const env = require('./env');
@@ -9,17 +11,15 @@ const auth = require('./schema/auth');
 
 Model.knex(knex(config.development));
 
-const server = new ApolloServer({
-  context: ({ req }) => ({
-    session: req.session
-  }),
-  modules: [
-    auth
-  ]
-});
+const modules = [
+  auth
+].reduce((acc, el) => ({
+  schema: acc.schema + el.typeDefs,
+  rootValue: { ...acc.typeDefs, ...el.resolvers }
+}), { schema: '', rootValue: {} });
 
 const app = express();
-
+app.use(bodyParser.json());
 app.use(session({
   secret: env.secret,
   resave: false,
@@ -28,8 +28,11 @@ app.use(session({
     sameSite: true
   }
 }));
-
-server.applyMiddleware({ app });
-
+app.use('/', graphqlHTTP(req => ({
+  schema: buildSchema(modules.schema),
+  rootValue: modules.rootValue,
+  context: { req },
+  graphiql: true
+})));
 app.listen(4000, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
+  console.log('🚀 Server ready at http://localhost:4000'));
