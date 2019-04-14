@@ -4,7 +4,6 @@ module Api exposing
   , signin
   , signup
   , User
-  , AuthType(..)
   )
 
 import Http
@@ -49,36 +48,35 @@ getCategories msg =
     )
   ))
 
-type AuthType
-  = Signup
-  | Signin
-
 type alias User =
   { name : String
   }
 
-authorize authType body decoder email password msg =
+signin email password msg =
   query msg
-  (String.replace "#body" body """
-    query ($email: String!, $password: String!) {
-      #body
-    }
-  """)
-  [("email", Encode.string email), ("password", Encode.string password)]
-  decoder
-
-signin =
-  authorize Signin
   """
-  signin(email: $email, password: $password) {
-    name
+  query ($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
+      name
+    }
   }
   """
+  [ ("email", Encode.string email)
+  , ("password", Encode.string password)
+  ]
   (Decode.field "signin" (Decode.map User
     (Decode.field "name" Decode.string)
   ))
 
-signup =
-  authorize Signup
-  "signin(email: $email, password: $password)"
+signup name email password msg =
+  query msg
+  """
+  query ($name: String!, $email: String!, $password: String!) {
+    signup(name: $name, email: $email, password: $password)
+  }
+  """
+  [ ("name", Encode.string email)
+  , ("email", Encode.string email)
+  , ("password", Encode.string password)
+  ]
   (Decode.field "signup" Decode.string)
