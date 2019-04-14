@@ -2,6 +2,7 @@ const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const session = require('express-session');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { Model } = require('objection');
 const knex = require('knex');
@@ -20,6 +21,7 @@ const modules = [
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 app.use(session({
   secret: env.secret,
   resave: false,
