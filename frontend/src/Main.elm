@@ -122,7 +122,7 @@ update msg model =
     SignupResponse result ->
       case result of
         Ok token ->
-          ({ model | signupOpen = False }, Cmd.none)
+          ({ model | signupOpen = False }, Api.signin model.email model.password SigninResponse)
         Err _ ->
           (model, Cmd.none)
     SigninSubmit ->
