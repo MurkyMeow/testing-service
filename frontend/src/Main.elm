@@ -27,16 +27,12 @@ type alias Model =
   , password : String
   , passwordAgain : String
   , message : String
-  , user : User
+  , user : Maybe Api.User
   , activeCategory : Category
   , categories : List Category
   , answers : List (Int, Int)
   , questions : List Question
   }
-
-type User
-  = Guest
-  | Authorized String
 
 type Modal
   = Signin
@@ -53,7 +49,7 @@ type Msg
   | SignupSubmit
   | SignupResponse (Result Http.Error String)
   | SigninSubmit
-  | SigninResponse (Result Http.Error String)
+  | SigninResponse (Result Http.Error Api.User)
   | Signout
 
 init : () -> (Model, Cmd Msg)
@@ -64,7 +60,7 @@ init _ =
    , signupOpen = False
    , signinOpen = False
    , message = ""
-   , user = Guest
+   , user = Nothing
    , answers = []
    , categories =
       [ Category 0 "cat1"
@@ -117,7 +113,7 @@ update msg model =
         Err _ ->
           (model, Cmd.none)
     SignupSubmit ->
-      (model, Api.authorize Api.Signup model.email model.password SignupResponse)
+      (model, Api.signup model.email model.password SignupResponse)
     SignupResponse result ->
       case result of
         Ok token ->
@@ -125,15 +121,15 @@ update msg model =
         Err _ ->
           (model, Cmd.none)
     SigninSubmit ->
-      (model, Api.authorize Api.Signin model.email model.password SignupResponse)
+      (model, Api.signin model.email model.password SigninResponse)
     SigninResponse result ->
       case result of
-        Ok token ->
-          (model, Cmd.none)
+        Ok user ->
+          ({ model | user = Just user }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
     Signout ->
-      ({ model | user = Guest }, Cmd.none)
+      ({ model | user = Nothing }, Cmd.none)
 
 
 view : Model -> Html Msg
@@ -151,12 +147,12 @@ viewHeader user =
   div [ class "_header" ]
     [ div [ class "logo" ] [ text "Hello world" ]
     , case user of
-        Authorized name ->
+        Just profile ->
           div [ class "nav" ]
-            [ Button.view [] name
+            [ Button.view [] profile.name
             , Button.view [ onClick Signout ] "Выйти"
             ]
-        Guest ->
+        Nothing ->
           div [ class "nav" ]
             [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
             , Button.view [ onClick (SetOpenState Signin True) ] "Войти"

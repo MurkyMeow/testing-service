@@ -1,4 +1,11 @@
-module Api exposing (Category, getCategories, authorize, AuthType(..))
+module Api exposing
+  ( Category
+  , getCategories
+  , signin
+  , signup
+  , User
+  , AuthType(..)
+  )
 
 import Http
 import Json.Encode as Encode
@@ -46,20 +53,32 @@ type AuthType
   = Signup
   | Signin
 
-authorize authType email password msg =
-  let
-    queryName =
-      case authType of
-        Signup ->
-          "signup"
-        Signin ->
-          "signin"
-  in
-    query msg
-    (String.replace "#type" queryName """
-      query ($email: String!, $password: String!) {
-        #type(email: $email, password: $password)
-      }
-    """)
-    [("email", Encode.string email), ("password", Encode.string password)]
-    (Decode.field "signup" Decode.string)
+type alias User =
+  { name : String
+  }
+
+authorize authType body decoder email password msg =
+  query msg
+  (String.replace "#body" body """
+    query ($email: String!, $password: String!) {
+      #body
+    }
+  """)
+  [("email", Encode.string email), ("password", Encode.string password)]
+  decoder
+
+signin =
+  authorize Signin
+  """
+  signin(email: $email, password: $password) {
+    name
+  }
+  """
+  (Decode.field "signin" (Decode.map User
+    (Decode.field "name" Decode.string)
+  ))
+
+signup =
+  authorize Signup
+  "signin(email: $email, password: $password)"
+  (Decode.field "signup" Decode.string)
