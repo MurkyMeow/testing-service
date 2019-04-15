@@ -1,6 +1,4 @@
 const { Model } = require('objection');
-const Question = require('./question');
-const Category = require('./category');
 
 module.exports = class extends Model {
   static get tableName() {
@@ -8,13 +6,15 @@ module.exports = class extends Model {
   }
 
   static get relationMappings() {
+    const Question = require('./question');
+    const Category = require('./category');
     return {
       questions: {
         relation: Model.HasManyRelation,
         modelClass: Question,
         join: {
           from: 'test.id',
-          to: 'questions.test_id'
+          to: 'question.test_id'
         }
       },
       category: {
