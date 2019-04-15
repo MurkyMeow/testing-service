@@ -1,13 +1,18 @@
 const { Model } = require('objection');
-const Answer = require('./answer');
-const Test = require('./test');
 
 module.exports = class extends Model {
   static get tableName() {
     return 'question';
   }
 
+  async validateAnswers(ids) {
+    const questionAnswers = await this.$relatedQuery('answers');
+    return ids.every(id => questionAnswers.find(x => x.id === id));
+  }
+
   static get relationMappings() {
+    const Answer = require('./answer');
+    const Test = require('./test');
     return {
       answers: {
         relation: Model.HasManyRelation,
