@@ -1,6 +1,5 @@
 const express = require('express');
-const graphqlHTTP = require('express-graphql');
-const { buildSchema } = require('graphql');
+const { ApolloServer } = require('apollo-server-express');
 const session = require('express-session');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -13,13 +12,15 @@ const testing = require('./schema/testing');
 
 Model.knex(knex(config.development));
 
-const modules = [
-  auth,
-  testing
-].reduce((acc, el) => ({
-  schema: acc.schema + el.typeDefs,
-  rootValue: { ...acc.typeDefs, ...el.resolvers }
-}), { schema: '', rootValue: {} });
+const server = new ApolloServer({
+  context: ({ req }) => ({
+    session: req.session
+  }),
+  modules: [
+    auth,
+    testing
+  ]
+});
 
 const app = express();
 app.use(bodyParser.json());
@@ -32,11 +33,6 @@ app.use(session({
     sameSite: true
   }
 }));
-app.use('/', graphqlHTTP(req => ({
-  schema: buildSchema(modules.schema),
-  rootValue: modules.rootValue,
-  context: { req },
-  graphiql: true
-})));
-app.listen(4000, () =>
-  console.log('🚀 Server ready at http://localhost:4000'));
+server.applyMiddleware({ app });
+app.listen({ port: 4000 }, () =>
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
