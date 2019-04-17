@@ -1,6 +1,9 @@
 import Browser exposing (element)
 import Html exposing (Html, div, text, form, input, label)
-import Html.Attributes exposing (rel, href, class, placeholder, required, type_, value)
+import Html.Attributes exposing
+  ( rel, href, class, placeholder
+  , required, type_, value, attribute
+  )
 import Html.Events exposing (onClick, onSubmit, onInput)
 import Platform.Cmd as Cmd
 import Api exposing (Category, getCategories)
@@ -32,6 +35,7 @@ type alias Model =
   , categories : List Category
   , answers : List (Int, Int)
   , questions : List Question
+  , questionIndex : Int
   }
 
 type Modal
@@ -52,6 +56,7 @@ type Msg
   | SigninSubmit
   | SigninResponse (Result Http.Error Api.User)
   | Signout
+  | SetQuestionIndex Int
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -64,6 +69,7 @@ init _ =
    , message = ""
    , user = Nothing
    , answers = []
+   , questionIndex = 0
    , categories =
       [ Category 0 "cat1"
       , Category 1 "cat2"
@@ -134,6 +140,8 @@ update msg model =
           (model, Cmd.none)
     Signout ->
       ({ model | user = Nothing }, Cmd.none)
+    SetQuestionIndex index ->
+      ({ model | questionIndex = index }, Cmd.none)
 
 
 view : Model -> Html Msg
@@ -144,7 +152,8 @@ view model =
     , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
     , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
     , viewCategories model.categories model.activeCategory
-    , viewTest model.questions
+    , viewTest model.questions model.questionIndex
+    , UI.button [] "Закончить"
     ]
 
 viewHeader user =
@@ -187,20 +196,21 @@ viewForm kind =
           (fields ++ [ input [ class "submit", type_ "submit", value "Войти" ] [] ])
       ]
 
-viewQuestion question =
-  div [ class "_question" ]
-    [ div [ class "header" ] [ text question.text ]
-    , div [ class "answer-list" ]
-        (List.map (\answer ->
-          label [ class "answer" ]
-            [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] [], text answer.text
-            ]
-        ) question.answers)
-    ]
-
-viewTest questions =
-  div [ class "_test" ]
-    (List.map viewQuestion questions ++ [ UI.button [] "Закончить" ])
+viewTest questions questionIndex =
+  div [ class "_test", attribute "style" ("--question-index:" ++ String.fromInt questionIndex) ]
+    (List.map (\question ->
+      div [ class "_question" ]
+        [ div [ class "header" ] [ text question.text ]
+        , div [ class "answer-list" ]
+          (List.map (\answer ->
+            label [ class "answer" ]
+              [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] []
+              , text answer.text
+              ]
+          ) question.answers)
+        , UI.button [ onClick (SetQuestionIndex (questionIndex + 1)) ] "Далее"
+        ]
+    ) questions)
 
 viewCategories categories activeCategory =
   div [ class "_categories" ]

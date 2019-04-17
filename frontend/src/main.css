@@ -94,8 +94,19 @@ body {
 }
 
 ._test {
-  width: 400px;
-  margin: 0 auto;
+  display: flex;
+  padding: 20px 0;
+  transform: translateX(calc(var(--question-index) * -100vw - var(--question-index) * 20px));
+  transition: 1s;
+
+  & ._question {
+    width: 100vw;
+    flex-shrink: 0;
+
+    &:not(:last-child) {
+      margin-right: 20px;
+    }
+  }
 
   & ._button {
     display: block;
@@ -103,33 +114,20 @@ body {
 }
 
 ._question {
-  margin: 50px 0;
-  padding: 5px 0;
-  border-radius: 15px;
+  background: #c02d7d;
 
   & .header {
     text-align: center;
     font-weight: bold;
+    margin-bottom: 30px;
   }
 
   & .answer {
     display: block;
-    border-left: 4px solid #fc6870;
+    border-left: 4px solid #6900b2;
     padding: 5px;
     padding-left: 5px;
     margin: 5px 0;
-
-    &:hover {
-      filter: brightness(85%);
-    }
-
-    &:nth-child(odd) {
-      background: #c02d7d;
-    }
-
-    &:nth-child(even) {
-      background: #6900b2;
-    }
   }
 }
 
