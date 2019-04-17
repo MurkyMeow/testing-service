@@ -1,0 +1,150 @@
+:root {
+  --black: #100e17;
+  --black-lighter: #312d3c;
+  --orange-gradient: linear-gradient(90deg, #fc6572, #ff805a, #ff9747);
+  --violet-gradient: linear-gradient(to left, #6900b2, #c02d7d);
+  --shadow: 1px 3px 4px black;
+  font-family: Arial, Helvetica, sans-serif
+}
+
+body {
+  margin: 0;
+  color: white;
+  background: var(--black);
+}
+
+._button {
+  padding: 8px 15px;
+  border-radius: 15px;
+  color: white;
+  cursor: pointer;
+  background: var(--orange-gradient);
+  transition: .3s box-shadow;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+._header {
+  display: flex;
+  background: var(--violet-gradient);
+  padding: 15px;
+  color: white;
+
+  & .nav {
+    margin-left: auto;
+
+    & > *:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  & .logo {
+    font-weight: bold;
+    font-style: italic;
+  }
+}
+
+._modal {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #202020cc;
+
+  & > * {
+    margin: auto;
+  }
+}
+
+._auth {
+  width: 400px;
+  display: inline-block;
+  box-shadow: var(--shadow);
+
+  & .header {
+    text-align: center;
+    background: var(--orange-gradient);
+    padding: 5px 0;
+  }
+
+  & form {
+    display: flex;
+    flex-direction: column;
+    background: var(--black);
+    padding: 20px;
+    margin-bottom: 0;
+  }
+
+  & input {
+    border: none;
+    display: block;
+    color: inherit;
+    margin: 8px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background: var(--black-lighter);
+  }
+
+  & .submit {
+    margin-left: auto;
+  }
+}
+
+._test {
+  width: 400px;
+  margin: 0 auto;
+
+  & ._button {
+    display: block;
+  }
+}
+
+._question {
+  margin: 50px 0;
+  padding: 5px 0;
+  border-radius: 15px;
+
+  & .header {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  & .answer {
+    display: block;
+    border-left: 4px solid #fc6870;
+    padding: 5px;
+    padding-left: 5px;
+    margin: 5px 0;
+
+    &:hover {
+      filter: brightness(85%);
+    }
+
+    &:nth-child(odd) {
+      background: #c02d7d;
+    }
+
+    &:nth-child(even) {
+      background: #6900b2;
+    }
+  }
+}
+
+._categories {
+  display: flex;
+  justify-content: center;
+
+  & .category {
+    padding: 25px;
+    margin: 0 10px;
+    background: #ff9648;
+
+    &.active {
+      background: #fc6771;
+    }
+  }
+}
+
