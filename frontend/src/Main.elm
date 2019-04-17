@@ -6,8 +6,7 @@ import Platform.Cmd as Cmd
 import Api exposing (Category, getCategories)
 import Http
 import Page.Index as Index
-import Button
-import Modal
+import UI
 
 type alias Answer =
   { id : Int
@@ -142,8 +141,8 @@ view model =
   div []
     [ viewHeader model.user
     , text model.message
-    , Modal.view model.signupOpen (SetOpenState Signup) (viewForm Signup)
-    , Modal.view model.signinOpen (SetOpenState Signin) (viewForm Signin)
+    , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
+    , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
     , viewCategories model.categories model.activeCategory
     , viewTest model.questions
     ]
@@ -154,13 +153,13 @@ viewHeader user =
     , case user of
         Just profile ->
           div [ class "nav" ]
-            [ Button.view [] profile.name
-            , Button.view [ onClick Signout ] "Выйти"
+            [ UI.button [] profile.name
+            , UI.button [ onClick Signout ] "Выйти"
             ]
         Nothing ->
           div [ class "nav" ]
-            [ Button.view [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
-            , Button.view [ onClick (SetOpenState Signin True) ] "Войти"
+            [ UI.button [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
+            , UI.button [ onClick (SetOpenState Signin True) ] "Войти"
             ]
     ]
 
@@ -201,7 +200,7 @@ viewQuestion question =
 
 viewTest questions =
   div [ class "_test" ]
-    (List.map viewQuestion questions ++ [ Button.view [] "Закончить" ])
+    (List.map viewQuestion questions ++ [ UI.button [] "Закончить" ])
 
 viewCategories categories activeCategory =
   div [ class "_categories" ]
