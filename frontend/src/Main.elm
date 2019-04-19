@@ -153,10 +153,14 @@ view model =
     , text model.message
     , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
     , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
-    , viewCategories model.categories model.activeCategory
-    , viewTests model.tests model.testId
-    , viewTest model.questions model.questionIndex
-    , UI.button [] "Закончить"
+    , div [ class "app-content" ]
+        [ viewCategories model.categories model.activeCategory
+        , viewTests model.tests model.testId
+        , if List.length model.questions > 0 then
+            viewTest model.questions model.questionIndex
+          else
+            text ""
+        ]
     ]
 
 viewHeader user =
@@ -248,6 +252,7 @@ viewTest questions questionIndex =
             ]
             []
         ) questions)
+    , UI.button [] "Закончить"
     ]
 
 viewCategories categories activeCategory =
