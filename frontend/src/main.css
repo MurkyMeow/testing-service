@@ -94,22 +94,38 @@ body {
 }
 
 ._test {
-  display: flex;
-  padding: 20px 0;
-  transform: translateX(calc(var(--question-index) * -100vw - var(--question-index) * 20px));
-  transition: 1s;
+  width: 500px;
+  margin: 0 auto;
 
-  & ._question {
-    width: 100vw;
-    flex-shrink: 0;
-
-    &:not(:last-child) {
-      margin-right: 20px;
-    }
+  & .question-list {
+    display: flex;
+    overflow: hidden;
+    margin-bottom: 10px;
   }
 
-  & ._button {
-    display: block;
+  & ._question {
+    width: 100%;
+    flex-shrink: 0;
+    transform: translateX(calc(var(--active-index) * -100%));
+    transition: .5s;
+  }
+
+  & .question-nav {
+    display: flex;
+    justify-content: center;
+
+    & div {
+      cursor: pointer;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: lightgray;
+      margin-right: 5px;
+
+      &.active {
+        background: gray;
+      }
+    }
   }
 }
 

@@ -197,20 +197,32 @@ viewForm kind =
       ]
 
 viewTest questions questionIndex =
-  div [ class "_test", attribute "style" ("--question-index:" ++ String.fromInt questionIndex) ]
-    (List.map (\question ->
-      div [ class "_question" ]
-        [ div [ class "header" ] [ text question.text ]
-        , div [ class "answer-list" ]
-          (List.map (\answer ->
-            label [ class "answer" ]
-              [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] []
-              , text answer.text
-              ]
-          ) question.answers)
-        , UI.button [ onClick (SetQuestionIndex (questionIndex + 1)) ] "Далее"
-        ]
-    ) questions)
+  div
+    [ class "_test"
+    , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
+    ]
+    [ div [ class "question-list" ]
+        (List.indexedMap (\index question ->
+          div [ class "_question" ]
+            [ div [ class "header" ] [ text question.text ]
+            , div [ class "answer-list" ]
+              (List.map (\answer ->
+                label [ class "answer" ]
+                  [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] []
+                  , text answer.text
+                  ]
+              ) question.answers)
+            ]
+        ) questions)
+    , div [ class "question-nav" ]
+        (List.indexedMap (\index question ->
+          div
+            [ class (if index == questionIndex then "active" else "")
+            , onClick (SetQuestionIndex index)
+            ]
+            []
+        ) questions)
+    ]
 
 viewCategories categories activeCategory =
   div [ class "_categories" ]
