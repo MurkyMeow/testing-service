@@ -18,6 +18,7 @@
     "no-console": "off",
     "arrow-parens": "off",
     "implicit-arrow-linebreak": "off",
+    "global-require": "off",
     "max-statements-per-line": ["error", { "max": 1 }]
   }
 }

@@ -2,6 +2,6 @@ module.exports = {
   host: 'localhost',
   user: 'root',
   password: '',
-  name: 'ThFedCorp',
+  name: 'SystemTesting',
   secret: 'LinuxMacWindows'
 };
