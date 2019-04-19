@@ -27,6 +27,7 @@ type alias Model =
   , questions : List Api.Question
   , tests : List Api.Test
   , questionIndex : Int
+  , testId : Int
   }
 
 type Modal
@@ -43,7 +44,7 @@ type Msg
   | SetCategory Category
   | GotCategories (Result Http.Error (List Category))
   | GotTests (Result Http.Error (List Api.Test))
-  | FetchQuestions Int
+  | SetTestId Int
   | GotQuestions (Result Http.Error (List Api.Question))
   | SignupSubmit
   | SignupResponse (Result Http.Error String)
@@ -65,6 +66,7 @@ init _ =
    , tests = []
    , answers = []
    , questionIndex = 0
+   , testId = 0
    , categories = []
    , activeCategory = Category 3 "tes"
    , questions = []
@@ -130,8 +132,8 @@ update msg model =
           ({ model | user = Just user, signinOpen = False }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
-    FetchQuestions testid ->
-      (model, Api.getQuestions testid GotQuestions)
+    SetTestId testid ->
+      ({ model | testId = testid }, Api.getQuestions testid GotQuestions)
     GotQuestions result ->
       case result of
         Ok questions ->
@@ -152,7 +154,7 @@ view model =
     , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
     , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
     , viewCategories model.categories model.activeCategory
-    , viewTests model.tests
+    , viewTests model.tests model.testId
     , viewTest model.questions model.questionIndex
     , UI.button [] "Закончить"
     ]
@@ -197,10 +199,15 @@ viewForm kind =
           (fields ++ [ input [ class "submit", type_ "submit", value "Войти" ] [] ])
       ]
 
-viewTests tests =
+viewTests tests activeid =
   div [ class "tests" ]
     (List.map (\test ->
-      div [ class "test", onClick (FetchQuestions test.id) ] [ text test.name ]
+      div
+        [ class "test"
+        , classname ("active", activeid == test.id)
+        , onClick (SetTestId test.id)
+        ]
+        [ text test.name ]
     ) tests)
 
 viewQuestion question =
