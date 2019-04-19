@@ -11,7 +11,7 @@ import Json.Encode as Encode
 import Json.Decode as Decode
 
 apiEndpoint =
-  "http://localhost:4000"
+  "http://localhost:4000/graphql"
 
 query body vars decoder msg =
   let
