@@ -1,9 +1,11 @@
 module Api exposing
   ( Category
   , getCategories
+  , getTests
   , signin
   , signup
   , User
+  , Test
   )
 
 import Http
@@ -43,6 +45,29 @@ getCategories =
   []
   (Decode.field "categories" (Decode.list
     (Decode.map2 Category
+      (Decode.field "id" Decode.int)
+      (Decode.field "name" Decode.string)
+    )
+  ))
+
+type alias Test =
+  { id : Int
+  , name : String
+  }
+
+getTests categoryId =
+  query
+  """
+  query ($category_id: Int!) {
+    tests(category_id: $category_id) {
+      id
+      name
+    }
+  }
+  """
+  [ ("category_id", Encode.int categoryId) ]
+  (Decode.field "tests" (Decode.list
+    (Decode.map2 Test
       (Decode.field "id" Decode.int)
       (Decode.field "name" Decode.string)
     )

@@ -172,3 +172,18 @@ body {
   }
 }
 
+.tests {
+  display: grid;
+  grid-template-columns: 300px 300px;
+  gap: 15px;
+  text-align: center;
+
+  & .test {
+    background: #6900b2;
+    padding: 20px 0;
+
+    &.active {
+      background: #4f0088;
+    }
+  }
+}

@@ -36,6 +36,7 @@ type alias Model =
   , categories : List Category
   , answers : List (Int, Int)
   , questions : List Question
+  , tests : List Api.Test
   , questionIndex : Int
   }
 
@@ -52,6 +53,7 @@ type Msg
   | ToggleAnswer (Int, Int)
   | SetCategory Category
   | GotCategories (Result Http.Error (List Category))
+  | GotTests (Result Http.Error (List Api.Test))
   | SignupSubmit
   | SignupResponse (Result Http.Error String)
   | SigninSubmit
@@ -69,6 +71,7 @@ init _ =
    , signinOpen = False
    , message = ""
    , user = Nothing
+   , tests = []
    , answers = []
    , questionIndex = 0
    , categories =
@@ -116,11 +119,17 @@ update msg model =
         else
           ({ model | answers = (questionid, answerid) :: model.answers }, Cmd.none)
     SetCategory category ->
-      ({ model | activeCategory = category }, Cmd.none)
+      ({ model | activeCategory = category }, Api.getTests category.id GotTests)
     GotCategories result ->
       case result of
         Ok categories ->
           ({ model | categories = categories }, Cmd.none)
+        Err _ ->
+          (model, Cmd.none)
+    GotTests result ->
+      case result of
+        Ok tests ->
+          ({ model | tests = tests }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
     SignupSubmit ->
@@ -153,6 +162,7 @@ view model =
     , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
     , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
     , viewCategories model.categories model.activeCategory
+    , viewTests model.tests
     , viewTest model.questions model.questionIndex
     , UI.button [] "Закончить"
     ]
@@ -196,6 +206,12 @@ viewForm kind =
       , form [ onSubmit handleSubmit ]
           (fields ++ [ input [ class "submit", type_ "submit", value "Войти" ] [] ])
       ]
+
+viewTests tests =
+  div [ class "tests" ]
+    (List.map (\test ->
+      div [ class "test" ] [ text test.name ]
+    ) tests)
 
 viewQuestion question =
   div [ class "_question" ]
