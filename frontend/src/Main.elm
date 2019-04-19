@@ -196,24 +196,24 @@ viewForm kind =
           (fields ++ [ input [ class "submit", type_ "submit", value "Войти" ] [] ])
       ]
 
+viewQuestion question =
+  div [ class "_question" ]
+    [ div [ class "header" ] [ text question.text ]
+    , div [ class "answer-list" ]
+      (List.map (\answer ->
+        label [ class "answer" ]
+          [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] []
+          , text answer.text
+          ]
+      ) question.answers)
+    ]
+
 viewTest questions questionIndex =
   div
     [ class "_test"
     , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
     ]
-    [ div [ class "question-list" ]
-        (List.indexedMap (\index question ->
-          div [ class "_question" ]
-            [ div [ class "header" ] [ text question.text ]
-            , div [ class "answer-list" ]
-              (List.map (\answer ->
-                label [ class "answer" ]
-                  [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] []
-                  , text answer.text
-                  ]
-              ) question.answers)
-            ]
-        ) questions)
+    [ div [ class "question-list" ] (List.map viewQuestion questions)
     , div [ class "question-nav" ]
         (List.indexedMap (\index question ->
           div
