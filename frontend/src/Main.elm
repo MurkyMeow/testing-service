@@ -9,6 +9,7 @@ import Platform.Cmd as Cmd
 import Api exposing (Category, getCategories)
 import Http
 import Page.Index as Index
+import Util exposing (classname)
 import UI
 
 type alias Answer =
@@ -213,9 +214,21 @@ viewTest questions questionIndex =
     [ class "_test"
     , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
     ]
-    [ div [ class "question-list" ] (List.map viewQuestion questions)
+    [ div [ class "frame" ]
+      [ UI.button
+          [ classname ("inactive", questionIndex <= 0)
+          , onClick (SetQuestionIndex (questionIndex - 1))
+          ]
+          "<"
+      , div [ class "question-list" ] (List.map viewQuestion questions)
+      , UI.button
+          [ classname ("inactive", questionIndex + 1 >= List.length questions)
+          , onClick (SetQuestionIndex (questionIndex + 1))
+          ]
+          ">"
+      ]
     , div [ class "question-nav" ]
-        (List.indexedMap (\index question ->
+        (List.indexedMap (\index _ ->
           div
             [ class (if index == questionIndex then "active" else "")
             , onClick (SetQuestionIndex index)

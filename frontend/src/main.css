@@ -103,6 +103,16 @@ body {
     margin-bottom: 10px;
   }
 
+  & .frame {
+    display: flex;
+    align-items: center;
+
+    & ._button.inactive {
+      background: gray;
+      pointer-events: none;
+    }
+  }
+
   & ._question {
     width: 100%;
     flex-shrink: 0;
