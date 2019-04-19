@@ -12,17 +12,6 @@ import Page.Index as Index
 import Util exposing (classname)
 import UI
 
-type alias Answer =
-  { id : Int
-  , text : String
-  }
-
-type alias Question =
-  { id : Int
-  , text : String
-  , answers : List Answer
-  }
-
 type alias Model =
   { signupOpen : Bool
   , signinOpen : Bool
@@ -35,7 +24,7 @@ type alias Model =
   , activeCategory : Category
   , categories : List Category
   , answers : List (Int, Int)
-  , questions : List Question
+  , questions : List Api.Question
   , tests : List Api.Test
   , questionIndex : Int
   }
@@ -54,6 +43,8 @@ type Msg
   | SetCategory Category
   | GotCategories (Result Http.Error (List Category))
   | GotTests (Result Http.Error (List Api.Test))
+  | FetchQuestions Int
+  | GotQuestions (Result Http.Error (List Api.Question))
   | SignupSubmit
   | SignupResponse (Result Http.Error String)
   | SigninSubmit
@@ -74,18 +65,9 @@ init _ =
    , tests = []
    , answers = []
    , questionIndex = 0
-   , categories =
-      [ Category 0 "cat1"
-      , Category 1 "cat2"
-      , Category 2 "cat3"
-      ]
+   , categories = []
    , activeCategory = Category 3 "tes"
-   , questions =
-      [ Question 0 "foo?" [ Answer 0 "bar", Answer 1 "baz" ]
-      , Question 1 "qux?" [ Answer 2 "quux", Answer 3 "cat" ]
-      , Question 2 "qux?" [ Answer 4 "quux", Answer 6 "car" ]
-      , Question 3 "qux?" [ Answer 5 "zzzz", Answer 7 "zxcz" ]
-      ]
+   , questions = []
    }
   , getCategories GotCategories
   )
@@ -146,6 +128,14 @@ update msg model =
       case result of
         Ok user ->
           ({ model | user = Just user, signinOpen = False }, Cmd.none)
+        Err _ ->
+          (model, Cmd.none)
+    FetchQuestions testid ->
+      (model, Api.getQuestions testid GotQuestions)
+    GotQuestions result ->
+      case result of
+        Ok questions ->
+          ({ model | questions = questions }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
     Signout ->
@@ -210,7 +200,7 @@ viewForm kind =
 viewTests tests =
   div [ class "tests" ]
     (List.map (\test ->
-      div [ class "test" ] [ text test.name ]
+      div [ class "test", onClick (FetchQuestions test.id) ] [ text test.name ]
     ) tests)
 
 viewQuestion question =
