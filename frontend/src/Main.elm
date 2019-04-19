@@ -230,7 +230,7 @@ viewTest questions questionIndex =
     , div [ class "question-nav" ]
         (List.indexedMap (\index _ ->
           div
-            [ class (if index == questionIndex then "active" else "")
+            [ classname ("active", index == questionIndex)
             , onClick (SetQuestionIndex index)
             ]
             []
@@ -242,7 +242,7 @@ viewCategories categories activeCategory =
     (List.map (\category ->
       div
         [ class "category"
-        , class (if category == activeCategory then "active" else "")
+        , classname ("active", category == activeCategory)
         , onClick (SetCategory category)
         ]
         [ text category.name ]
