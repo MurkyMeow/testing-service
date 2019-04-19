@@ -11,11 +11,11 @@ alwaysStop msg =
 
 modal open setOpen slot =
   if open then
-    div [ class "_modal", onClick (setOpen False) ]
+    div [ class "modal", onClick (setOpen False) ]
       [ div [ stopPropagationOn "click" (Decode.succeed (setOpen True) |> Decode.map alwaysStop) ] [ slot ]
       ]
   else
     text ""
 
 button attributes slot =
-  a (attributes ++ [ class "_button" ]) [ text slot ]
+  a (attributes ++ [ class "button" ]) [ text slot ]

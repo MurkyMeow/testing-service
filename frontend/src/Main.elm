@@ -164,16 +164,16 @@ view model =
     ]
 
 viewHeader user =
-  div [ class "_header" ]
-    [ div [ class "logo" ] [ text "Hello world" ]
+  div [ class "header" ]
+    [ div [ class "header-logo" ] [ text "Hello world" ]
     , case user of
         Just profile ->
-          div [ class "nav" ]
+          div [ class "header-nav" ]
             [ UI.button [] profile.name
             , UI.button [ onClick Signout ] "Выйти"
             ]
         Nothing ->
-          div [ class "nav" ]
+          div [ class "header-nav" ]
             [ UI.button [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
             , UI.button [ onClick (SetOpenState Signin True) ] "Войти"
             ]
@@ -197,17 +197,17 @@ viewForm kind =
         Signin ->
           (SigninSubmit, baseFields)
   in
-    div [ class "_auth" ]
-      [ div [ class "header" ] [ text "Заполните поля" ]
+    div [ class "auth" ]
+      [ div [ class "auth-header" ] [ text "Заполните поля" ]
       , form [ onSubmit handleSubmit ]
-          (fields ++ [ input [ class "submit", type_ "submit", value "Войти" ] [] ])
+          (fields ++ [ input [ class "auth-submit", type_ "submit", value "Войти" ] [] ])
       ]
 
 viewTests tests activeid =
   div [ class "tests" ]
     (List.map (\test ->
       div
-        [ class "test"
+        [ class "tests-item"
         , classname ("active", activeid == test.id)
         , onClick (SetTestId test.id)
         ]
@@ -215,11 +215,11 @@ viewTests tests activeid =
     ) tests)
 
 viewQuestion question =
-  div [ class "_question" ]
-    [ div [ class "header" ] [ text question.text ]
-    , div [ class "answer-list" ]
+  div [ class "question" ]
+    [ div [ class "question-header" ] [ text question.text ]
+    , div [ class "question-answers" ]
       (List.map (\answer ->
-        label [ class "answer" ]
+        label [ class "question-answers-item" ]
           [ input [ type_ "checkbox", onInput (\s -> ToggleAnswer (question.id, answer.id))] []
           , text answer.text
           ]
@@ -228,23 +228,23 @@ viewQuestion question =
 
 viewTest questions questionIndex =
   div
-    [ class "_test"
+    [ class "test"
     , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
     ]
-    [ div [ class "frame" ]
+    [ div [ class "test-frame" ]
       [ UI.button
           [ classname ("inactive", questionIndex <= 0)
           , onClick (SetQuestionIndex (questionIndex - 1))
           ]
           "<"
-      , div [ class "question-list" ] (List.map viewQuestion questions)
+      , div [ class "test-questions" ] (List.map viewQuestion questions)
       , UI.button
           [ classname ("inactive", questionIndex + 1 >= List.length questions)
           , onClick (SetQuestionIndex (questionIndex + 1))
           ]
           ">"
       ]
-    , div [ class "question-nav" ]
+    , div [ class "test-nav" ]
         (List.indexedMap (\index _ ->
           div
             [ classname ("active", index == questionIndex)
@@ -256,10 +256,10 @@ viewTest questions questionIndex =
     ]
 
 viewCategories categories activeCategory =
-  div [ class "_categories" ]
+  div [ class "categories" ]
     (List.map (\category ->
       div
-        [ class "category"
+        [ class "categories-item"
         , classname ("active", category == activeCategory)
         , onClick (SetCategory category)
         ]
