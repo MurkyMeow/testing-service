@@ -3,5 +3,5 @@ module.exports = {
   user: 'root',
   password: '',
   name: 'SystemTesting',
-  secret: 'LinuxMacWindows'
+  secret: 'LinuxMacWindowsLinuxMacWindowsLinuxMacWindows'
 };

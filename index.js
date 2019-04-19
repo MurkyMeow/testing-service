@@ -1,8 +1,7 @@
-const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
-const session = require('express-session');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const Fastify = require('fastify');
+const cors = require('fastify-cors')
+const session = require('fastify-session');
+const cookie = require('fastify-cookie');
 const { Model } = require('objection');
 const knex = require('knex');
 const env = require('./env');
@@ -12,27 +11,15 @@ const testing = require('./schema/testing');
 
 Model.knex(knex(config.development));
 
-const server = new ApolloServer({
-  context: ({ req }) => ({
-    session: req.session
-  }),
-  modules: [
-    auth,
-    testing
-  ]
-});
+const fastify = Fastify();
+fastify.register(cors);
+fastify.register(cookie);
+fastify.register(session, { secret: env.secret });
 
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-app.use(session({
-  secret: env.secret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    sameSite: true
-  }
-}));
-server.applyMiddleware({ app });
-app.listen({ port: 4000 }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
+fastify.register(auth, { prefix: '/auth' });
+fastify.register(testing, { prefix: '/test' });
+
+fastify.setNotFoundHandler((req, reply) => reply.status(404).send('Not found'));
+fastify
+  .listen(4000)
+  .then(() => console.log('running on http://localhost:4000'));

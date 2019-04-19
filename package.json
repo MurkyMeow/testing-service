@@ -11,13 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "apollo-server-express": "^2.4.8",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
-    "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "graphql": "^14.1.1",
+    "fastify": "^2.3.0",
+    "fastify-cookie": "^3.0.2",
+    "fastify-cors": "^2.1.2",
+    "fastify-session": "^2.0.1",
     "knex": "^0.16.3",
     "objection": "^1.6.7",
     "sqlite3": "^4.0.6"
