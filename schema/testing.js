@@ -20,10 +20,16 @@ module.exports = {
       questions: [Question]
     }
 
+    type Answer {
+      id: Int
+      text: String
+    }
+
     type Question {
       id: Int
       test_id: Int
       text: String
+      answers: [Answer]
     }
 
     extend type Query {
@@ -43,6 +49,10 @@ module.exports = {
       categories: authorizedOnly(async () => {
         const categories = await Category.query();
         return categories;
+      }),
+      questions: authorizedOnly(async (_, { test_id }) => {
+        const questions = await Question.query().where({ test_id }).eager('answers');
+        return questions;
       }),
       tests: authorizedOnly(async (_, { category_id }) => {
         const tests = await Test.query().where({ category_id }).eager('questions');
