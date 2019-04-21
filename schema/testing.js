@@ -12,7 +12,7 @@ module.exports = (fastify, opts, next) => {
   });
   fastify.get('/questions', async ({ query }) => {
     const questions = await Question.query().where({ test_id: query.test_id }).eager('answers');
-    return questions;
+    return { questions };
   });
   fastify.get('/tests', async ({ query }) => {
     const tests = await Test.query().where({ category_id: query.category_id }).eager('questions');
