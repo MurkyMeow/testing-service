@@ -1,16 +1,17 @@
 const User = require('../models/user');
 
 module.exports = (fastify, opts, next) => {
-  fastify.post('/signin', async req => {
-    const { email, password } = req.body;
+  fastify.post('/signin', async ({ body, session }) => {
+    const { email, password } = body;
     const user = await User.signin(email, password);
     // eslint-disable-next-line no-param-reassign
-    req.session.userid = user.id;
+    session.userid = user.id;
     return { name: user.name };
   });
-  fastify.post('/signup', async ({ name, email, password }) => {
+  fastify.post('/signup', async ({ body }) => {
+    const { name, email, password } = body;
     await User.signup(name, email, password);
-    return 'Ok';
+    return { signup: 'Ok' };
   });
   next();
 };

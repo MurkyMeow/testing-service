@@ -10,27 +10,27 @@ module.exports = (fastify, opts, next) => {
     const categories = await Category.query();
     return { categories };
   });
-  fastify.get('/questions', async ({ test_id }, res) => {
-    const questions = await Question.query().where({ test_id }).eager('answers');
-    res.json({ questions });
+  fastify.get('/questions', async ({ query }) => {
+    const questions = await Question.query().where({ test_id: query.test_id }).eager('answers');
+    return questions;
   });
-  fastify.get('/tests', async ({ category_id }, res) => {
-    const tests = await Test.query().where({ category_id }).eager('questions');
-    res.json({ tests });
+  fastify.get('/tests', async ({ query }) => {
+    const tests = await Test.query().where({ category_id: query.category_id }).eager('questions');
+    return { tests };
   });
-  fastify.get('/result', async ({ test_id, session }, res) => {
-    const [test] = await Test.query().where({ id: test_id });
-    res.json({ result: test.getUserResult(session.userid) });
+  fastify.get('/result', async ({ query, session }) => {
+    const [test] = await Test.query().where({ id: query.test_id });
+    return { result: test.getUserResult(session.userid) };
   });
-  fastify.post('/answer', async ({ question_id, answer_ids, session }, res) => {
-    const [question] = await Question.query().where({ id: question_id });
+  fastify.post('/answer', async ({ query, session }) => {
+    const [question] = await Question.query().where({ id: query.question_id });
     assert(
-      await question.validateAnswers(answer_ids),
+      await question.validateAnswers(query.answer_ids),
       new APIError(400, 'Some of the answers is invalid')
     );
-    const rows = answer_ids.map(id => ({ user_id: session.userid, answer_id: id }));
+    const rows = query.answer_ids.map(id => ({ user_id: session.userid, answer_id: id }));
     await Progress.query().insertGraph(rows);
-    res.send('Ok');
+    return { answer: 'Ok' };
   });
   next();
 };

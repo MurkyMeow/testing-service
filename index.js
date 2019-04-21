@@ -1,5 +1,5 @@
 const Fastify = require('fastify');
-const cors = require('fastify-cors')
+const cors = require('fastify-cors');
 const session = require('fastify-session');
 const cookie = require('fastify-cookie');
 const { Model } = require('objection');
