@@ -137,7 +137,7 @@ update msg model =
     GotQuestions result ->
       case result of
         Ok questions ->
-          ({ model | questions = questions }, Cmd.none)
+          ({ model | questions = questions, questionIndex = 0 }, Cmd.none)
         Err _ ->
           (model, Cmd.none)
     Signout ->
