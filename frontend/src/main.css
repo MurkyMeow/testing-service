@@ -66,6 +66,7 @@ body {
   right: 0;
   bottom: 0;
   background: #202020cc;
+  z-index: 1;
 
   & > * {
     margin: auto;
