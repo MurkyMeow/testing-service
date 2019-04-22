@@ -1,5 +1,5 @@
 import Browser exposing (element)
-import Html exposing (Html, div, text, form, input, label)
+import Html exposing (Html, div, text, form, input, label, a)
 import Html.Attributes exposing
   ( rel, href, class, placeholder
   , required, type_, value, attribute
@@ -164,20 +164,30 @@ view model =
     ]
 
 viewHeader user =
-  div [ class "header" ]
-    [ div [ class "header-logo" ] [ text "Hello world" ]
-    , case user of
+  let
+    (breadcrumbs, accountButtons) =
+      case user of
         Just profile ->
-          div [ class "header-nav" ]
-            [ UI.button [] profile.name
+          ( [ a [] [ text "Категории" ]
+            , a [] [ text "Тесты" ]
+            , a [] [ text "Тест" ]
+            ]
+          , [ UI.button [] profile.name
             , UI.button [ onClick Signout ] "Выйти"
             ]
+          )
         Nothing ->
-          div [ class "header-nav" ]
-            [ UI.button [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
+          ( [ text "" ]
+          , [ UI.button [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
             , UI.button [ onClick (SetOpenState Signin True) ] "Войти"
             ]
-    ]
+          )
+  in
+    div [ class "header" ]
+      [ div [ class "header-logo" ] [ text "Hello world" ]
+      , div [ class "header-nav-breadcrumbs" ] breadcrumbs
+      , div [ class "header-nav-account" ] accountButtons
+      ]
 
 viewForm : Modal -> Html Msg
 viewForm kind =
