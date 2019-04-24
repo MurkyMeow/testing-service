@@ -39,5 +39,14 @@ module.exports = (fastify, opts, next) => {
     const category = await Category.query().insert({ name: body.name })
     return 'OK';
   })
+
+  fastify.post('/categories/del', async ({ body, session }) => {
+    const [categories] = await Category.query().where({ id: body.id });
+    assert(categories, new APIError(400, 'Not deleted test'));
+    const category = await Category.query().delete().where({ id: body.id });
+    return 'OK';
+  });
+
+
   next();
 };
