@@ -40,6 +40,13 @@ module.exports = (fastify, opts, next) => {
     return 'OK';
   })
 
+  fastify.post('/categories/edit', async ({ body, session }) => {
+    const [categories] = await Category.query().where({ id: body.id });
+    assert(categories, new APIError(400, 'Not edit test'));
+    const category = await Category.query().where({ id: body.id }).update({ name: body.name });
+    return 'OK';
+  })
+
   fastify.post('/categories/del', async ({ body, session }) => {
     const [categories] = await Category.query().where({ id: body.id });
     assert(categories, new APIError(400, 'Not deleted test'));
