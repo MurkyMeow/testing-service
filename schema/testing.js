@@ -22,13 +22,13 @@ module.exports = (fastify, opts, next) => {
     const [test] = await Test.query().where({ id: query.test_id });
     return { result: test.getUserResult(session.userid) };
   });
-  fastify.post('/answer', async ({ query, session }) => {
-    const [question] = await Question.query().where({ id: query.question_id });
+  fastify.post('/answer', async ({ body, session }) => {
+    const [question] = await Question.query().where({ id: body.question_id });
     assert(
-      await question.validateAnswers(query.answer_ids),
+      await question.validateAnswers(body.answer_ids),
       new APIError(400, 'Some of the answers is invalid')
     );
-    const rows = query.answer_ids.map(id => ({ user_id: session.userid, answer_id: id }));
+    const rows = body.answer_ids.map(id => ({ user_id: session.userid, answer_id: id }));
     await Progress.query().insertGraph(rows);
     return { answer: 'Ok' };
   });
