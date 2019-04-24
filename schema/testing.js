@@ -36,21 +36,21 @@ module.exports = (fastify, opts, next) => {
   fastify.post('/categories/add', async ({ body, session }) => {
     const [categories] = await Category.query().where({ name: body.name });
     assert(!categories, new APIError(400, 'Not added test'));
-    const category = await Category.query().insert({ name: body.name })
+    await Category.query().insert({ name: body.name });
     return 'OK';
-  })
+  });
 
   fastify.post('/categories/edit', async ({ body, session }) => {
     const [categories] = await Category.query().where({ id: body.id });
     assert(categories, new APIError(400, 'Not edit test'));
-    const category = await Category.query().where({ id: body.id }).update({ name: body.name });
+    await Category.query().where({ id: body.id }).update({ name: body.name });
     return 'OK';
-  })
+  });
 
   fastify.post('/categories/del', async ({ body, session }) => {
     const [categories] = await Category.query().where({ id: body.id });
     assert(categories, new APIError(400, 'Not deleted test'));
-    const category = await Category.query().delete().where({ id: body.id });
+    await Category.query().delete().where({ id: body.id });
     return 'OK';
   });
 
