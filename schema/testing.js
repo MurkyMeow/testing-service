@@ -32,5 +32,12 @@ module.exports = (fastify, opts, next) => {
     await Progress.query().insertGraph(rows);
     return { answer: 'Ok' };
   });
+
+  fastify.post('/categories/add', async ({ body, session }) => {
+    const [categories] = await Category.query().where({ name: body.name });
+    assert(!categories, new APIError(400, 'Not added test'));
+    const category = await Category.query().insert({ name: body.name })
+    return 'OK';
+  })
   next();
 };
