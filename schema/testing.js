@@ -65,6 +65,12 @@ module.exports = (fastify, opts, next) => {
     await Category.query().delete().where({ id: body.id });
     return 'OK';
   });
+  fastify.post('/questions/del', async ({ body, session }) => {
+    const [questions] = await Question.query().where({ id: body.id });
+    assert(questions, new APIError(400, 'Not deleted question'));
+    await Question.query().delete().where({ id: body.id });
+    return 'OK';
+  });
 
 
   next();
