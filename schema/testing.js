@@ -52,6 +52,12 @@ module.exports = (fastify, opts, next) => {
     await Category.query().where({ id: body.id }).update({ name: body.name });
     return 'OK';
   });
+  fastify.post('/questions/edit', async ({ body, session }) => {
+    const [questions] = await Question.query().where({ id: body.id });
+    assert(questions, new APIError(400, 'Not edit question'));
+    await Question.query().where({ id: body.id }).update({ text: body.text });
+    return 'OK';
+  });
 
   fastify.post('/categories/del', async ({ body, session }) => {
     const [categories] = await Category.query().where({ id: body.id });
