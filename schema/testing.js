@@ -83,6 +83,12 @@ module.exports = (fastify, opts, next) => {
     await Question.query().delete().where({ id: body.id });
     return 'OK';
   });
+  fastify.post('/tests/del', async ({ body, session }) => {
+    const [tests] = await Test.query().where({ id: body.id });
+    assert(tests, new APIError(400, 'Not deleted test'));
+    await Test.query().delete().where({ id: body.id });
+    return 'OK';
+  });
 
 
   next();
