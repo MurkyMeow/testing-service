@@ -40,7 +40,7 @@ type Page
   = Index
   | Categories
   | Category Int
-  | Test
+  | Test Int
 
 type Modal
   = Signin
@@ -180,7 +180,7 @@ update msg model =
             [ Parser.map Index Parser.top
             , Parser.map Categories (Parser.s "categories")
             , Parser.map Category (Parser.s "category" </> Parser.int)
-            , Parser.map Test (Parser.s "test")
+            , Parser.map Test (Parser.s "test" </> Parser.int)
             ]
       in
         case Parser.parse parser url of
@@ -192,8 +192,8 @@ update msg model =
                 ({ model | page = Categories }, Cmd.none)
               Category id ->
                 ({ model | page = Category id }, Api.getTests id GotTests)
-              Test ->
-                ({ model | page = Test }, Cmd.none)
+              Test id ->
+                ({ model | page = Test id }, Api.getQuestions id GotQuestions)
           Nothing ->
             ({ model | page = Index }, Cmd.none)
 
@@ -215,7 +215,7 @@ view model =
                 viewCategories model.categories model.activeCategory
               Category id ->
                 viewTests model.tests model.testId
-              Test ->
+              Test id ->
                 viewTest model.questions model.questionIndex
           ]
       ]
@@ -274,10 +274,10 @@ viewForm kind =
 viewTests tests activeid =
   div [ class "tests" ]
     (List.map (\test ->
-      div
+      a
         [ class "tests-item"
         , classname ("active", activeid == test.id)
-        , onClick (SetTestId test.id)
+        , href (Builder.absolute [ "test", String.fromInt test.id ] [])
         ]
         [ text test.name ]
     ) tests)
