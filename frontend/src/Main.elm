@@ -40,7 +40,7 @@ type Page
   = Index
   | Categories
   | Category Int
-  | Test Int
+  | Test Int Int
 
 type Modal
   = Signin
@@ -179,8 +179,8 @@ update msg model =
           Parser.oneOf
             [ Parser.map Index Parser.top
             , Parser.map Categories (Parser.s "categories")
+            , Parser.map Test (Parser.s "category" </> Parser.int </> Parser.s "test" </> Parser.int)
             , Parser.map Category (Parser.s "category" </> Parser.int)
-            , Parser.map Test (Parser.s "test" </> Parser.int)
             ]
       in
         case Parser.parse parser url of
@@ -192,18 +192,15 @@ update msg model =
                 ({ model | page = Categories }, Cmd.none)
               Category id ->
                 ({ model | page = Category id }, Api.getTests id GotTests)
-              Test id ->
-                ({ model | page = Test id }, Api.getQuestions id GotQuestions)
+              Test categoryid testid ->
+                ({ model | page = Test categoryid testid }, Api.getQuestions testid GotQuestions)
           Nothing ->
             ({ model | page = Index }, Cmd.none)
 
-
-
-view : Model -> Browser.Document Msg
 view model =
   { title = "test"
   , body =
-      [ viewHeader model.user
+      [ viewHeader model.user model.page
       , text model.message
       , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
       , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
@@ -214,22 +211,29 @@ view model =
               Categories ->
                 viewCategories model.categories model.activeCategory
               Category id ->
-                viewTests model.tests model.testId
-              Test id ->
+                viewTests id model.tests model.testId
+              Test _ _ ->
                 viewTest model.questions model.questionIndex
           ]
       ]
   }
 
-viewHeader user =
+viewHeader user page =
   let
     (breadcrumbs, accountButtons) =
       case user of
         Just profile ->
-          ( [ a [ href "/categories" ] [ text "Категории" ]
-            , a [ href "/tests" ] [ text "Тесты" ]
-            , a [ href "/test" ] [ text "Тест" ]
-            ]
+          ( [ a [ href "/categories" ] [ text "Категории" ] ]
+            ++ (case page of
+                Category id ->
+                  [ a [ href (Builder.absolute [ "tests", String.fromInt id ] []) ] [ text "Тесты" ] ]
+                Test categoryid testid ->
+                  [ a [ href (Builder.absolute [ "category", String.fromInt categoryid ] []) ] [ text "Тесты" ]
+                  , a [ href (Builder.absolute [ "category", String.fromInt categoryid, "test", String.fromInt testid ] []) ] [ text "Тест" ]
+                  ]
+                _ ->
+                  [ text "" ]
+            )
           , [ UI.button [] profile.name
             , UI.button [ onClick Signout ] "Выйти"
             ]
@@ -271,13 +275,13 @@ viewForm kind =
           (fields ++ [ input [ class "auth-submit", type_ "submit", value "Войти" ] [] ])
       ]
 
-viewTests tests activeid =
+viewTests categoryid tests activeid =
   div [ class "tests" ]
     (List.map (\test ->
       a
         [ class "tests-item"
         , classname ("active", activeid == test.id)
-        , href (Builder.absolute [ "test", String.fromInt test.id ] [])
+        , href (Builder.absolute [ "category", String.fromInt categoryid, "test", String.fromInt test.id ] [])
         ]
         [ text test.name ]
     ) tests)
