@@ -1,7 +1,8 @@
 import Browser exposing (application)
 import Browser.Navigation as Navigation
 import Url
-import Url.Parser as Parser
+import Url.Builder as Builder
+import Url.Parser as Parser exposing ((</>))
 import Html exposing (Html, div, text, form, input, label, a)
 import Html.Attributes exposing
   ( rel, href, class, placeholder
@@ -9,7 +10,7 @@ import Html.Attributes exposing
   )
 import Html.Events exposing (onClick, onSubmit, onInput)
 import Platform.Cmd as Cmd
-import Api exposing (Category, getCategories)
+import Api
 import Http
 import Page.Index as Index
 import Util exposing (classname)
@@ -24,8 +25,8 @@ type alias Model =
   , name : String
   , message : String
   , user : Maybe Api.User
-  , activeCategory : Category
-  , categories : List Category
+  , activeCategory : Api.Category
+  , categories : List Api.Category
   , answers : List (Int, Int)
   , questions : List Api.Question
   , tests : List Api.Test
@@ -38,7 +39,7 @@ type alias Model =
 type Page
   = Index
   | Categories
-  | Tests
+  | Category Int
   | Test
 
 type Modal
@@ -52,8 +53,8 @@ type Msg
   | SetPasswordAgain String
   | SetName String
   | ToggleAnswer (Int, Int)
-  | SetCategory Category
-  | GotCategories (Result Http.Error (List Category))
+  | SetCategory Api.Category
+  | GotCategories (Result Http.Error (List Api.Category))
   | GotTests (Result Http.Error (List Api.Test))
   | SetTestId Int
   | GotQuestions (Result Http.Error (List Api.Question))
@@ -81,12 +82,12 @@ init flags url key =
    , questionIndex = 0
    , testId = 0
    , categories = []
-   , activeCategory = Category 3 "tes"
+   , activeCategory = Api.Category 3 "tes"
    , questions = []
    , key = key
    , page = Index
    }
-  , getCategories GotCategories
+  , Api.getCategories GotCategories
   )
 
 main =
@@ -178,7 +179,7 @@ update msg model =
           Parser.oneOf
             [ Parser.map Index Parser.top
             , Parser.map Categories (Parser.s "categories")
-            , Parser.map Tests (Parser.s "tests")
+            , Parser.map Category (Parser.s "category" </> Parser.int)
             , Parser.map Test (Parser.s "test")
             ]
       in
@@ -189,8 +190,8 @@ update msg model =
                 ({ model | page = Index }, Cmd.none)
               Categories ->
                 ({ model | page = Categories }, Cmd.none)
-              Tests ->
-                ({ model | page = Tests }, Cmd.none)
+              Category id ->
+                ({ model | page = Category id }, Api.getTests id GotTests)
               Test ->
                 ({ model | page = Test }, Cmd.none)
           Nothing ->
@@ -212,7 +213,7 @@ view model =
                 text ""
               Categories ->
                 viewCategories model.categories model.activeCategory
-              Tests ->
+              Category id ->
                 viewTests model.tests model.testId
               Test ->
                 viewTest model.questions model.questionIndex
@@ -325,10 +326,10 @@ viewTest questions questionIndex =
 viewCategories categories activeCategory =
   div [ class "categories" ]
     (List.map (\category ->
-      div
+      a
         [ class "categories-item"
+        , href (Builder.relative [ "category", String.fromInt category.id ] [])
         , classname ("active", category == activeCategory)
-        , onClick (SetCategory category)
         ]
         [ text category.name ]
       )
