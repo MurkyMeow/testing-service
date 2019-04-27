@@ -1,4 +1,7 @@
-import Browser exposing (element)
+import Browser exposing (application)
+import Browser.Navigation as Navigation
+import Url
+import Url.Parser as Parser
 import Html exposing (Html, div, text, form, input, label, a)
 import Html.Attributes exposing
   ( rel, href, class, placeholder
@@ -28,7 +31,15 @@ type alias Model =
   , tests : List Api.Test
   , questionIndex : Int
   , testId : Int
+  , key : Navigation.Key
+  , page : Page
   }
+
+type Page
+  = Index
+  | Categories
+  | Tests
+  | Test
 
 type Modal
   = Signin
@@ -52,9 +63,11 @@ type Msg
   | SigninResponse (Result Http.Error Api.User)
   | Signout
   | SetQuestionIndex Int
+  | UrlChanged Url.Url
+  | LinkClicked Browser.UrlRequest
 
-init : () -> (Model, Cmd Msg)
-init _ =
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init flags url key =
   ({ email = ""
    , password = ""
    , passwordAgain = ""
@@ -70,12 +83,21 @@ init _ =
    , categories = []
    , activeCategory = Category 3 "tes"
    , questions = []
+   , key = key
+   , page = Index
    }
   , getCategories GotCategories
   )
 
 main =
-  element { init = init, update = update, view = view, subscriptions = \_ -> Sub.none }
+  application
+    { init = init
+    , update = update
+    , view = view
+    , subscriptions = \_ -> Sub.none
+    , onUrlChange = UrlChanged
+    , onUrlRequest = LinkClicked
+    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -144,33 +166,68 @@ update msg model =
       ({ model | user = Nothing }, Cmd.none)
     SetQuestionIndex index ->
       ({ model | questionIndex = index }, Cmd.none)
+    LinkClicked urlRequest ->
+      case urlRequest of
+        Browser.Internal url ->
+          (model, Navigation.pushUrl model.key (Url.toString url))
+        Browser.External href ->
+          (model, Cmd.none)
+    UrlChanged url ->
+      let
+        parser =
+          Parser.oneOf
+            [ Parser.map Index Parser.top
+            , Parser.map Categories (Parser.s "categories")
+            , Parser.map Tests (Parser.s "tests")
+            , Parser.map Test (Parser.s "test")
+            ]
+      in
+        case Parser.parse parser url of
+          Just route ->
+            case route of
+              Index ->
+                ({ model | page = Index }, Cmd.none)
+              Categories ->
+                ({ model | page = Categories }, Cmd.none)
+              Tests ->
+                ({ model | page = Tests }, Cmd.none)
+              Test ->
+                ({ model | page = Test }, Cmd.none)
+          Nothing ->
+            ({ model | page = Index }, Cmd.none)
 
 
-view : Model -> Html Msg
+
+view : Model -> Browser.Document Msg
 view model =
-  div []
-    [ viewHeader model.user
-    , text model.message
-    , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
-    , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
-    , div [ class "app-content" ]
-        [ viewCategories model.categories model.activeCategory
-        , viewTests model.tests model.testId
-        , if List.length model.questions > 0 then
-            viewTest model.questions model.questionIndex
-          else
-            text ""
-        ]
-    ]
+  { title = "test"
+  , body =
+      [ viewHeader model.user
+      , text model.message
+      , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
+      , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
+      , div [ class "app-content" ]
+          [ case model.page of
+              Index ->
+                text ""
+              Categories ->
+                viewCategories model.categories model.activeCategory
+              Tests ->
+                viewTests model.tests model.testId
+              Test ->
+                viewTest model.questions model.questionIndex
+          ]
+      ]
+  }
 
 viewHeader user =
   let
     (breadcrumbs, accountButtons) =
       case user of
         Just profile ->
-          ( [ a [] [ text "Категории" ]
-            , a [] [ text "Тесты" ]
-            , a [] [ text "Тест" ]
+          ( [ a [ href "/categories" ] [ text "Категории" ]
+            , a [ href "/tests" ] [ text "Тесты" ]
+            , a [ href "/test" ] [ text "Тест" ]
             ]
           , [ UI.button [] profile.name
             , UI.button [ onClick Signout ] "Выйти"
