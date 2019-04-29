@@ -54,7 +54,7 @@ module.exports = (fastify, opts, next) => {
 
   fastify.post('/categories/edit', async ({ body, session }) => {
     const [categories] = await Category.query().where({ id: body.id });
-    assert(categories, new APIError(400, 'Not edit test'));
+    assert(categories, new APIError(400, 'Requested category does not exist'));
     await Category.query().where({ id: body.id }).update({ name: body.name });
     return 'OK';
   });
