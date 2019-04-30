@@ -4,6 +4,7 @@ const Category = require('../models/category');
 const Test = require('../models/test');
 const Question = require('../models/question');
 const Progress = require('../models/progress');
+const Answer = require('../models/answer');
 
 module.exports = (fastify, opts, next) => {
   fastify.get('/categories', async () => {
@@ -49,6 +50,16 @@ module.exports = (fastify, opts, next) => {
     const [verifyCategory] = await Category.query().where({ id: body.category_id });
     assert(verifyCategory, new APIError(400, 'Requested category does not exist'));
     await Test.query().insert({ name: body.name, category_id: body.category_id });
+    return { ok: true };
+  });
+  fastify.post('/answers/add', async ({ body }) => {
+    const [verifyQuestion] = await Question.query().where({ id: body.question_id });
+    assert(verifyQuestion, new APIError(400, 'Requested question does not exist'));
+    await Answer.query().insert({
+      text: body.text,
+      correct: body.correct,
+      question_id: body.question_id
+    });
     return { ok: true };
   });
 
