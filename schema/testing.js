@@ -47,7 +47,7 @@ module.exports = (fastify, opts, next) => {
   });
   fastify.post('/tests/add', async ({ body }) => {
     const [verifyCategory] = await Category.query().where({ id: body.category_id });
-    assert(verifyCategory, new APIError(400, 'Category not found'));
+    assert(verifyCategory, new APIError(400, 'Requested category does not exist'));
     await Test.query().insert({ name: body.name, category_id: body.category_id });
     return { ok: true };
   });
