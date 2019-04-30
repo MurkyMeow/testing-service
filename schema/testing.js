@@ -39,11 +39,11 @@ module.exports = (fastify, opts, next) => {
     await Category.query().insert({ name: body.name });
     return { ok: true };
   });
-  fastify.post('/questions/add', async ({ body, session }) => {
-    const [questions] = await Question.query().where({ text: body.text });
-    assert(!questions, new APIError(400, 'Not added question'));
+  fastify.post('/questions/add', async ({ body }) => {
+    const [verifyTest] = await Test.query().where({ id: body.test_id });
+    assert(verifyTest, new APIError(400, 'Test not found'));
     await Question.query().insert({ text: body.text, test_id: body.test_id });
-    return 'OK';
+    return { ok: true };
   });
   fastify.post('/tests/add', async ({ body, session }) => {
     const [tests] = await Test.query().where({ name: body.name });
