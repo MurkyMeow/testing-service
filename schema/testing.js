@@ -33,7 +33,7 @@ module.exports = (fastify, opts, next) => {
     return { answer: 'Ok' };
   });
 
-  fastify.post('/categories/add', async ({ body, session }) => {
+  fastify.post('/categories/add', async ({ body }) => {
     const [categories] = await Category.query().where({ name: body.name });
     assert(!categories, new APIError(400, 'Not added category'));
     await Category.query().insert({ name: body.name });
