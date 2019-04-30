@@ -58,11 +58,11 @@ module.exports = (fastify, opts, next) => {
     await Category.query().where({ id: body.id }).update({ name: body.name });
     return { ok: true };
   });
-  fastify.post('/questions/edit', async ({ body, session }) => {
+  fastify.post('/questions/edit', async ({ body }) => {
     const [questions] = await Question.query().where({ id: body.id });
-    assert(questions, new APIError(400, 'Not edit question'));
+    assert(questions, new APIError(400, 'Requested question does not exist'));
     await Question.query().where({ id: body.id }).update({ text: body.text });
-    return 'OK';
+    return { ok: true };
   });
   fastify.post('/tests/edit', async ({ body, session }) => {
     const [tests] = await Test.query().where({ id: body.id });
