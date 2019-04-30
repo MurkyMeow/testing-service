@@ -41,7 +41,7 @@ module.exports = (fastify, opts, next) => {
   });
   fastify.post('/questions/add', async ({ body }) => {
     const [verifyTest] = await Test.query().where({ id: body.test_id });
-    assert(verifyTest, new APIError(400, 'Test not found'));
+    assert(verifyTest, new APIError(400, 'Requested test does not exist'));
     await Question.query().insert({ text: body.text, test_id: body.test_id });
     return { ok: true };
   });
