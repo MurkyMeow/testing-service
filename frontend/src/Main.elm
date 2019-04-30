@@ -42,6 +42,12 @@ type Page
   | Category Int
   | Test Int Int
 
+type alias PageInfo msg =
+  { title : String
+  , sequence : List (String, String)
+  , body : Html msg
+  }
+
 type Modal
   = Signin
   | Signup
@@ -198,42 +204,36 @@ update msg model =
             ({ model | page = Index }, Cmd.none)
 
 view model =
-  { title = "test"
-  , body =
-      [ viewHeader model.user model.page
-      , text model.message
-      , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
-      , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
-      , div [ class "app-content" ]
-          [ case model.page of
-              Index ->
-                text ""
-              Categories ->
-                viewCategories model.categories model.activeCategory
-              Category id ->
-                viewTests id model.tests model.testId
-              Test _ _ ->
-                viewTest model.questions model.questionIndex
-          ]
+  let
+    page =
+      case model.page of
+        Index ->
+          { title = "index"
+          , sequence = [ ("categories", "Категории") ]
+          , body = text ""
+          }
+        Categories ->
+          viewCategories model.categories model.activeCategory
+        Category id ->
+          viewTests id model.tests model.testId
+        Test testid categoryid ->
+          viewTest testid categoryid model.questions model.questionIndex
+  in
+    { title = page.title
+    , body =
+        [ viewHeader model.user page.sequence
+        , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
+        , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
+        , div [ class "app-content" ] [ page.body ]
       ]
   }
 
-viewHeader user page =
+viewHeader user sequence =
   let
     (breadcrumbs, accountButtons) =
       case user of
         Just profile ->
-          ( [ a [ href "/categories" ] [ text "Категории" ] ]
-            ++ (case page of
-                Category id ->
-                  [ a [ href (Builder.absolute [ "tests", String.fromInt id ] []) ] [ text "Тесты" ] ]
-                Test categoryid testid ->
-                  [ a [ href (Builder.absolute [ "category", String.fromInt categoryid ] []) ] [ text "Тесты" ]
-                  , a [ href (Builder.absolute [ "category", String.fromInt categoryid, "test", String.fromInt testid ] []) ] [ text "Тест" ]
-                  ]
-                _ ->
-                  [ text "" ]
-            )
+          ( List.map (\( link, title ) -> a [ href link ] [ text title ]) sequence
           , [ UI.button [] profile.name
             , UI.button [ onClick Signout ] "Выйти"
             ]
@@ -276,15 +276,19 @@ viewForm kind =
       ]
 
 viewTests categoryid tests activeid =
-  div [ class "tests" ]
-    (List.map (\test ->
-      a
-        [ class "tests-item"
-        , classname ("active", activeid == test.id)
-        , href (Builder.absolute [ "category", String.fromInt categoryid, "test", String.fromInt test.id ] [])
-        ]
-        [ text test.name ]
-    ) tests)
+  { title = "Categories"
+  , sequence = [ ("category", "Категории") ]
+  , body =
+      div [ class "tests" ]
+        (List.map (\test ->
+          a
+          [ class "tests-item"
+          , classname ("active", activeid == test.id)
+          , href (Builder.absolute [ "category", String.fromInt categoryid, "test", String.fromInt test.id ] [])
+          ]
+          [ text test.name ]
+        ) tests)
+  }
 
 viewQuestion question =
   div [ class "question" ]
@@ -298,44 +302,61 @@ viewQuestion question =
       ) question.answers)
     ]
 
-viewTest questions questionIndex =
-  div
-    [ class "test"
-    , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
-    ]
-    [ div [ class "test-frame" ]
-      [ UI.button
-          [ classname ("inactive", questionIndex <= 0)
-          , onClick (SetQuestionIndex (questionIndex - 1))
+viewTest testid categoryid questions questionIndex =
+  { title = "Test"
+  , sequence =
+      [ ( Builder.absolute
+          [ "categories"
+          , String.fromInt categoryid
+          , "test"
+          , String.fromInt testid
           ]
-          "<"
-      , div [ class "test-questions" ] (List.map viewQuestion questions)
-      , UI.button
-          [ classname ("inactive", questionIndex + 1 >= List.length questions)
-          , onClick (SetQuestionIndex (questionIndex + 1))
-          ]
-          ">"
+          []
+        , "Категории"
+        )
+      , ("test", "Тест")
       ]
-    , div [ class "test-nav" ]
-        (List.indexedMap (\index _ ->
-          div
-            [ classname ("active", index == questionIndex)
-            , onClick (SetQuestionIndex index)
+  , body =
+      div
+        [ class "test"
+        , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
+        ]
+        [ div [ class "test-frame" ]
+          [ UI.button
+            [ classname ("inactive", questionIndex <= 0)
+            , onClick (SetQuestionIndex (questionIndex - 1))
             ]
-            []
-        ) questions)
-    , UI.button [] "Закончить"
-    ]
+            "<"
+          , div [ class "test-questions" ] (List.map viewQuestion questions)
+          , UI.button
+            [ classname ("inactive", questionIndex + 1 >= List.length questions)
+            , onClick (SetQuestionIndex (questionIndex + 1))
+            ]
+            ">"
+          ]
+        , div [ class "test-nav" ]
+            (List.indexedMap (\index _ ->
+              div
+                [ classname ("active", index == questionIndex)
+                , onClick (SetQuestionIndex index)
+                ]
+                []
+          ) questions)
+        , UI.button [] "Закончить"
+        ]
+  }
 
 viewCategories categories activeCategory =
-  div [ class "categories" ]
-    (List.map (\category ->
-      a
-        [ class "categories-item"
-        , href (Builder.relative [ "category", String.fromInt category.id ] [])
-        , classname ("active", category == activeCategory)
-        ]
-        [ text category.name ]
-      )
-      categories
-    )
+  { title = "Test"
+  , sequence = [ ( "/", "Категории" ) ]
+  , body =
+      div [ class "categories" ]
+        (List.map (\category ->
+          a
+            [ class "categories-item"
+            , href (Builder.relative [ "category", String.fromInt category.id ] [])
+            , classname ("active", category == activeCategory)
+            ]
+            [ text category.name ]
+        ) categories)
+  }
