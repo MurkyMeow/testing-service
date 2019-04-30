@@ -71,11 +71,11 @@ module.exports = (fastify, opts, next) => {
     return { ok: true };
   });
 
-  fastify.post('/categories/del', async ({ body, session }) => {
+  fastify.post('/categories/del', async ({ body }) => {
     const [categories] = await Category.query().where({ id: body.id });
-    assert(categories, new APIError(400, 'Not deleted test'));
+    assert(categories, new APIError(400, 'Requested category does not exist'));
     await Category.query().delete().where({ id: body.id });
-    return 'OK';
+    return { ok: true };
   });
   fastify.post('/questions/del', async ({ body, session }) => {
     const [questions] = await Question.query().where({ id: body.id });
