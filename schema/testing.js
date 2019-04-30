@@ -83,13 +83,11 @@ module.exports = (fastify, opts, next) => {
     await Question.query().delete().where({ id: body.id });
     return { ok: true };
   });
-  fastify.post('/tests/del', async ({ body, session }) => {
+  fastify.post('/tests/del', async ({ body }) => {
     const [tests] = await Test.query().where({ id: body.id });
-    assert(tests, new APIError(400, 'Not deleted test'));
+    assert(tests, new APIError(400, 'Requested test does not exist'));
     await Test.query().delete().where({ id: body.id });
-    return 'OK';
+    return { ok: true };
   });
-
-
   next();
 };
