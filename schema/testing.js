@@ -106,5 +106,11 @@ module.exports = (fastify, opts, next) => {
     await Test.query().delete().where({ id: body.id });
     return { ok: true };
   });
+  fastify.post('/answers/del', async ({ body }) => {
+    const [verifyAnswer] = await Answer.query().where({ id: body.id });
+    assert(verifyAnswer, new APIError(400, 'Requested answer does not exist'));
+    await Answer.query().delete().where({ id: body.id });
+    return { ok: true };
+  });
   next();
 };
