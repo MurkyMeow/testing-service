@@ -68,3 +68,28 @@ a {
 .modal-content {
   margin: auto;
 }
+
+.app-auth-header {
+  text-align: center;
+}
+.app-auth {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  padding: 10px 20px;
+  margin-bottom: 0;
+  background: var(--black);
+  box-shadow: var(--shadow);
+}
+.app-auth-field {
+  display: block;
+  color: inherit;
+  border: none;
+  margin: 8px 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: var(--black-lighter);
+}
+.app-auth-btn {
+  margin: 0 auto;
+}
