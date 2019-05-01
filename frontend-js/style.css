@@ -22,7 +22,7 @@ a {
   display: flex;
   align-items: center;
   background: var(--violet-gradient);
-  padding: 15px;
+  padding: 5px 10px;
 }
 .app-header-nav {
   margin-left: auto;
