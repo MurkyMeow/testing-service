@@ -27,7 +27,27 @@ a {
 .app-header-nav {
   margin-left: auto;
 }
+.app-header-nav-btn {
+  margin: 5px 0;
+}
 
 .app-header-logo {
   font-size: 24px;
+}
+
+.button {
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 15px;
+  color: white;
+  cursor: pointer;
+  background: var(--orange-gradient);
+  transition: .3s box-shadow;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+}
+.button-inactive {
+  background: linear-gradient(#d3cce3, #e9e4f0);
 }

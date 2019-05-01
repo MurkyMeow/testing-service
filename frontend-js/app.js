@@ -1,6 +1,7 @@
 import { el, html, useState, useEffect } from '../index.js';
 import categories from './pages/categories.js';
 import profile from './pages/profile.js';
+import button from './components/button.js';
 
 const notFound = el(() => html`
   <h1>Page not found</h1>
@@ -34,8 +35,8 @@ const app = el(() => {
     <header class="app-header">
       <a class="app-header-logo" href="#/">Nice header there</a>
       <nav class="app-header-nav">
-        <a href="#/">Категории</a>
-        <a href="#/profile">Профиль</a>
+        ${button({ classname: 'app-header-nav-btn', link: '#/' })('Категории')}
+        ${button({ classname: 'app-header-nav-btn', link: '#/profile' })('Профиль')}
       </nav>
     </header>
     <div class="app-content">${page}</div>
