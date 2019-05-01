@@ -9,9 +9,9 @@ module.exports = (fastify, opts, next) => {
     return { name: user.name };
   });
   fastify.post('/signup', async ({ body }) => {
-    const { name, email, password } = body;
-    await User.signup(name, email, password);
-    return { signup: 'Ok' };
+    const { email, password } = body;
+    await User.signup(email, password);
+    return { ok: true };
   });
   next();
 };
