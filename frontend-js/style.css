@@ -51,3 +51,20 @@ a {
 .button-inactive {
   background: linear-gradient(#d3cce3, #e9e4f0);
 }
+
+.modal {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #202020cc;
+  z-index: 1;
+}
+.modal-hidden {
+  display: none;
+}
+.modal-content {
+  margin: auto;
+}
