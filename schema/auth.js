@@ -6,8 +6,8 @@ const auth = router();
 auth.post('/signin', async ctx => {
   const { email, password } = ctx.request.body;
   const user = await User.signin(email, password);
-  ctx.session.userid = user.id;
-  ctx.body = { name: user.name };
+  ctx.session.user = user;
+  ctx.body = { id: user.id, name: user.name, email: user.email };
 });
 
 auth.post('/signup', async ctx => {
