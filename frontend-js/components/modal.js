@@ -12,7 +12,8 @@ const useModal = initial => {
       </div>
     </div>
     `),
-    showModal
+    showModal,
+    hideModal,
   ];
 };
 
