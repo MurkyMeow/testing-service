@@ -16,6 +16,11 @@ auth.post('/signup', async ctx => {
   ctx.body = { ok: true };
 });
 
+auth.get('/userinfo', async ctx => {
+  if (!ctx.session.user) ctx.throw(403, 'You ane not authorized');
+  ctx.body = ctx.session.user;
+});
+
 auth.prefix('/auth');
 
 module.exports = auth;
