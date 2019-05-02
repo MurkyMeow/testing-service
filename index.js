@@ -13,7 +13,7 @@ Model.knex(knex(config.development));
 
 const app = new Koa();
 app.keys = [env.secret];
-app.use(cors());
+app.use(cors({ credentials: true }));
 app.use(bodyParser());
 app.use(session({ maxAge: 86400000 }, app));
 
