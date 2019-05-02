@@ -1,5 +1,5 @@
-import { el, html, useState, useEffect } from '../index.js';
-import { post } from './api.js';
+import { el, html, useState, useEffect, useGlobalState } from '../index.js';
+import { post, get } from './api.js';
 import categories from './pages/categories.js';
 import profile from './pages/profile.js';
 import button from './components/button.js';
@@ -20,7 +20,7 @@ const getPage = () => {
   }
 };
 
-const authForm = el(type => {
+const authForm = el(({ type, success }) => {
   const signup = type === 'signup';
   const submit = async e => {
     const form = e.target.parentNode;
@@ -38,7 +38,7 @@ const authForm = el(type => {
       email: email.value,
       password: password.value
     });
-    console.log(user);
+    success(user);
   };
   return html`
   <form class="app-auth">
@@ -54,17 +54,19 @@ const authForm = el(type => {
 });
 
 const app = el(() => {
+  const [user, setUser] = useGlobalState('user');
   const [page, setPage] = useState(getPage());
   const [url, setUrl] = useState('');
   const [authType, setAuthType] = useState('signup');
-  const [modal, showModal] = useModal(false);
+  const [modal, showModal, hideModal] = useModal(false);
 
-  useEffect(() => {
+  useEffect(async () => {
     window.onhashchange = () => {
       if (document.location.hash === url) return;
       setPage(getPage());
       setUrl(document.location.hash);
     };
+    setUser(await get('/auth/userinfo'));
   }, []);
 
   const showForm = type => () => {
@@ -72,15 +74,27 @@ const app = el(() => {
     showModal();
   };
 
+  const onSuccess = newUser => {
+    setUser(newUser);
+    hideModal();
+  };
+
   return html`
   <div class="app">
-    ${modal(authForm(authType))}
+    ${modal(
+      authForm({ type: authType, success: onSuccess })
+    )}
     <header class="app-header">
       <a class="app-header-logo" href="#/">Nice header there</a>
       <nav class="app-header-nav">
-        ${button({ classname: 'app-header-nav-btn', link: '#/' })('Категории')}
-        ${button({ classname: 'app-header-nav-btn', click: showForm('singup') })('Создать аккаунт')}
-        ${button({ classname: 'app-header-nav-btn', click: showForm('signin') })('Войти')}
+      ${user ? [
+          button({ classname: 'app-header-nav-btn', link: '#/' })('Категории'),
+          button({ classname: 'app-header-nav-btn' })(user.name),
+        ] : [
+          button({ classname: 'app-header-nav-btn', click: showForm('signup') })('Создать аккаунт'),
+          button({ classname: 'app-header-nav-btn', click: showForm('signin') })('Войти'),
+        ]
+      }
       </nav>
     </header>
     <div class="app-content">${page}</div>
