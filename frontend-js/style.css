@@ -93,3 +93,31 @@ a {
 .app-auth-btn {
   margin: 0 auto;
 }
+
+.categories-page {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+}
+.categories-title {
+  text-align: center;
+}
+.category-name {
+  text-align: center;
+  text-decoration-style: double;
+}
+.categories-list {  
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  grid-template-columns: 300px 300px 300px;
+  gap: 20px;
+}
+.category {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  background: #c02d7d;
+  padding: 10px;
+  border-radius: 8px
+}
