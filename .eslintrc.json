@@ -1,7 +1,8 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "extends": "airbnb-base",
   "globals": {
@@ -19,6 +20,9 @@
     "arrow-parens": "off",
     "implicit-arrow-linebreak": "off",
     "global-require": "off",
-    "max-statements-per-line": ["error", { "max": 1 }]
+    "max-statements-per-line": ["error", { "max": 1 }],
+    "object-curly-newline": "off",
+    "import/extensions": "off",
+    "indent": [2, 2, {"SwitchCase": 1, "ignoredNodes": ["TemplateLiteral *"]}]
   }
 }

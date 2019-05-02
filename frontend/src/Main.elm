@@ -1,12 +1,16 @@
-import Browser exposing (element)
-import Html exposing (Html, div, text, form, input, label)
+import Browser exposing (application)
+import Browser.Navigation as Navigation
+import Url
+import Url.Builder as Builder
+import Url.Parser as Parser exposing ((</>))
+import Html exposing (Html, div, text, form, input, label, a)
 import Html.Attributes exposing
   ( rel, href, class, placeholder
   , required, type_, value, attribute
   )
 import Html.Events exposing (onClick, onSubmit, onInput)
 import Platform.Cmd as Cmd
-import Api exposing (Category, getCategories)
+import Api
 import Http
 import Page.Index as Index
 import Util exposing (classname)
@@ -21,13 +25,27 @@ type alias Model =
   , name : String
   , message : String
   , user : Maybe Api.User
-  , activeCategory : Category
-  , categories : List Category
+  , activeCategory : Api.Category
+  , categories : List Api.Category
   , answers : List (Int, Int)
   , questions : List Api.Question
   , tests : List Api.Test
   , questionIndex : Int
   , testId : Int
+  , key : Navigation.Key
+  , page : Page
+  }
+
+type Page
+  = Index
+  | Categories
+  | Category Int
+  | Test Int Int
+
+type alias PageInfo msg =
+  { title : String
+  , sequence : List (String, String)
+  , body : Html msg
   }
 
 type Modal
@@ -41,8 +59,8 @@ type Msg
   | SetPasswordAgain String
   | SetName String
   | ToggleAnswer (Int, Int)
-  | SetCategory Category
-  | GotCategories (Result Http.Error (List Category))
+  | SetCategory Api.Category
+  | GotCategories (Result Http.Error (List Api.Category))
   | GotTests (Result Http.Error (List Api.Test))
   | SetTestId Int
   | GotQuestions (Result Http.Error (List Api.Question))
@@ -52,9 +70,11 @@ type Msg
   | SigninResponse (Result Http.Error Api.User)
   | Signout
   | SetQuestionIndex Int
+  | UrlChanged Url.Url
+  | LinkClicked Browser.UrlRequest
 
-init : () -> (Model, Cmd Msg)
-init _ =
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init flags url key =
   ({ email = ""
    , password = ""
    , passwordAgain = ""
@@ -68,14 +88,23 @@ init _ =
    , questionIndex = 0
    , testId = 0
    , categories = []
-   , activeCategory = Category 3 "tes"
+   , activeCategory = Api.Category 3 "tes"
    , questions = []
+   , key = key
+   , page = Index
    }
-  , getCategories GotCategories
+  , Api.getCategories GotCategories
   )
 
 main =
-  element { init = init, update = update, view = view, subscriptions = \_ -> Sub.none }
+  application
+    { init = init
+    , update = update
+    , view = view
+    , subscriptions = \_ -> Sub.none
+    , onUrlChange = UrlChanged
+    , onUrlRequest = LinkClicked
+    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -144,40 +173,83 @@ update msg model =
       ({ model | user = Nothing }, Cmd.none)
     SetQuestionIndex index ->
       ({ model | questionIndex = index }, Cmd.none)
+    LinkClicked urlRequest ->
+      case urlRequest of
+        Browser.Internal url ->
+          (model, Navigation.pushUrl model.key (Url.toString url))
+        Browser.External href ->
+          (model, Cmd.none)
+    UrlChanged url ->
+      let
+        parser =
+          Parser.oneOf
+            [ Parser.map Index Parser.top
+            , Parser.map Categories (Parser.s "categories")
+            , Parser.map Test (Parser.s "category" </> Parser.int </> Parser.s "test" </> Parser.int)
+            , Parser.map Category (Parser.s "category" </> Parser.int)
+            ]
+      in
+        case Parser.parse parser url of
+          Just route ->
+            case route of
+              Index ->
+                ({ model | page = Index }, Cmd.none)
+              Categories ->
+                ({ model | page = Categories }, Cmd.none)
+              Category id ->
+                ({ model | page = Category id }, Api.getTests id GotTests)
+              Test categoryid testid ->
+                ({ model | page = Test categoryid testid }, Api.getQuestions testid GotQuestions)
+          Nothing ->
+            ({ model | page = Index }, Cmd.none)
 
-
-view : Model -> Html Msg
 view model =
-  div []
-    [ viewHeader model.user
-    , text model.message
-    , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
-    , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
-    , div [ class "app-content" ]
-        [ viewCategories model.categories model.activeCategory
-        , viewTests model.tests model.testId
-        , if List.length model.questions > 0 then
-            viewTest model.questions model.questionIndex
-          else
-            text ""
-        ]
-    ]
+  let
+    page =
+      case model.page of
+        Index ->
+          { title = "index"
+          , sequence = [ ("categories", "Категории") ]
+          , body = text ""
+          }
+        Categories ->
+          viewCategories model.categories model.activeCategory
+        Category id ->
+          viewTests id model.tests model.testId
+        Test testid categoryid ->
+          viewTest testid categoryid model.questions model.questionIndex
+  in
+    { title = page.title
+    , body =
+        [ viewHeader model.user page.sequence
+        , UI.modal model.signupOpen (SetOpenState Signup) (viewForm Signup)
+        , UI.modal model.signinOpen (SetOpenState Signin) (viewForm Signin)
+        , div [ class "app-content" ] [ page.body ]
+      ]
+  }
 
-viewHeader user =
-  div [ class "header" ]
-    [ div [ class "header-logo" ] [ text "Hello world" ]
-    , case user of
+viewHeader user sequence =
+  let
+    (breadcrumbs, accountButtons) =
+      case user of
         Just profile ->
-          div [ class "header-nav" ]
-            [ UI.button [] profile.name
+          ( List.map (\( link, title ) -> a [ href link ] [ text title ]) sequence
+          , [ UI.button [] profile.name
             , UI.button [ onClick Signout ] "Выйти"
             ]
+          )
         Nothing ->
-          div [ class "header-nav" ]
-            [ UI.button [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
+          ( [ text "" ]
+          , [ UI.button [ onClick (SetOpenState Signup True) ] "Создать аккаунт"
             , UI.button [ onClick (SetOpenState Signin True) ] "Войти"
             ]
-    ]
+          )
+  in
+    div [ class "header" ]
+      [ div [ class "header-logo" ] [ text "Hello world" ]
+      , div [ class "header-nav-breadcrumbs" ] breadcrumbs
+      , div [ class "header-nav-account" ] accountButtons
+      ]
 
 viewForm : Modal -> Html Msg
 viewForm kind =
@@ -203,16 +275,20 @@ viewForm kind =
           (fields ++ [ input [ class "auth-submit", type_ "submit", value "Войти" ] [] ])
       ]
 
-viewTests tests activeid =
-  div [ class "tests" ]
-    (List.map (\test ->
-      div
-        [ class "tests-item"
-        , classname ("active", activeid == test.id)
-        , onClick (SetTestId test.id)
-        ]
-        [ text test.name ]
-    ) tests)
+viewTests categoryid tests activeid =
+  { title = "Categories"
+  , sequence = [ ("category", "Категории") ]
+  , body =
+      div [ class "tests" ]
+        (List.map (\test ->
+          a
+          [ class "tests-item"
+          , classname ("active", activeid == test.id)
+          , href (Builder.absolute [ "category", String.fromInt categoryid, "test", String.fromInt test.id ] [])
+          ]
+          [ text test.name ]
+        ) tests)
+  }
 
 viewQuestion question =
   div [ class "question" ]
@@ -226,44 +302,61 @@ viewQuestion question =
       ) question.answers)
     ]
 
-viewTest questions questionIndex =
-  div
-    [ class "test"
-    , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
-    ]
-    [ div [ class "test-frame" ]
-      [ UI.button
-          [ classname ("inactive", questionIndex <= 0)
-          , onClick (SetQuestionIndex (questionIndex - 1))
+viewTest testid categoryid questions questionIndex =
+  { title = "Test"
+  , sequence =
+      [ ( Builder.absolute
+          [ "categories"
+          , String.fromInt categoryid
+          , "test"
+          , String.fromInt testid
           ]
-          "<"
-      , div [ class "test-questions" ] (List.map viewQuestion questions)
-      , UI.button
-          [ classname ("inactive", questionIndex + 1 >= List.length questions)
-          , onClick (SetQuestionIndex (questionIndex + 1))
-          ]
-          ">"
+          []
+        , "Категории"
+        )
+      , ("test", "Тест")
       ]
-    , div [ class "test-nav" ]
-        (List.indexedMap (\index _ ->
-          div
-            [ classname ("active", index == questionIndex)
-            , onClick (SetQuestionIndex index)
+  , body =
+      div
+        [ class "test"
+        , attribute "style" ("--active-index:" ++ String.fromInt questionIndex)
+        ]
+        [ div [ class "test-frame" ]
+          [ UI.button
+            [ classname ("inactive", questionIndex <= 0)
+            , onClick (SetQuestionIndex (questionIndex - 1))
             ]
-            []
-        ) questions)
-    , UI.button [] "Закончить"
-    ]
+            "<"
+          , div [ class "test-questions" ] (List.map viewQuestion questions)
+          , UI.button
+            [ classname ("inactive", questionIndex + 1 >= List.length questions)
+            , onClick (SetQuestionIndex (questionIndex + 1))
+            ]
+            ">"
+          ]
+        , div [ class "test-nav" ]
+            (List.indexedMap (\index _ ->
+              div
+                [ classname ("active", index == questionIndex)
+                , onClick (SetQuestionIndex index)
+                ]
+                []
+          ) questions)
+        , UI.button [] "Закончить"
+        ]
+  }
 
 viewCategories categories activeCategory =
-  div [ class "categories" ]
-    (List.map (\category ->
-      div
-        [ class "categories-item"
-        , classname ("active", category == activeCategory)
-        , onClick (SetCategory category)
-        ]
-        [ text category.name ]
-      )
-      categories
-    )
+  { title = "Test"
+  , sequence = [ ( "/", "Категории" ) ]
+  , body =
+      div [ class "categories" ]
+        (List.map (\category ->
+          a
+            [ class "categories-item"
+            , href (Builder.relative [ "category", String.fromInt category.id ] [])
+            , classname ("active", category == activeCategory)
+            ]
+            [ text category.name ]
+        ) categories)
+  }

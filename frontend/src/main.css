@@ -45,7 +45,25 @@ body {
   color: white;
 }
 
-.header-nav {
+.header-nav-breadcrumbs {
+  margin-left: 5%;
+
+  & a {
+    color: #fff;
+
+    &.active {
+      color: #fffe00;
+    }
+
+    &:not(:last-child)::after {
+      content: '/';
+      margin: 0 5px;
+      color: lightgray;
+    }
+  }
+}
+
+.header-nav-account {
   margin-left: auto;
 
   & > *:not(:last-child) {
@@ -66,6 +84,7 @@ body {
   right: 0;
   bottom: 0;
   background: #202020cc;
+  z-index: 1;
 
   & > * {
     margin: auto;

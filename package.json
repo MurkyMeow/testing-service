@@ -4,20 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --ignore ./frontend -e js,gql .",
+    "start": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
     "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^2.2.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
-    "fastify": "^2.3.0",
-    "fastify-cookie": "^3.0.2",
-    "fastify-cors": "^2.1.2",
-    "fastify-session": "^2.0.1",
     "knex": "^0.16.3",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-joi-router": "^6.0.0",
+    "koa-session": "^5.11.0",
     "objection": "^1.6.7",
     "sqlite3": "^4.0.6"
   },
