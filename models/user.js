@@ -1,7 +1,6 @@
 const { Model } = require('objection');
 const bcrypt = require('bcryptjs');
 const Answer = require('./answer');
-const { APIError, assert } = require('../util/error');
 
 module.exports = class extends Model {
   static get tableName() {
@@ -23,15 +22,15 @@ module.exports = class extends Model {
 
   static async signup(email, password) {
     const [user] = await this.query().where({ email });
-    assert(!user, new APIError(400, 'That email is busy'));
+    if (user) throw Error('That email is busy');
     const hash = bcrypt.hashSync(password, 8);
     const { id } = await this.query().insert({ email, password: hash });
-    assert(id, new APIError(500, ''));
+    return id;
   }
 
   static async signin(email, password) {
     const [user] = await this.query().where({ email });
-    assert(user && bcrypt.compareSync(password, user.password), new APIError(400, 'Invalid login'));
+    if (!user || !bcrypt.compareSync(password, user.password)) return null;
     return user;
   }
 };

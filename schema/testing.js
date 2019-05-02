@@ -1,6 +1,5 @@
 // const authorizedOnly = require('../util/auth');
 const router = require('koa-joi-router');
-const { APIError, assert } = require('../util/error');
 const Category = require('../models/category');
 const Test = require('../models/test');
 const Question = require('../models/question');
@@ -27,10 +26,7 @@ testing.get('/result', async ctx => {
 testing.post('/answer', async ctx => {
   const { answer_ids } = ctx.query;
   const [question] = await Question.query().where({ id: ctx.query.question_id });
-  assert(
-    await question.validateAnswers(answer_ids),
-    new APIError(400, 'Some of the answers is invalid')
-  );
+  ctx.assert(await question.validateAnswers(answer_ids), 400, 'Some of the answers are invalid');
   const rows = answer_ids.map(id => ({ user_id: ctx.session.userid, answer_id: id }));
   await Progress.query().insertGraph(rows);
   ctx.body = { answer: 'Ok' };
