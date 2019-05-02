@@ -1,9 +1,12 @@
 import { el, html, useState, useEffect } from '../index.js';
 import { get } from '../api.js';
+import button from '../components/button.js';
 
-const category = el(name => html`
+const category = el(({ name, id }) => html`
   <div class="category">
-    <h2>${name}</h2>
+    <div class="category-name">${name}</h2>
+    <p>Описание</p>
+    ${button({ link: `#/category/${id}` })('Перейти')}
   </div>
 `);
 
@@ -16,9 +19,9 @@ const categories = el(() => {
   }, []);
 
   return html`
-  <div>
-    <h1>Categories page</h1>
-    <div>${items.map(item => category(item.name))}</div>
+  <div class="categories-page">
+    <h1 class="categories-title">Categories page</h1>
+    <div class="categories-list">${items.map(item => category(item))}</div>
   </div>
   `;
 });
