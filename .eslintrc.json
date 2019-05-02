@@ -23,7 +23,6 @@
     "max-statements-per-line": ["error", { "max": 1 }],
     "object-curly-newline": "off",
     "import/extensions": "off",
-    "indent": ["error", 2, { "ignoredNodes": ["TemplateLiteral *"] }],
-    "function-paren-newline": "off"
+    "indent": [2, 2, {"SwitchCase": 1, "ignoredNodes": ["TemplateLiteral *"]}]
   }
 }
