@@ -25,6 +25,7 @@
     "import/extensions": "off",
     "indent": [2, 2, {"SwitchCase": 1, "ignoredNodes": ["TemplateLiteral *"]}],
     "no-return-assign": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "no-restricted-syntax": "off"
   }
 }
