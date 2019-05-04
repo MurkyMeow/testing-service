@@ -89,7 +89,7 @@ const app = el(() => {
       <nav class="app-header-nav">
       ${user ? [
           button({ classname: 'app-header-nav-btn', link: '#/' })('Категории'),
-          button({ classname: 'app-header-nav-btn' })(user.name),
+          button({ classname: 'app-header-nav-btn', link: '#/profile' })(user.name),
         ] : [
           button({ classname: 'app-header-nav-btn', click: showForm('signup') })('Создать аккаунт'),
           button({ classname: 'app-header-nav-btn', click: showForm('signin') })('Войти'),
