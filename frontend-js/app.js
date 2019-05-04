@@ -9,15 +9,38 @@ const notFound = el(() => html`
   <h1>Page not found</h1>
 `);
 
+const routes = [
+  {
+    regex: /^\/$/,
+    component: notFound,
+  },
+  {
+    regex: /^\/categories$/,
+    component: categories,
+  },
+  {
+    regex: /^\/profile$/,
+    component: profile,
+  },
+  {
+    regex: /^\/category\/(\d+)\/$/,
+    component: notFound,
+    params: ['id'],
+  },
+];
+
 const getPage = () => {
-  switch (document.location.hash.slice(1)) {
-    case '/':
-      return categories;
-    case '/profile':
-      return profile;
-    default:
-      return notFound;
+  const path = document.location.hash.slice(1);
+  for (const route of routes) {
+    const [match, ...args] = path.match(route.regex) || [];
+    if (match) {
+      const query = route
+        .params
+        .reduce((acc, param, i) => ({ ...acc, [param]: args[i] }), {});
+      return route.component({ query });
+    }
   }
+  return notFound();
 };
 
 const authForm = el(({ type, success }) => {
