@@ -34,9 +34,9 @@ const getPage = () => {
   for (const route of routes) {
     const [match, ...args] = path.match(route.regex) || [];
     if (match) {
-      const query = route
-        .params
-        .reduce((acc, param, i) => ({ ...acc, [param]: args[i] }), {});
+      const query = route.params
+        ? route.params.reduce((acc, param, i) => ({ ...acc, [param]: args[i] }), {})
+        : [];
       return route.component({ query });
     }
   }
@@ -111,7 +111,7 @@ const app = el(() => {
       <a class="app-header-logo" href="#/">Nice header there</a>
       <nav class="app-header-nav">
       ${user ? [
-          button({ classname: 'app-header-nav-btn', link: '#/' })('Категории'),
+          button({ classname: 'app-header-nav-btn', link: '#/categories' })('Категории'),
           button({ classname: 'app-header-nav-btn', link: '#/profile' })(user.name),
         ] : [
           button({ classname: 'app-header-nav-btn', click: showForm('signup') })('Создать аккаунт'),
