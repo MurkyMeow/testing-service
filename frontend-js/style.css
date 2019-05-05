@@ -125,8 +125,14 @@ a {
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
   position: relative;
 }
+<<<<<<< HEAD
 .category-description {
   height: 120px;
+=======
+.category {
+  text-align: center;
+  background: #c02d7d;
+>>>>>>> frontend/category:  correct layout
   padding: 10px;
   background: #9e1b92;
 }
