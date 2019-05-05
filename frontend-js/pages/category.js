@@ -1,28 +1,18 @@
-import { el, html, useState, useEffect } from '../index.js';
-import { get } from '../api.js';
+import { el, html } from '../index.js';
 import button from '../components/button.js';
+import listPage from '../abstract/list-page.js';
 
-const test = el(({ name }) => html`
+export default ({ query }) => listPage({
+  title: 'Выберете тест:',
+  endpoint: `/test/tests/?${query.id}`,
+  test: console.log(query.id),
+  colWidth: 300,
+  template: el(({ name, id }) => html`
     <div class="test">
-        <div class="test-name">${name}</div>
-        <p>Описание</p>
-        ${button({ link: '#/test/id' })('Пройти тест')}
+      <div class="test-name">${name}</div>
+      <p>Описание</p>
+      <p>${query.id}</p>
+      ${button({ link: `#/questions/${id}/` })('Пройти тест')}
     </div>
-`);
-
-const tests = el(() => {
-  const [items, setItems] = useState([]);
-
-  useEffect(async () => {
-    const response = await get('/test/tests');
-    setItems(response);
-  }, []);
-
-  return html`
-    <div class="category-page">
-        <h1 class="category-title">Category page</h1>
-        <div class="category-list">${items.map(item => test(item))}</div>
-    </div>
-    `;
+  `),
 });
-export default tests;
