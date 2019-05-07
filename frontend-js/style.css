@@ -13,6 +13,12 @@ body {
   background: var(--black);
 }
 
+i {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-size: 24px;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -111,10 +117,37 @@ a {
 }
 
 .category-name {
+  color: #000;
+  font-weight: bold;
   text-align: center;
+  background: #fff;
+  padding: 5px 0;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
+  position: relative;
 }
-.category {
-  background: #c02d7d;
+.category-description {
+  height: 120px;
   padding: 10px;
-  border-radius: 8px
+  background: #9e1b92;
+}
+.category-summary {
+  padding-left: 10px;
+  background: #711368;
+}
+.category-summary > div {
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.category-summary i {
+  margin-right: 2px;
+}
+.category-actions {
+  text-align: end;
+  margin-top: 10px;
+}
+.category-actions .button {
+  font-size: 12px;
+  padding: 5px 15px;
 }
