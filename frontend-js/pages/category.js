@@ -4,7 +4,7 @@ import listPage from '../abstract/list-page.js';
 
 export default ({ query }) => listPage({
   title: 'Выберете тест:',
-  endpoint: `/test/tests/?${query.id}`,
+  endpoint: `/test/tests?category_id=${query.id}`,
   colWidth: 300,
   template: el(({ name, id }) => html`
     <div class="test">
