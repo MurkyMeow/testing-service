@@ -9,7 +9,6 @@ export default listPage({
   template: el(({ name, id }) => html`
     <div class="category">
       <div class="category-name">${name}</div>
-<<<<<<< HEAD
       <div class="category-description">Описание</div>
       <div class="category-summary">
         <div><i>info</i>6</div>
@@ -18,10 +17,6 @@ export default listPage({
       <div class="category-actions">
         ${button({ link: `#/category/${id}` })('Перейти')}
       </div>
-=======
-      <p>Описание</p>
-      ${button({ link: `#/tests/${id}/` })('Перейти')}
->>>>>>> frontend/category:  correct layout
     </div>
   `),
 });
