@@ -17,11 +17,11 @@ module.exports.Rest = prefix => {
     register: (name, model, options = {}) => {
       router.get(name, async ctx => {
         const { where } = options.get || standard.get;
-        const { id, eager } = ctx.request.query;
-        if (id) {
-          ctx.body = await model.query().where(where(ctx.request.query)).eager(eager);
+        const { samples, eager } = ctx.request.query;
+        if (samples) {
+          ctx.body = await model.query().eager(eager).limit(samples);
         } else {
-          ctx.body = await model.query().eager(eager);
+          ctx.body = await model.query().where(where(ctx.request.query)).eager(eager);
         }
       });
       router.put(name, async ctx => {
