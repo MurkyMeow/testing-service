@@ -4,7 +4,7 @@ import listPage from '../abstract/list-page.js';
 
 export default listPage({
   title: 'Категории',
-  endpoint: '/test/categories',
+  endpoint: '/test/categories?samples=10',
   colWidth: 500,
   template: el(({ name, id }) => html`
     <div class="category">
