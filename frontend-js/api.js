@@ -5,6 +5,9 @@ export const get = (url, options) =>
   })
     .then(res => res.json());
 
+export const remove = (url, options) =>
+  get(url, { ...options, method: 'DELETE' });
+
 const withBody = method => (url, data) =>
   get(url, {
     method,
