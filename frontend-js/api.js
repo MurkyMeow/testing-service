@@ -5,11 +5,14 @@ export const get = (url, options) =>
   })
     .then(res => res.json());
 
-export const post = (url, data) =>
+const withBody = method => (url, data) =>
   get(url, {
-    method: 'POST',
+    method,
     body: JSON.stringify(data),
     headers: {
       'Content-type': 'application/json'
     }
   });
+
+export const post = withBody('POST');
+export const put = withBody('PUT');
