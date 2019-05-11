@@ -1,6 +1,6 @@
 import { el, html, useState } from '../index.js';
 import button from '../components/button.js';
-import { get } from '../api.js';
+import { put } from '../api.js';
 
 const categoryForm = el(() => {
   const [msg, setMsg] = useState('');
@@ -9,7 +9,7 @@ const categoryForm = el(() => {
     const formData = new FormData(e.target);
     const name = formData.get('name');
     try {
-      await get('/test/categories', { method: 'PUT', body: JSON.stringify({ name }) });
+      await put('/test/categories', { name });
       setMsg('Категория успешно создана');
     } catch (err) {
       setMsg('Не удалось создать категорию');
