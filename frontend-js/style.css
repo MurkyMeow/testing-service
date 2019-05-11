@@ -151,3 +151,32 @@ a {
   font-size: 12px;
   padding: 5px 15px;
 }
+
+.profile {
+  padding: 0 50px;
+}
+.profile-tests {
+  display: flex;
+}
+.profile-test {
+  width: 300px;
+  margin-right: 20px;
+}
+.profile-test-name {
+  padding: 10px;
+  background: deeppink;
+}
+.profile-test-stats {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: #711368;
+}
+.profile-test-actions {
+  text-align: end;
+  margin-top: 10px;
+}
+.profile-test-btn {
+  font-size: 12px;
+  padding: 5px 10px;
+}
