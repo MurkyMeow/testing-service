@@ -5,6 +5,7 @@ import tests from './pages/category.js';
 import profile from './pages/profile.js';
 import button from './components/button.js';
 import useModal from './components/modal.js';
+import testingForm from './pages/testing.js';
 
 const notFound = el(() => html`
   <h1>Page not found</h1>
@@ -26,6 +27,11 @@ const routes = [
   {
     regex: /^\/tests\/(\d+)\/$/,
     component: tests,
+    params: ['id'],
+  },
+  {
+    regex: /^\/questions\/(\d+)\/$/,
+    component: testingForm,
     params: ['id'],
   }
 ];
