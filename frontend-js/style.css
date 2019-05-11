@@ -151,3 +151,20 @@ a {
   font-size: 12px;
   padding: 5px 15px;
 }
+
+.question {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.question-answers {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background: #9e1b92;
+  justify-content: center;
+  gap: 20px;
+  width: 300px;
+}
+.question-nav {
+  display: inline-flex;
+}
