@@ -1,6 +1,7 @@
 import { el, html, useState, useEffect, useGlobalState } from '../index.js';
 import { post, get } from './api.js';
 import categories from './pages/categories.js';
+import tests from './pages/category.js';
 import profile from './pages/profile.js';
 import button from './components/button.js';
 import useModal from './components/modal.js';
@@ -23,10 +24,10 @@ const routes = [
     component: profile,
   },
   {
-    regex: /^\/category\/(\d+)\/$/,
-    component: notFound,
+    regex: /^\/tests\/(\d+)\/$/,
+    component: tests,
     params: ['id'],
-  },
+  }
 ];
 
 const getPage = () => {

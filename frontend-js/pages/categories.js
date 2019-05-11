@@ -15,7 +15,7 @@ export default listPage({
         <div><i>query_builder</i>60</div>
       </div>
       <div class="category-actions">
-        ${button({ link: `#/category/${id}` })('Перейти')}
+        ${button({ link: `#/tests/${id}/` })('Перейти')}
       </div>
     </div>
   `),
