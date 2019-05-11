@@ -1,11 +1,11 @@
 import { el, html, useEffect, useState } from '../index.js';
-import { get } from '../api.js';
+import { get, put } from '../api.js';
 import button from '../components/button.js';
 import listPage from '../abstract/list-page.js';
 
-export default listPage({
+const list = listPage({
   title: 'Категории',
-  endpoint: '/test/categories?samples=10',
+  endpoint: '/test/categories?samples=30',
   colWidth: 500,
   template: el(({ name, id }) => {
     const [tests, setTests] = useState([]);
@@ -35,4 +35,25 @@ export default listPage({
     </div>
     `;
   }),
+});
+
+export default el(() => {
+  const [name, setName] = useState('');
+  const submit = async () => {
+    try {
+      await put('/test/categories', { name });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  return [
+    list(),
+    html`
+    <div class="categories-add">
+      <input class="categories-add-input" placeholder="Название категории"
+        onchange=${e => setName(e.target.value)}>
+      ${button({ classname: 'categories-add-btn', click: submit })('+')}
+    </div>
+    `
+  ];
 });

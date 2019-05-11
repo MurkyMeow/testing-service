@@ -166,6 +166,23 @@ a {
   padding: 5px 15px;
 }
 
+.categories-add {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+}
+.categories-add-input {
+  font-size: inherit;
+  border: none;
+  width: 300px;
+  padding: 0 15px;
+  margin-right: 5px;
+  border-radius: 8px;
+}
+.categories-add-btn {
+  padding: 6px 11px;
+}
+
 .profile {
   padding: 0 50px;
 }
