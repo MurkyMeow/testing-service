@@ -1,5 +1,5 @@
 import { el, html, useState } from '../index.js';
-import button from '../components/button.js';
+import button from './button.js';
 import { put } from '../api.js';
 
 const categoryForm = el(() => {
