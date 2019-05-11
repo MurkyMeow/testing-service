@@ -125,10 +125,24 @@ a {
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
   position: relative;
 }
-.category-description {
-  height: 120px;
+.category-test-list {
+  margin: 0;
   padding: 10px;
   background: #9e1b92;
+}
+.category-test-list-item {
+  margin-bottom: 5px;
+}
+.category-test-list-item::before {
+  content: '●';
+  margin-right: 5px;
+}
+.category-test-list-add-btn {
+  font-size: 18px;
+  text-align: center;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
 }
 .category-summary {
   padding-left: 10px;
