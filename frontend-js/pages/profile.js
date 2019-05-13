@@ -1,9 +1,20 @@
 import { el, html, useGlobalState, useEffect, useState } from '../index.js';
-import { get } from '../api.js';
+import { get, post } from '../api.js';
 import button from '../components/button.js';
 
 const profile = el(() => {
-  const [user] = useGlobalState('user');
+  const [user, setUser] = useGlobalState('user');
+  const [name, setName] = useState('');
+  const submit = async () => {
+    try {
+      await post('/auth/name', { name });
+      setUser({ ...user, name });
+    } catch (err) {
+      console.error(err);
+    }
+    return { ok: true };
+  };
+
   const [tests, setTests] = useState([]);
 
   useEffect(async () => {
@@ -13,6 +24,14 @@ const profile = el(() => {
   return html`
     <div class="profile">
       <h1>${user ? user.name : ''}</h1>
+
+      <p>Аккаунт:</p>
+      <div class="profile-name-edit">
+        <input class="profile-name-edit-input" placeholder="Новое имя"
+          onchange=${e => setName(e.target.value)}>
+        ${button({ classname: 'profile-name-edit-btn', click: submit })('Сохранить')}
+      </div>
+
       <h2>Тесты:</h2>
       <div class="profile-tests">
         ${el(() => tests.map(test => html`
