@@ -28,7 +28,7 @@ const useRequest = request => {
   const [loading, setLoading] = useState(true);
   useEffect(async () => {
     try {
-      setData(await request);
+      setData(await request());
     } catch (err) {
       console.error(err);
     }

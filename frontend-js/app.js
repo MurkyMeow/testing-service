@@ -1,4 +1,4 @@
-import { el, html, useState, useEffect, useGlobalState } from '../index.js';
+import { el, html, useState, useEffect, useGlobalState, useRequest } from '../index.js';
 import { post, get } from './api.js';
 import categories from './pages/categories.js';
 import tests from './pages/category.js';
@@ -83,6 +83,7 @@ const app = el(() => {
   const [url, setUrl] = useState('');
   const [authType, setAuthType] = useState('signup');
   const [modal, showModal, hideModal] = useModal(false);
+  const [, session] = useRequest(() => get('/auth/userinfo'));
 
   useEffect(async () => {
     window.onhashchange = () => {
@@ -90,8 +91,8 @@ const app = el(() => {
       setPage(getPage());
       setUrl(document.location.hash);
     };
-    setUser(await get('/auth/userinfo'));
   }, []);
+  useEffect(() => setUser(session), [session]);
 
   const showForm = type => () => {
     setAuthType(type);
