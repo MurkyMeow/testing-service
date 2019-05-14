@@ -23,6 +23,20 @@ const useGlobalState = key => {
   return [value, update];
 };
 
+const useRequest = request => {
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(async () => {
+    try {
+      setData(await request);
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+  }, []);
+  return [loading, data];
+};
+
 export {
   el,
   html,
@@ -30,4 +44,5 @@ export {
   useEffect,
   state,
   useGlobalState,
+  useRequest,
 };
