@@ -211,3 +211,24 @@ a {
   font-size: 12px;
   padding: 5px 10px;
 }
+
+.test-page {
+  padding: 50px;
+}
+.test-page-frame {
+  --slide-width: 200px;
+  --slide-height: 200px;
+  --slide-index: 0;
+
+  display: flex;
+  overflow: hidden;
+  width: var(--slide-width);
+}
+.test-page-test {
+  width: var(--slide-width);
+  height: var(--slide-height);
+  flex-shrink: 0;
+  background: #6900b2;
+  transform: translateX(calc(var(--slide-index) * var(--slide-width) * -1));
+  transition: transform .5s;
+}

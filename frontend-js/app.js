@@ -5,6 +5,7 @@ import tests from './pages/category.js';
 import profile from './pages/profile.js';
 import button from './components/button.js';
 import useModal from './components/modal.js';
+import test from './pages/test.js';
 
 const notFound = el(() => html`
   <h1>Page not found</h1>
@@ -24,10 +25,15 @@ const routes = [
     component: profile,
   },
   {
+    regex: /^\/test\/(\d+)\/$/,
+    component: test,
+    params: ['id'],
+  },
+  {
     regex: /^\/tests\/(\d+)\/$/,
     component: tests,
     params: ['id'],
-  }
+  },
 ];
 
 const getPage = () => {
@@ -71,7 +77,7 @@ const authForm = el(({ type, success }) => {
     <input class="app-auth-field" name="password" placeholder="Пароль" required>
     ${signup ? html`
       <input class="app-auth-field" name="passwordAgain" placeholder="Повторите пароль" required>
-    ` : ''}
+    ` : html``}
     ${button({ classname: 'app-auth-btn', click: submit })('Войти')}
   </form>
   `;
@@ -106,9 +112,7 @@ const app = el(() => {
 
   return html`
   <div class="app">
-    ${modal(
-      authForm({ type: authType, success: onSuccess })
-    )}
+    ${modal(authForm({ type: authType, success: onSuccess }))}
     <header class="app-header">
       <a class="app-header-logo" href="#/">Nice header there</a>
       <nav class="app-header-nav">
