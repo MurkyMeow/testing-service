@@ -36,9 +36,12 @@ const useRequest = request => {
   return [loading, data];
 };
 
+const iter = (array, template) => el(() => (array || []).map(template));
+
 export {
   el,
   html,
+  iter,
   useState,
   useEffect,
   state,
