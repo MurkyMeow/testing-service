@@ -26,13 +26,12 @@ const useGlobalState = key => {
 const useRequest = request => {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
-  useEffect(async () => {
-    try {
-      setData(await request());
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
+  useEffect(() => {
+    request().then(res => {
+      setData(res);
+      setLoading(false);
+    })
+      .catch(console.error);
   }, []);
   return [loading, data];
 };
