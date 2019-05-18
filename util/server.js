@@ -16,12 +16,16 @@ module.exports.Rest = prefix => {
     router,
     register: (name, model, options = {}) => {
       router.get(name, async ctx => {
-        const { where } = options.get || standard.get;
-        const { samples, eager } = ctx.request.query;
+        const { id, samples, eager } = ctx.request.query;
+        const { where } = id ? standard.get : options.get;
         if (samples) {
           ctx.body = await model.query().eager(eager).limit(samples);
         } else {
-          ctx.body = await model.query().where(where(ctx.request.query)).eager(eager);
+          if (!where) ctx.throw('Couldnt find a `where` handler. Did you forget to specify id?', 400);
+          const [item] = await model.query()
+            .where(where(ctx.request.query))
+            .eager(eager);
+          ctx.body = item;
         }
       });
       router.put(name, async ctx => {

@@ -19,7 +19,7 @@ rest.register('/questions', Question, {
 });
 rest.register('/tests', Test, {
   get: {
-    where: ({ id, category_id }) => id ? { id } : { category_id },
+    where: query => ({ category_id: query.category_id }),
   },
 });
 rest.router.get('/result', async ctx => {
