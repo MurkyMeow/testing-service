@@ -41,6 +41,13 @@ a {
   font-size: 24px;
 }
 
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
 .button {
   display: inline-block;
   padding: 8px 15px;
@@ -117,7 +124,10 @@ a {
   gap: 20px;
 }
 
-.category-name {
+.category {
+  width: 500px;
+}
+.category__name {
   color: #000;
   font-weight: bold;
   text-align: center;
@@ -126,53 +136,53 @@ a {
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
   position: relative;
 }
-.category-test-list {
+.category__test-list {
   margin: 0;
   padding: 10px;
   background: #9e1b92;
 }
-.category-test-list-item {
+.category__test-list__test {
   margin-bottom: 5px;
 }
-.category-test-list-item::before {
+.category__test-list__test::before {
   content: '●';
   margin-right: 5px;
 }
-.category-test-list-add-btn {
+.category__test-list__add-btn {
   font-size: 18px;
   text-align: center;
   text-decoration: underline;
   cursor: pointer;
   margin-top: 10px;
 }
-.category-summary {
-  padding-left: 10px;
+.category__summary {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
   background: #711368;
 }
-.category-summary > div {
+.category__summary > div {
   font-weight: bold;
   display: inline-flex;
   align-items: center;
   margin-right: 10px;
 }
-.category-summary i {
+.category__summary i {
+  font-size: 16px;
   margin-right: 2px;
 }
-.category-actions {
-  text-align: end;
-  margin-top: 10px;
-}
-.category-actions .button {
+.category__summary .button {
   font-size: 12px;
-  padding: 5px 15px;
+  margin-left: auto;
+  padding: 6px 10px;
 }
 
-.categories-add {
+.page-categories__add {
   display: flex;
   justify-content: center;
   margin: 40px 0;
 }
-.categories-add-input {
+.page-categories__add__input {
   font-size: inherit;
   border: none;
   width: 300px;
@@ -180,8 +190,16 @@ a {
   margin-right: 5px;
   border-radius: 8px;
 }
-.categories-add-btn {
+.page-categories__add__btn {
   padding: 6px 11px;
+}
+.page-categories__category-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.page-categories__category-list > * {
+  margin-bottom: 40px;
 }
 
 .profile {
