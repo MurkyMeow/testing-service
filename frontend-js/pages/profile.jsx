@@ -4,14 +4,19 @@ import Button from '../components/button';
 
 const Profile = () => {
   const [user] = useGlobalState('user');
-  const [, data = []] = useRequest(() => get('/test/tests?samples=5'));
+  const [, tests = []] = useRequest(() => get('/test/tests?samples=5'));
+  const [, finished = []] = useRequest(() => get('/stats/tests'));
 
   return (
     <div className="profile">
       <h1>{user ? user.name : ''}</h1>
+      <h2>Пройденные тесты:</h2>
+      {finished.map(result => (
+        <div key={result.id}>{result.test.name} — {result.score * 100}%</div>
+      ))}
       <h2>Тесты:</h2>
       <div className="profile-tests">
-        {data.map(test => (
+        {tests.map(test => (
           <div className="profile-test" key={test.id}>
             <div className="profile-test-name">{test.name}</div>
             <div className="profile-test-stats">
