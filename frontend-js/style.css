@@ -244,22 +244,105 @@ a {
 }
 
 .test-page {
-  padding: 50px;
-}
-.test-page-frame {
-  --slide-width: 200px;
-  --slide-height: 200px;
-  --slide-index: 0;
-
-  display: flex;
   overflow: hidden;
-  width: var(--slide-width);
 }
-.test-page-test {
+.test-page__frame {
+  position: relative;
+  display: flex;
+  --slide-index: 0;
+}
+.test-page__nav-btn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  cursor: pointer;
+  background: #7802cc;
+  z-index: 1;
+
+  &.--right {
+    left: calc(100% - 30px);
+  }
+  &.--disabled {
+    pointer-events: none;
+    background: #343a40;
+  }
+  &.--warning {
+    background: #ff934a;
+  }
+}
+.test-page__question {
+  --slide-width: 500px;
+  --slide-height: 200px;
+  --spacing: calc((100vw - var(--slide-width)) / 4);
+  --middle: calc(50vw - var(--slide-width) / 2 - var(--spacing));
+  --step: calc(var(--slide-width) + 2 * var(--spacing));
   width: var(--slide-width);
   height: var(--slide-height);
+  margin: 0 var(--spacing);
   flex-shrink: 0;
   background: #6900b2;
-  transform: translateX(calc(var(--slide-index) * var(--slide-width) * -1));
-  transition: transform .5s;
+  transform: translateX(calc(var(--middle) - var(--slide-index) * var(--step)));
+  transition: transform .35s;
+}
+.test-page__question__title {
+  font-size: 20px;
+  text-align: center;
+  padding: 5px 0;
+  margin-bottom: 10px;
+}
+.test-page__question__answers {
+  counter-reset: index;
+}
+.test-page__question__answers__item {
+  display: flex;
+
+  & div {
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+
+    &::before {
+      counter-increment: index;
+      content: counter(index) ')';
+      margin-right: 10px;
+    }
+  }
+  & input {
+    display: none;
+  }
+  & input:checked ~ div {
+    background: #9e1b92;
+  }
+}
+.test-page__navigation {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 50px;
+
+  & > div {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #8e8a99;
+
+    &.--active {
+      background: #fff;
+    }
+  }
+}
+.test-page__finish-btn {
+  display: block;
+  margin: 0 auto;
+}
+
+.result-page__result {
+  font-size: 30px;
+  font-style: italic;
+  text-align: center;
 }

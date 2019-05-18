@@ -1,0 +1,15 @@
+import { withRouter } from 'next/router';
+import { useRequest, get } from '../api';
+
+const Result = ({ router }) => {
+  const [loading, result] = useRequest(() => get(`/test/result?test_id=${router.query.test_id}`));
+  if (loading) return <div className="page-title">Загрузка...</div>;
+  return (
+    <div className="result-page">
+      <div className="page-title">Ваш результат:</div>
+      <div className="result-page__result">{result.score * 100}%</div>
+    </div>
+  );
+};
+
+export default withRouter(Result);
