@@ -43,6 +43,7 @@
     "import/prefer-default-export": "off",
     "no-restricted-syntax": "off",
     "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error"
+    "react/jsx-uses-vars": "error",
+    "no-confusing-arrow": "off"
   }
 }
