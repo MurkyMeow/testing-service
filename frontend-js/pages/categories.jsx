@@ -1,28 +1,26 @@
 import { useState } from 'react';
-import { put, get, useRequest } from '../api';
+import { useDocument } from '../index';
 import Button from '../components/button';
 
 const Categories = () => {
   const [name, setName] = useState('');
-  const [, items = []] = useRequest(() => get('/test/categories?samples=30&eager=tests'));
-  const submit = async () => {
-    try {
-      await put('/test/categories', { name });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const { items, addItem, removeItem } = useDocument('/test/categories', 'tests');
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
       <div className="page-categories__add">
         <input className="page-categories__add__input" placeholder="Название категории" onChange={e => setName(e.target.value)}/>
-        <Button className="page-categories__add__btn" onClick={submit}>+</Button>
+        <Button className="page-categories__add__btn" onClick={() => addItem({ name })}>+</Button>
       </div>
       <div className="page-categories__category-list">
         {items.map(category => (
           <div className="category" key={category.id}>
-            <div className="category__name">{category.name}</div>
+            <header className="category__header">
+              <div>{category.name}</div>
+              <i className="category__header__close-btn" onClick={() => removeItem(category.id)}>
+                close
+              </i>
+            </header>
             <div className="category__test-list">
               {category.tests.map(test => (
                 <div className="category__test-list__test" key={test.id}>

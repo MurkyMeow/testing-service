@@ -127,7 +127,8 @@ a {
 .category {
   width: 500px;
 }
-.category__name {
+.category__header {
+  position: relative;
   color: #000;
   font-weight: bold;
   text-align: center;
@@ -135,6 +136,12 @@ a {
   padding: 5px 0;
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
   position: relative;
+}
+.category__header__close-btn {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  cursor: pointer;
 }
 .category__test-list {
   margin: 0;
