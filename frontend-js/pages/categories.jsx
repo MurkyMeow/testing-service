@@ -4,7 +4,10 @@ import Button from '../components/button';
 
 const Categories = () => {
   const [name, setName] = useState('');
-  const { items, addItem, removeItem } = useDocument('/test/categories', 'tests');
+  const { items, addItem, removeItem } = useDocument('/test/categories', {
+    relation: 'tests',
+    samples: '30',
+  });
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>

@@ -22,7 +22,7 @@ const useGlobalState = (key, initial) => {
   return [value, update];
 };
 
-const useDocument = (endpoint, relation) => {
+const useDocument = (endpoint, options = {}) => {
   const [items, setItems] = useGlobalState(endpoint, []);
   const ep = () => {
     if (endpoint.includes('?')) {
@@ -32,12 +32,14 @@ const useDocument = (endpoint, relation) => {
     return `${endpoint}?`;
   };
   const refresh = () => {
-    const url = `${ep()}samples=30`;
+    const { samples, relation } = options;
+    const url = samples ? `${ep()}samples=${samples}` : ep();
     get(relation ? `${url}&eager=${relation}` : url)
       .then(res => setItems(res))
       .catch(console.error);
   };
   const addItem = params => {
+    const { relation } = options;
     put(ep(), relation ? { ...params, eager: relation } : params)
       .then(item => setItems([...items, item]))
       .catch(console.error);
