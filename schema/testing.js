@@ -38,8 +38,9 @@ rest.router.post('/answer', async ctx => {
   const correct = new Set();
   for (const [questionId, answerId] of Object.entries(answers)) {
     const question = questions.find(x => x.id === Number(questionId));
-    const answer = question.answers.find(x => x.correct);
-    if (answer.id === answerId) correct.add(answerId);
+    if (question.answers.find(x => x.id === answerId).correct) {
+      correct.add(answerId);
+    }
   }
   const score = correct.size / questions.length;
   const opts = { user_id: ctx.session.user.id, test_id: testId };
