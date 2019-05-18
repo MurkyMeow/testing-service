@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 export const get = (url, options) =>
   fetch(`http://localhost:4000${url}`, {
     ...options,
@@ -19,3 +21,16 @@ const withBody = method => (url, data) =>
 
 export const post = withBody('POST');
 export const put = withBody('PUT');
+
+export const useRequest = request => {
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    request().then(res => {
+      setData(res);
+      setLoading(false);
+    })
+      .catch(console.error);
+  }, []);
+  return [loading, data];
+};

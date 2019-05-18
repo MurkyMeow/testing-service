@@ -1,5 +1,4 @@
-import { useRequest } from '../index';
-import { get } from '../api';
+import { get, useRequest } from '../api';
 
 const ListPage = ({ title, endpoint, colWidth, children }) => {
   const [, items = []] = useRequest(() => get(endpoint));

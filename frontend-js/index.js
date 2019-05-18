@@ -23,21 +23,7 @@ const useGlobalState = key => {
   return [value, update];
 };
 
-const useRequest = request => {
-  const [data, setData] = useState();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    request().then(res => {
-      setData(res);
-      setLoading(false);
-    })
-      .catch(console.error);
-  }, []);
-  return [loading, data];
-};
-
 export {
   state,
   useGlobalState,
-  useRequest,
 };

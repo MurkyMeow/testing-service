@@ -1,8 +1,8 @@
 import App, { Container } from 'next/app';
 import { useState, useEffect } from 'react';
 import { useModal } from '../components/modal';
-import { useGlobalState, useRequest } from '../index';
-import { get, post } from '../api';
+import { useGlobalState } from '../index';
+import { get, post, useRequest } from '../api';
 import Button from '../components/button';
 import '../style.css';
 

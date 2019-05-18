@@ -1,5 +1,5 @@
-import { useGlobalState, useRequest } from '../index';
-import { get } from '../api';
+import { useGlobalState } from '../index';
+import { get, useRequest } from '../api';
 import Button from '../components/button';
 
 const Profile = () => {
