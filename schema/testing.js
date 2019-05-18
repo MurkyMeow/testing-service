@@ -1,7 +1,7 @@
 const Category = require('../models/category');
 const Test = require('../models/test');
 const Question = require('../models/question');
-const Progress = require('../models/progress');
+const Result = require('../models/result');
 const { Rest } = require('../util/server');
 
 const rest = Rest('/test');
@@ -23,16 +23,33 @@ rest.register('/tests', Test, {
   },
 });
 rest.router.get('/result', async ctx => {
-  const [test] = await Test.query().where({ id: ctx.query.test_id });
-  ctx.body = { result: test.getUserResult(ctx.session.user.id) };
+  const { test_id } = ctx.request.query;
+  const [result] = await Result.query().where({ user_id: ctx.session.user.id, test_id });
+  ctx.body = { score: result.score };
 });
 rest.router.post('/answer', async ctx => {
-  const { answer_ids } = ctx.query;
-  const [question] = await Question.query().where({ id: ctx.query.question_id });
-  ctx.assert(await question.validateAnswers(answer_ids), 400, 'Some of the answers are invalid');
-  const rows = answer_ids.map(id => ({ user_id: ctx.session.user.id, answer_id: id }));
-  await Progress.query().insertGraph(rows);
-  ctx.body = { answer: 'Ok' };
+  const { testId, answers } = ctx.request.body;
+  const questions = await Question.query()
+    .where({ test_id: testId })
+    .eager('answers');
+  if (answers.length > questions.length) {
+    ctx.throw('The amount of answers cant exceed questions number', 400);
+  }
+  const correct = new Set();
+  for (const [questionId, answerId] of Object.entries(answers)) {
+    const question = questions.find(x => x.id === Number(questionId));
+    const answer = question.answers.find(x => x.correct);
+    if (answer.id === answerId) correct.add(answerId);
+  }
+  const score = correct.size / questions.length;
+  const opts = { user_id: ctx.session.user.id, test_id: testId };
+  const [result] = await Result.query().where(opts);
+  if (result) {
+    await Result.query().where({ id: result.id }).update({ score });
+  } else {
+    await Result.query().insert({ ...opts, score });
+  }
+  ctx.body = { score };
 });
 
 module.exports = rest.router;
