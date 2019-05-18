@@ -9,6 +9,7 @@ import '../style.css';
 const AuthForm = ({ type, onSuccess }) => {
   const signup = type === 'signup';
   const submit = async e => {
+    e.preventDefault();
     const form = e.target.parentNode;
     const [email, password, passwordAgain] = form;
     if (!form.reportValidity()) return;
