@@ -8,6 +8,7 @@ const env = require('./env');
 const config = require('./knexfile');
 const auth = require('./schema/auth');
 const testing = require('./schema/testing');
+const stats = require('./schema/stats');
 
 Model.knex(knex(config.development));
 
@@ -19,6 +20,7 @@ app.use(session({ maxAge: 86400000 }, app));
 
 app.use(auth.middleware());
 app.use(testing.middleware());
+app.use(stats.middleware());
 app.use(async ctx => ctx.throw(404, 'Not found'));
 
 app.listen(4000);
