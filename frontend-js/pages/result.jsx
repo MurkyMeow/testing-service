@@ -8,6 +8,7 @@ const Result = ({ router }) => {
     <div className="result-page">
       <div className="page-title">Ваш результат:</div>
       <div className="result-page__result">{result.score * 100}%</div>
+      <div className="result-page__conclusion">{result.conclusion}</div>
     </div>
   );
 };
