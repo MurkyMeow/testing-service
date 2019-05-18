@@ -5,3 +5,4 @@ dist
 *.bak
 *~
 system-testing.sqlite
+.next

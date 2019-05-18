@@ -11,8 +11,24 @@
   },
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    }
+  },
+  "plugins": [
+    "react"
+  ],
   "rules": {
     "comma-dangle": "off",
     "camelcase": "off",
@@ -22,10 +38,11 @@
     "global-require": "off",
     "max-statements-per-line": ["error", { "max": 1 }],
     "object-curly-newline": "off",
-    "import/extensions": "off",
     "indent": [2, 2, {"SwitchCase": 1, "ignoredNodes": ["TemplateLiteral *"]}],
     "no-return-assign": "off",
     "import/prefer-default-export": "off",
-    "no-restricted-syntax": "off"
+    "no-restricted-syntax": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
   }
 }

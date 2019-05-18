@@ -1,4 +1,4 @@
-const { default: el, html, useState, useEffect } = window.neverland;
+import { useState, useEffect } from 'react';
 
 const state = {
   user: null
@@ -36,14 +36,7 @@ const useRequest = request => {
   return [loading, data];
 };
 
-const iter = (array, template) => el(() => (array || []).map(template));
-
 export {
-  el,
-  html,
-  iter,
-  useState,
-  useEffect,
   state,
   useGlobalState,
   useRequest,
