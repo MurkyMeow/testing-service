@@ -25,7 +25,10 @@ rest.register('/tests', Test, {
 rest.router.get('/result', async ctx => {
   const { test_id } = ctx.request.query;
   const [result] = await Result.query().where({ user_id: ctx.session.user.id, test_id });
-  ctx.body = { score: result.score };
+  ctx.body = {
+    score: result.score,
+    conclusion: await result.conclusion()
+  };
 });
 rest.router.post('/answer', async ctx => {
   const { testId, answers } = ctx.request.body;

@@ -6,8 +6,10 @@ module.exports = class extends Model {
     return 'result';
   }
 
-  get conclusion() {
-    return Conclusion.query().where('min_score', '<', this.score).max('min_score');
+  async conclusion() {
+    const items = await Conclusion.query().where('min_score', '<', this.score);
+    const [conclusion] = items.sort((a, b) => b.min_score - a.min_score);
+    return conclusion ? conclusion.text : '';
   }
 
   static get relationMappings() {
