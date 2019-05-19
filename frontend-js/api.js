@@ -22,15 +22,14 @@ const withBody = method => (url, data) =>
 export const post = withBody('POST');
 export const put = withBody('PUT');
 
-export const useRequest = request => {
+export const useRequest = (request, params = {}) => {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     request().then(res => {
-      setData(res);
+      setData(params.only && Array.isArray(res) ? res[0] : res);
       setLoading(false);
-    })
-      .catch(console.error);
+    }).catch(console.error);
   }, []);
   return [loading, data];
 };
