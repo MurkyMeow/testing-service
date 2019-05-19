@@ -404,3 +404,69 @@ a {
 .result-page__conclusion {
   font-size: 18px;
 }
+
+.test-add-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.test-add-page__editable {
+  display: block;
+  color: #fff;
+  border: none;
+  text-align: center;
+  background: transparent;
+
+  &.--name {
+    width: 500px;
+  }
+  &.--question {
+    font-size: 16px;
+    width: 80%;
+    margin: 0 auto 10px;
+  }
+  &.--answer {
+    font-size: 16px;
+    width: 100%;
+    text-align: left;
+  }
+}
+.test-add-page__question {
+  position: relative;
+  width: 500px;
+  background: #6900b2;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+.test-add-page__remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+.test-add-page__question__answer {
+  position: relative;
+  display: flex;
+
+  & .test-add-page__editable {
+    padding: 5px 10px;
+  }
+  & input[type="radio"] {
+    width: 40px;
+    margin: 0 0 0 -10px;
+
+    &:checked ~ * {
+      background: #2da81a;
+    }
+  }
+}
+.test-add-page__question__add-btn {
+  font-size: 12px;
+  display: block;
+  margin: 10px auto 0;
+  padding: 5px 8px;
+}
+.test-add-page__add-btn {
+  margin-bottom: 50px;
+}
