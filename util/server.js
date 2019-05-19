@@ -33,6 +33,9 @@ module.exports.Rest = prefix => {
         ctx.assert(await verify(ctx.request.body), 409, 'This item already exists');
         ctx.body = await model.query().insert(body).eager(eager);
       });
+      router.patch(name, async ctx => {
+        ctx.body = await model.query().upsertGraph(ctx.request.body);
+      });
       router.post(name, async ctx => {
         const { id, ...patch } = ctx.request.body;
         ctx.body = await model.query().findById(id).patch(patch);
