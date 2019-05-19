@@ -68,6 +68,9 @@ a {
   &[variant="disabled"] {
     background: linear-gradient(90deg, #898989, #c0c0c0);
   }
+  &:active {
+    transform: scale(0.96);
+  }
 }
 
 .modal {
