@@ -40,7 +40,7 @@ const Categories = () => {
             <div className="category__summary">
               <div><i>info</i>6</div>
               <div><i>query_builder</i>60</div>
-              <Button link={`#/tests/${category.id}`}>Перейти</Button>
+              <Button link={`/category?id=${category.id}`}>Перейти</Button>
             </div>
           </div>
         ))}
