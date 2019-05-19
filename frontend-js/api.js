@@ -19,6 +19,7 @@ const withBody = method => (url, data) =>
     }
   });
 
+export const patch = withBody('PATCH');
 export const post = withBody('POST');
 export const put = withBody('PUT');
 
