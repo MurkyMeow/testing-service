@@ -3,10 +3,10 @@ import { useDocument } from '../index';
 import Button from '../components/button';
 
 const Category = ({ router }) => {
-  const { items, removeItem } = useDocument(`/test/tests?category_id=${router.query.category_id}`, {
+  const { items, removeItem } = useDocument(`/test/tests?category_id=${router.query.id}`, {
     samples: '30',
   });
-  const addTest = () => router.push(`/test_edit?category_id=${router.query.category_id}`);
+  const addTest = () => router.push(`/test_edit?category_id=${router.query.id}`);
   return (
     <div className="category-page">
       {items.map(test => (
