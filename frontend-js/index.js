@@ -55,8 +55,15 @@ const useDocument = (endpoint, options = {}) => {
   return { items, addItem, removeItem, refresh };
 };
 
+const key = Symbol('');
+
+const withKey = object => ({ ...object, [key]: Math.random() });
+const getKey = object => object.id || object[key];
+
 export {
   state,
   useGlobalState,
   useDocument,
+  withKey,
+  getKey,
 };
