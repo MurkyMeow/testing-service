@@ -11,7 +11,7 @@ const Categories = () => {
   });
   const [loadingStats, stats] = useRequest(() => get('/stats/tests'));
   const finished = test =>
-    !loadingStats && stats.find(x => x.test.id === test.id);
+    !loadingStats && stats.find(x => x.test && x.test.id === test.id);
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
