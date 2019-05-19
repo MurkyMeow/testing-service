@@ -149,19 +149,22 @@ a {
   background: #9e1b92;
 }
 .category__test-list__test {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 
   &::before {
     content: '●';
     margin-right: 5px;
   }
+  &.--finished .category__test-list__test__name {
+    text-decoration: line-through;
+  }
 }
 .category__test-list__add-btn {
   font-size: 18px;
-  text-align: center;
+  width: 130px;
+  margin: 10px auto 0;
   text-decoration: underline;
   cursor: pointer;
-  margin-top: 10px;
 }
 .category__summary {
   display: flex;
@@ -202,7 +205,7 @@ a {
   border-radius: 8px;
 }
 .page-categories__add__btn {
-  padding: 6px 11px;
+  padding: 6px 10px;
 }
 .page-categories__category-list {
   display: flex;

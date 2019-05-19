@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDocument } from '../index';
+import { useRequest, get } from '../api';
 import Button from '../components/button';
 
 const Categories = () => {
@@ -8,6 +9,9 @@ const Categories = () => {
     relation: 'tests',
     samples: '30',
   });
+  const [loadingStats, stats] = useRequest(() => get('/stats/tests'));
+  const finished = test =>
+    !loadingStats && stats.find(x => x.test.id === test.id);
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
@@ -26,8 +30,9 @@ const Categories = () => {
             </header>
             <div className="category__test-list">
               {category.tests.map(test => (
-                <div className="category__test-list__test" key={test.id}>
-                  {test.name}
+                <div className={`category__test-list__test ${finished(test) ? '--finished' : ''}`} key={test.id}>
+                  <span className="category__test-list__test__name">{test.name}</span>
+                  <span> {finished(test) ? '(Пройден)' : ''}</span>
                 </div>
               ))}
               <div className="category__test-list__add-btn">Добавить тест</div>
