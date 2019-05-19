@@ -61,9 +61,13 @@ a {
   text-decoration: none;
   font-weight: bold;
   font-size: 14px;
-}
-.button-inactive {
-  background: linear-gradient(#d3cce3, #e9e4f0);
+
+  &[variant="secondary"] {
+    background: linear-gradient(#d3cce3, #e9e4f0);
+  }
+  &[variant="disabled"] {
+    background: linear-gradient(90deg, #898989, #c0c0c0);
+  }
 }
 
 .modal {

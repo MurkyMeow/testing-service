@@ -1,10 +1,8 @@
 import Link from 'next/link';
 
-const Button = ({ className = '', link, onClick, secondary, children }) => {
+const Button = ({ className = '', link, onClick, variant, children }) => {
   const button = (
-    <button
-      className={`button ${secondary ? 'button-secondary' : ''} ${className}`}
-      onClick={onClick}>
+    <button className={`button ${className}`} onClick={onClick} variant={variant}>
       {children}
     </button>
   );
