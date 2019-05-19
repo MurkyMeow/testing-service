@@ -45,6 +45,8 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "no-confusing-arrow": "off",
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "function-paren-newline": "off",
+    "no-underscore-dangle": "off"
   }
 }
