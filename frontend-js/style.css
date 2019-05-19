@@ -163,8 +163,11 @@ a {
   font-size: 18px;
   width: 130px;
   margin: 10px auto 0;
-  text-decoration: underline;
   cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 .category__summary {
   display: flex;
