@@ -11,7 +11,7 @@ const Profile = () => {
     <div className="profile">
       <h1>{user ? user.name : ''}</h1>
       <h2>Пройденные тесты:</h2>
-      {finished.map(result => (
+      {finished.map(result => result.test && (
         <div key={result.id}>{result.test.name} — {result.score * 100}%</div>
       ))}
       <h2>Тесты:</h2>
