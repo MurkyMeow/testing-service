@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 import { useDocument } from '../index';
 import { useRequest, get } from '../api';
 import Button from '../components/button';
@@ -35,7 +36,9 @@ const Categories = () => {
                   <span> {finished(test) ? '(Пройден)' : ''}</span>
                 </div>
               ))}
-              <div className="category__test-list__add-btn">Добавить тест</div>
+              <Link href={`/test_edit?category_id=${category.id}`}>
+                <div className="category__test-list__add-btn">Добавить тест</div>
+              </Link>
             </div>
             <div className="category__summary">
               <div><i>info</i>6</div>
