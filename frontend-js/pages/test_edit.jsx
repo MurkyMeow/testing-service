@@ -14,12 +14,21 @@ const makeQuestion = () => withKey({
   answers: [makeAnswer(), makeAnswer()],
 });
 
+const prevented = func => e => {
+  e.preventDefault();
+  if (func) func();
+};
+
 const TestEdit = ({ router }) => {
   const { category_id, id } = router.query;
   const form = useRef();
   const [name, setName] = useState('');
+  const [saved, setSaved] = useState(Boolean(id));
   const [questions, setQuestions] = useState([makeQuestion()]);
-  const update = draft => setQuestions(produce(questions, draft));
+  const update = draft => {
+    setQuestions(produce(questions, draft));
+    setSaved(false);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -31,8 +40,7 @@ const TestEdit = ({ router }) => {
       .catch(console.error);
   }, []);
 
-  const addQuestion = e => {
-    e.preventDefault();
+  const addQuestion = () => {
     update(_questions => {
       _questions.push(makeQuestion());
     });
@@ -49,8 +57,7 @@ const TestEdit = ({ router }) => {
     });
   };
 
-  const addAnswer = (e, questionIndex) => {
-    e.preventDefault();
+  const addAnswer = questionIndex => {
     update(_questions => {
       _questions[questionIndex].answers.push(makeAnswer());
     });
@@ -82,6 +89,7 @@ const TestEdit = ({ router }) => {
     } else {
       await patch('/test/tests', { id, name, questions });
     }
+    setSaved(true);
   };
   return (
     <form className="test-add-page" onSubmit={submit} ref={form}>
@@ -123,16 +131,23 @@ const TestEdit = ({ router }) => {
             </div>
           ))}
           <Button className="test-add-page__question__add-btn"
-            onClick={e => addAnswer(e, questionIndex)}>
+            onClick={prevented(() => addAnswer(questionIndex))}>
             Добавить ответ
           </Button>
         </div>
       ))}
       <Button className="test-add-page__add-btn"
-        onClick={e => addQuestion(e)}>
+        onClick={prevented(addQuestion)}>
         Добавить вопрос
       </Button>
-      <Button className="test-add-page__send-btn" onClick={submit}>Готово</Button>
+      {saved ? (
+        <Button className="test-add-page__send-btn" variant="disabled"
+          onClick={prevented()}>
+          Сохранено
+        </Button>
+      ) : (
+        <Button className="test-add-page__send-btn">Сохранить</Button>
+      )}
     </form>
   );
 };
