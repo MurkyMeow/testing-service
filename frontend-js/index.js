@@ -55,17 +55,8 @@ const useDocument = (endpoint, options = {}) => {
   return { items, addItem, removeItem, refresh };
 };
 
-const createKeyRegistry = () => {
-  const cache = new WeakMap();
-  return object => {
-    if (!cache.has(object)) cache.set(object, Math.random());
-    return cache.get(object);
-  };
-};
-
 export {
   state,
   useGlobalState,
   useDocument,
-  createKeyRegistry,
 };
