@@ -16,7 +16,7 @@ const Category = ({ router }) => {
             <i className="category-page__test__delete-btn" onClick={() => removeItem(test.id)}>close</i>
             <div className="category-page__test__name">{test.name}</div>
             <div className="category-page__test__description">Описание</div>
-            <Button className="category-page__link" link={`#/questions/${test.id}/`}>
+            <Button className="category-page__link" link={`/test?id=${test.id}`}>
               Пройти тест
             </Button>
           </div>
