@@ -293,11 +293,17 @@ a {
 .category-page__test__description {
   margin: auto 0;
 }
+.category-page__test__edit-btn,
 .category-page__test__delete-btn {
+  cursor: pointer;
   position: absolute;
   top: 0;
+}
+.category-page__test__edit-btn {
   right: 0;
-  cursor: pointer;
+}
+.category-page__test__delete-btn {
+  left: 0;
 }
 
 .test-page {

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { withRouter } from 'next/router';
 import { useDocument } from '../index';
 import Button from '../components/button';
@@ -13,6 +14,9 @@ const Category = ({ router }) => {
       <div className="category-page__test-list">
         {items.map(test => (
           <div className="category-page__test" key={test.id}>
+            <Link href={`/test_edit?id=${test.id}`}>
+              <i className="category-page__test__edit-btn">edit</i>
+            </Link>
             <i className="category-page__test__delete-btn" onClick={() => removeItem(test.id)}>close</i>
             <div className="category-page__test__name">{test.name}</div>
             <div className="category-page__test__description">Описание</div>
