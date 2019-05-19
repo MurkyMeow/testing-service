@@ -61,7 +61,7 @@ const Header = () => {
       <Modal>
         <AuthForm type={authType} onSuccess={onSuccess}/>
       </Modal>
-      <a className="app-header-logo" href="#/">Nice header there</a>
+      <a className="app-header-logo" href="/">Nice header there</a>
       <nav className="app-header-nav">
         {user ? <>
           <Button className="app-header-nav-btn" link="/categories">Категории</Button>
