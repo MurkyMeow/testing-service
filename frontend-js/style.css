@@ -311,6 +311,9 @@ a {
     padding: 10px;
     cursor: pointer;
 
+    &:hover {
+      background: #570095;
+    }
     &::before {
       counter-increment: index;
       content: counter(index) ')';
