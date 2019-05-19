@@ -18,7 +18,7 @@ module.exports.Rest = prefix => {
       router.get(name, async ctx => {
         const { id, samples, eager } = ctx.request.query;
         if (samples) {
-          ctx.body = await model.query().eager(eager).limit(samples);
+          ctx.body = await model.query().limit(samples).eager(eager);
         } else {
           const { where } = id ? standard.get : options.get;
           if (!where) ctx.throw('Couldnt find a `where` handler. Did you forget to specify id?', 400);
