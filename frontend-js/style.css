@@ -122,6 +122,37 @@ a {
   background: transparent;
 }
 
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+.notification {
+  position: fixed;
+  top: 100px;
+  left: calc(50% - 100px);
+  width: 200px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, .25);
+  animation:
+    appear .5s,
+    appear .5s calc(var(--duration) - .5s) reverse forwards;
+
+  &.--error {
+    background: #ff1744;
+  }
+  &.--success {
+    background: #09af00;
+  }
+  &.--warning {
+    color: #1e1e1e;
+    background: #ffc000;
+  }
+}
+
 .list-page {
   margin-top: 20px;
 }

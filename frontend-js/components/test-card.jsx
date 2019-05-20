@@ -1,14 +1,22 @@
 import Link from 'next/link';
 import Button from './button';
 import { remove } from '../api';
+import { useNotification } from './notification';
 
 export const TestCard = ({ className, test, onDelete }) => {
+  const [notification, notify] = useNotification();
   const removeItem = async () => {
-    await remove(`/test/tests?id=${test.id}`);
-    onDelete();
+    try {
+      await remove(`/test/tests?id=${test.id}`);
+      onDelete();
+    } catch (err) {
+      if (err.code === 403) notify('error', 'Отказано в доступе');
+      else notify('error', 'При удалении возникла ошибка');
+    }
   };
   return (
     <div className={`test-card ${className}`}>
+      {notification}
       <div className="test-card__summary">
         <Link href={`/test_edit?id=${test.id}`}>
           <i className="test-card__edit-btn">edit</i>
