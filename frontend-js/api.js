@@ -35,5 +35,5 @@ export const useRequest = (request, params = {}) => {
     }).catch(console.error);
     return () => cancelled = true;
   }, []);
-  return [loading, data];
+  return [loading, data, setData];
 };

@@ -4,12 +4,12 @@ import { useRequest, get } from '../api';
 import Button from '../components/button';
 
 const Category = ({ router }) => {
-  const [loading, items] = useRequest(() => get(`/test/tests?category_id=${router.query.id}`));
+  const [loading, items, setItems] = useRequest(() => get(`/test/tests?category_id=${router.query.id}`));
   const addTest = () => {
     router.push(`/test_edit?category_id=${router.query.id}`);
   };
-  const deleteTest = () => {
-    // setItems(items.filter(x => x.id !== id));
+  const deleteTest = id => {
+    setItems(items.filter(x => x.id !== id));
   };
   if (loading) return <div className="page-title">Загрузка...</div>;
   return (
