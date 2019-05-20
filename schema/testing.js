@@ -34,18 +34,19 @@ rest.router.post('/answer', async ctx => {
   const { testId, answers } = ctx.request.body;
   const questions = await Question.query()
     .where({ test_id: testId })
-    .eager('answers');
-  if (answers.length > questions.length) {
-    ctx.throw('The amount of answers cant exceed questions number', 400);
-  }
+    .eager('answers')
+    .modifyEager('answers', m => m.where({ correct: 1 }));
   const correct = new Set();
-  for (const [questionId, answerId] of Object.entries(answers)) {
+  const incorrect = new Set();
+  for (const [questionId, answerIds] of Object.entries(answers)) {
     const question = questions.find(x => x.id === Number(questionId));
-    if (question.answers.find(x => x.id === answerId).correct) {
-      correct.add(answerId);
+    for (const id of answerIds) {
+      if (question.answers.find(x => x.id === id)) correct.add(id);
+      else incorrect.add(id);
     }
   }
-  const score = correct.size / questions.length;
+  const max = questions.reduce((acc, el) => acc + el.answers.length, 0);
+  const score = Math.max(correct.size - incorrect.size, 0) / max;
   const opts = { user_id: ctx.session.user.id, test_id: testId };
   const [result] = await Result.query().where(opts);
   if (result) {
