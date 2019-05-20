@@ -237,8 +237,8 @@ a {
 }
 .test-card__link {
   font-size: 12px;
-  margin: 20px auto 0;
-  padding: 5px 10px;
+  margin-left: auto;
+  padding: 3px 8px;
 }
 .test-card__stats {
   display: flex;
