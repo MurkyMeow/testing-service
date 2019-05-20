@@ -42,7 +42,14 @@ module.exports.Rest = prefix => {
       });
       router.delete(name, async ctx => {
         const { id } = ctx.request.query;
-        ctx.body = await model.query().deleteById(id);
+        const { role } = ctx.session.user;
+        const item = await model.query().where({ id });
+        if (role === 'admin' || ctx.session.user.id === item.creator_id) {
+          ctx.body = await model.query().deleteById(id);
+        } else {
+          ctx.throw(403, 'forbidden');
+        }
+        ctx.body = { ok: true };
       });
     }
   };
