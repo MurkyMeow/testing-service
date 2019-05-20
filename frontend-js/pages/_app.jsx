@@ -65,7 +65,7 @@ const Header = () => {
       <nav className="app-header-nav">
         {user ? <>
           <Button className="app-header-nav-btn" link="/categories">Категории</Button>
-          <Button className="app-header-nav-btn" link="/profile">{user.name}</Button>
+          <Button className="app-header-nav-btn" link="/profile">Профиль</Button>
         </> : <>
           <Button className="app-header-nav-btn" onClick={showForm('signup')}>Создать аккаунт</Button>
           <Button className="app-header-nav-btn" onClick={showForm('signin')}>Войти</Button>
