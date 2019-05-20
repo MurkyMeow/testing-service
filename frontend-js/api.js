@@ -5,7 +5,8 @@ export const get = (url, options) =>
     ...options,
     credentials: 'include',
   })
-    .then(res => res.json());
+    .then(res => res.json())
+    .catch(console.error);
 
 export const remove = (url, options) =>
   get(url, { ...options, method: 'DELETE' });
