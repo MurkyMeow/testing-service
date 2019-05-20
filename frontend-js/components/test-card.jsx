@@ -2,13 +2,13 @@ import Link from 'next/link';
 import Button from './button';
 import { remove } from '../api';
 
-export const TestCard = ({ test, onDelete }) => {
+export const TestCard = ({ className, test, onDelete }) => {
   const removeItem = async () => {
     await remove(`/test/tests?id=${test.id}`);
     onDelete();
   };
   return (
-    <div className="test-card">
+    <div className={`test-card ${className}`}>
       <Link href={`/test_edit?id=${test.id}`}>
         <i className="test-card__edit-btn">edit</i>
       </Link>
