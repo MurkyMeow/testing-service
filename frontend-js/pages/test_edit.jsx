@@ -93,7 +93,7 @@ const TestEdit = ({ router }) => {
   };
   return (
     <form className="test-add-page" onSubmit={submit} ref={form}>
-      <input className="page-title test-add-page__editable --name"
+      <input className="page-title editable --name"
         value={name}
         onChange={e => setName(e.target.value)}
         placeholder="Название теста" required
@@ -106,7 +106,7 @@ const TestEdit = ({ router }) => {
               close
             </i>
           )}
-          <input className="test-add-page__editable --question"
+          <input className="editable --question"
             placeholder="Вопрос" required
             value={question.text}
             onChange={e => setQuestionText(questionIndex, e.target.value)}
@@ -117,7 +117,7 @@ const TestEdit = ({ router }) => {
                 checked={answer.correct}
                 onChange={() => checkAnswer(questionIndex, answerIndex)}
               />
-              <input className="test-add-page__editable --answer" required
+              <input className="editable --answer" required
                 placeholder="Ответ"
                 value={answer.text}
                 onChange={e => setAnswerText(questionIndex, answerIndex, e.target.value)}

@@ -115,6 +115,13 @@ a {
   margin: 0 auto;
 }
 
+.editable {
+  display: block;
+  color: #fff;
+  border: none;
+  background: transparent;
+}
+
 .list-page {
   margin-top: 20px;
 }
@@ -422,26 +429,23 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.test-add-page__editable {
-  display: block;
-  color: #fff;
-  border: none;
-  text-align: center;
-  background: transparent;
 
-  &.--name {
-    width: 500px;
-  }
-  &.--question {
-    font-size: 16px;
-    width: 80%;
-    margin: 0 auto 10px;
-  }
-  &.--answer {
-    font-size: 16px;
-    width: 100%;
-    text-align: left;
+  & .editable {
+    text-align: center;
+
+    &.--name {
+      width: 500px;
+    }
+    &.--question {
+      font-size: 16px;
+      width: 80%;
+      margin: 0 auto 10px;
+    }
+    &.--answer {
+      font-size: 16px;
+      width: 100%;
+      text-align: left;
+    }
   }
 }
 .test-add-page__question {
@@ -462,7 +466,7 @@ a {
   position: relative;
   display: flex;
 
-  & .test-add-page__editable {
+  & .editable {
     padding: 5px 10px;
   }
   & input[type="radio"] {
