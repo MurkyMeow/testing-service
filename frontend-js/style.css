@@ -224,15 +224,16 @@ a {
 }
 .test-card__edit-btn,
 .test-card__delete-btn {
+  font-size: 20px;
   cursor: pointer;
   position: absolute;
-  top: 0;
+  top: 5px;
 }
 .test-card__edit-btn {
-  right: 0;
+  right: 5px;
 }
 .test-card__delete-btn {
-  left: 0;
+  left: 5px;
 }
 .test-card__link {
   font-size: 12px;
