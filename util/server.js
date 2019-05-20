@@ -45,11 +45,11 @@ module.exports.Rest = prefix => {
         const { role } = ctx.session.user;
         const item = await model.query().where({ id });
         if (role === 'admin' || ctx.session.user.id === item.creator_id) {
-          ctx.body = await model.query().deleteById(id);
+          await model.query().deleteById(id);
+          ctx.body = { ok: true };
         } else {
           ctx.throw(403, 'forbidden');
         }
-        ctx.body = { ok: true };
       });
     }
   };
