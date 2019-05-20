@@ -383,12 +383,10 @@ a {
 }
 .test-page__question {
   --slide-width: 500px;
-  --slide-height: 200px;
   --spacing: calc((100vw - var(--slide-width)) / 4);
   --middle: calc(50vw - var(--slide-width) / 2 - var(--spacing));
   --step: calc(var(--slide-width) + 2 * var(--spacing));
   width: var(--slide-width);
-  height: var(--slide-height);
   margin: 0 var(--spacing);
   flex-shrink: 0;
   background: #6900b2;
