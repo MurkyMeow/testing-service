@@ -237,6 +237,12 @@ a {
 .profile {
   padding: 0 50px;
 }
+.profile__name {
+  font-size: 24px;
+  text-align: center;
+  width: 500px;
+  margin: 20px auto;
+}
 .profile-tests {
   display: flex;
 }
