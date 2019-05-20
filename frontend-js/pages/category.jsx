@@ -1,11 +1,17 @@
-import Link from 'next/link';
 import { withRouter } from 'next/router';
-import { useDocument } from '../index';
+import { TestCard } from '../components/test-card';
+import { useRequest, get } from '../api';
 import Button from '../components/button';
 
 const Category = ({ router }) => {
-  const { items, removeItem } = useDocument(`/test/tests?category_id=${router.query.id}`);
-  const addTest = () => router.push(`/test_edit?category_id=${router.query.id}`);
+  const [loading, items] = useRequest(() => get(`/test/tests?category_id=${router.query.id}`));
+  const addTest = () => {
+    router.push(`/test_edit?category_id=${router.query.id}`);
+  };
+  const deleteTest = () => {
+    // setItems(items.filter(x => x.id !== id));
+  };
+  if (loading) return <div className="page-title">Загрузка...</div>;
   return (
     <div className="category-page">
       {!items.length && <>
@@ -13,17 +19,7 @@ const Category = ({ router }) => {
       </>}
       <div className="category-page__test-list">
         {items.map(test => (
-          <div className="category-page__test" key={test.id}>
-            <Link href={`/test_edit?id=${test.id}`}>
-              <i className="category-page__test__edit-btn">edit</i>
-            </Link>
-            <i className="category-page__test__delete-btn" onClick={() => removeItem(test.id)}>close</i>
-            <div className="category-page__test__name">{test.name}</div>
-            <div className="category-page__test__description">Описание</div>
-            <Button className="category-page__link" link={`/test?id=${test.id}`}>
-              Пройти тест
-            </Button>
-          </div>
+          <TestCard test={test} key={test.id} onDelete={() => deleteTest(test.id)}/>
         ))}
       </div>
       <Button className="category-page__add-btn" onClick={addTest}>+</Button>
