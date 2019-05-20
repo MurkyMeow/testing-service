@@ -267,38 +267,48 @@ a {
 }
 
 .profile {
-  padding: 0 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .profile__name {
   font-size: 24px;
+  font-weight: 700;
   text-align: center;
   width: 500px;
-  margin: 20px auto;
+  margin: 20px auto 10px;
+  border-bottom: 1px solid gray;
 }
-.profile-tests {
+.profile__finished-test {
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 20px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.profile__tests-title {
+  margin-bottom: 0;
+}
+.profile__tests {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 800px;
 }
-.profile-test {
+.profile__test {
   width: 300px;
-  margin-right: 20px;
+  text-align: center;
+  margin: 20px;
 }
-.profile-test-name {
+.profile__test-name {
   padding: 10px;
-  background: deeppink;
+  background: #9e1b92;
 }
-.profile-test-stats {
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  background: #711368;
-}
-.profile-test-actions {
-  text-align: end;
-  margin-top: 10px;
-}
-.profile-test-btn {
-  font-size: 12px;
-  padding: 5px 10px;
+.profile__test-info {
+  padding: 10px;
+  background: #570095;
 }
 
 .category-page__test-list {
@@ -306,6 +316,10 @@ a {
   grid-template-columns: repeat(3, 300px);
   justify-content: center;
   padding: 20px;
+
+  & .test-card {
+    margin: 20px;
+  }
 }
 .category-page__add-btn {
   font-size: 28px;
