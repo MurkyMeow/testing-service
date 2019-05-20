@@ -1,16 +1,18 @@
 import { useState } from 'react';
+import produce from 'immer';
 import { withRouter } from 'next/router';
 import { useRequest, get, post } from '../api';
 import Button from '../components/button';
 
-const Question = ({ data, onAnswer }) => (
+const Question = ({ data, checked, onToggle }) => (
   <div className="test-page__question">
     <div className="test-page__question__title">{data.text}</div>
     <div className="test-page__question__answers">
       {data.answers.map(answer => (
         <label className="test-page__question__answers__item" key={answer.id}>
-          <input name={`name--${data.id}`} type="radio"
-            onInput={() => onAnswer(answer.id)}
+          <input type="checkbox"
+            checked={checked.includes(answer.id)}
+            onChange={() => onToggle(answer.id)}
           />
           <div>{answer.text}</div>
         </label>
@@ -34,6 +36,15 @@ const Test = ({ router }) => {
     if (index > test.questions.length - 1) finish();
     else if (index >= 0) setSlide(index);
   };
+  const checkAnswer = (questionId, answerId) => {
+    setAnswers(produce(answers, _answers => {
+      if (!answers[questionId]) _answers[questionId] = [];
+      const answer = _answers[questionId];
+      const index = answer.indexOf(answerId);
+      if (index === -1) answer.push(answerId);
+      else answer.splice(index, 1);
+    }));
+  };
   if (loading) return <div className="page-title">Загрузка...</div>;
   return (
     <div className="test-page">
@@ -45,7 +56,8 @@ const Test = ({ router }) => {
         </div>
         {test.questions.map(question => (
           <Question data={question} key={question.id}
-            onAnswer={answerId => setAnswers({ ...answers, [question.id]: answerId })}
+            checked={answers[question.id] || []}
+            onToggle={answerId => checkAnswer(question.id, answerId)}
           />
         ))}
         <div className={`test-page__nav-btn --right ${slide >= test.questions.length - 1 ? '--warning' : ''}`}

@@ -73,11 +73,10 @@ const TestEdit = ({ router }) => {
       answers[answerIndex].text = text;
     });
   };
-  const checkAnswer = (questionIndex, answerIndex) => {
+  const checkAnswer = (questionIndex, answerIndex, checked) => {
     update(_questions => {
-      const question = _questions[questionIndex];
-      question.answers = question.answers
-        .map((answer, i) => ({ ...answer, correct: i === answerIndex }));
+      const answer = _questions[questionIndex].answers[answerIndex];
+      answer.correct = checked;
     });
   };
   const submit = async e => {
@@ -113,9 +112,8 @@ const TestEdit = ({ router }) => {
           />
           {question.answers.map((answer, answerIndex) => (
             <div className="test-add-page__question__answer" key={getKey(answer)}>
-              <input type="radio" name={`correct--${questionIndex}`} required
-                checked={answer.correct}
-                onChange={() => checkAnswer(questionIndex, answerIndex)}
+              <input type="checkbox" checked={answer.correct}
+                onChange={e => checkAnswer(questionIndex, answerIndex, e.target.checked)}
               />
               <input className="editable --answer" required
                 placeholder="Ответ"

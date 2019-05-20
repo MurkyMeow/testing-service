@@ -406,6 +406,7 @@ a {
 }
 .test-page__question__answers__item {
   display: flex;
+  margin-bottom: 10px;
 
   & div {
     width: 100%;
@@ -502,11 +503,12 @@ a {
 .test-add-page__question__answer {
   position: relative;
   display: flex;
+  align-items: center;
 
   & .editable {
     padding: 5px 10px;
   }
-  & input[type="radio"] {
+  & input[type="checkbox"] {
     width: 40px;
     margin: 0 0 0 -10px;
 
