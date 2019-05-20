@@ -208,7 +208,7 @@ a {
   }
 }
 
-.test-card {
+.test-card__summary {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -239,6 +239,22 @@ a {
   font-size: 12px;
   margin: 20px auto 0;
   padding: 5px 10px;
+}
+.test-card__stats {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  background: #006776;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+  & i {
+    font-size: 16px;
+    margin-right: 5px;
+  }
 }
 
 .page-categories__add {
