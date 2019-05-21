@@ -24,7 +24,7 @@ const Question = ({ data, checked, onToggle }) => (
 const Test = ({ router }) => {
   const { id } = router.query;
   const [slide, setSlide] = useState(0);
-  const [loading, test] = useRequest(() => get(`/test/tests?id=${id}&eager=[questions.answers]`), { only: true });
+  const [, test] = useRequest(() => get(`/test/tests?id=${id}&eager=[questions.answers]`), { only: true });
   const [answers, setAnswers] = useState({});
   const finish = async () => {
     // eslint-disable-next-line no-restricted-globals
@@ -45,7 +45,7 @@ const Test = ({ router }) => {
       else answer.splice(index, 1);
     }));
   };
-  if (loading) return <div className="page-title">Загрузка...</div>;
+  if (!test) return <div className="page-title">Загрузка...</div>;
   return (
     <div className="test-page">
       <div className="page-title">{test.name}</div>

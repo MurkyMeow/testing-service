@@ -4,8 +4,10 @@ export const get = (url, options) =>
   fetch(`http://localhost:4000${url}`, {
     ...options,
     credentials: 'include',
-  })
-    .then(res => res.json());
+  }).then(res => {
+    if (!res.ok) throw res;
+    return res.json();
+  });
 
 export const remove = (url, options) =>
   get(url, { ...options, method: 'DELETE' });
@@ -24,16 +26,22 @@ export const post = withBody('POST');
 export const put = withBody('PUT');
 
 export const useRequest = (request, params = {}) => {
-  const [data, setData] = useState();
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState({});
   let cancelled = false;
+  const modifyData = data => {
+    setState({ ...state, data });
+  };
   useEffect(() => {
     request().then(res => {
       if (cancelled) return;
-      setData(params.only && Array.isArray(res) ? res[0] : res);
-      setLoading(false);
-    }).catch(console.error);
+      const data = params.only ? res[0] : res;
+      setState({ data });
+    }).catch(error => {
+      if (cancelled) return;
+      console.warn(error.status, error.statusText);
+      setState({ error: error.status || 400 });
+    });
     return () => cancelled = true;
   }, []);
-  return [loading, data, setData];
+  return [state, state.data, modifyData];
 };

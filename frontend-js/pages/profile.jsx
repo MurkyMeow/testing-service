@@ -6,7 +6,7 @@ import { TestCard } from '../components/test-card';
 
 const Profile = ({ router }) => {
   const [user, setUser] = useGlobalState('user');
-  const [loading, profile] = useRequest(() =>
+  const [status, profile] = useRequest(() =>
     get(`/stats/profile?id=${router.query.id || ''}`)
   );
 
@@ -17,7 +17,9 @@ const Profile = ({ router }) => {
       setUser({ ...user, name: value });
     }
   };
-  if (loading) return <div className="page-title">Loading...</div>;
+  if (status.error === 404) return <div className="page-title">Этот профиль не существует =(</div>;
+  if (status.error) return <div className="page-title">Не удалось загрузить профиль.</div>;
+  if (!profile) return <div className="page-title">Загрузка...</div>;
   return (
     <div className="profile">
       <input className="profile__name editable" placeholder="Сменить имя"

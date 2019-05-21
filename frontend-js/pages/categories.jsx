@@ -10,9 +10,9 @@ const Categories = () => {
     relation: '[tests, creator]',
     samples: '30',
   });
-  const [loadingStats, stats] = useRequest(() => get('/stats/tests'));
+  const [, stats] = useRequest(() => get('/stats/tests'));
   const finished = test =>
-    !loadingStats && stats.find(x => x.test && x.test.id === test.id);
+    stats && stats.find(x => x.test && x.test.id === test.id);
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
