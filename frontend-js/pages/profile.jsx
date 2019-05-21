@@ -3,6 +3,7 @@ import { withRouter } from 'next/router';
 import { useGlobalState } from '../index';
 import { get, useRequest, post } from '../api';
 import { TestCard } from '../components/test-card';
+import { Editable } from '../components/editable';
 
 const Profile = ({ router }) => {
   const [user, setUser] = useGlobalState('user');
@@ -10,22 +11,19 @@ const Profile = ({ router }) => {
     get(`/stats/profile?id=${router.query.id || ''}`)
   );
 
-  const changeName = async e => {
-    const { value } = e.target;
-    if (user.name !== value) {
-      await post('/stats/name/', { name: value });
-      setUser({ ...user, name: value });
-    }
+  const changeName = async name => {
+    await post('/stats/name/', { name });
+    setUser({ ...user, name });
   };
   if (status.error === 404) return <div className="page-title">Этот профиль не существует =(</div>;
   if (status.error) return <div className="page-title">Не удалось загрузить профиль.</div>;
   if (!profile) return <div className="page-title">Загрузка...</div>;
   return (
     <div className="profile">
-      <input className="profile__name editable" placeholder="Сменить имя"
+      <Editable className="profile__name" placeholder="Сменить имя"
         disabled={user && user.id !== profile.id}
-        defaultValue={profile.name || profile.id}
-        onBlur={changeName}
+        initial={profile.name || profile.id}
+        onChange={changeName}
       />
       {profile.results.length > 0 && <>
         <h3>Пройденные тесты:</h3>
