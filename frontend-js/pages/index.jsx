@@ -1,5 +1,5 @@
 const Index = (() => (
-  <h1>Главная страница</h1>
+  <h1 className="page-title">Главная страница</h1>
 ));
 
 export default Index;
