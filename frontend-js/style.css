@@ -30,15 +30,15 @@ a {
   background: var(--violet-gradient);
   padding: 5px 10px;
 }
-.app-header-nav {
+.app-header-auth {
   margin-left: auto;
 }
 .app-header-nav-btn {
   margin: 5px;
 }
-
 .app-header-logo {
   font-size: 24px;
+  margin-right: 20px;
 }
 
 .page-title {

@@ -1,6 +1,8 @@
 import App, { Container } from 'next/app';
+import { withRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useModal } from '../components/modal';
+import { useNotification } from '../components/notification';
 import { useGlobalState } from '../index';
 import { get, post, useRequest } from '../api';
 import Button from '../components/button';
@@ -40,11 +42,12 @@ const AuthForm = ({ type, onSuccess }) => {
   );
 };
 
-const Header = () => {
+const Header = ({ router }) => {
   const [user, setUser] = useGlobalState('user');
   const [authType, setAuthType] = useState('signup');
   const [Modal, showModal, hideModal] = useModal(false);
   const [, session] = useRequest(() => get('/auth/userinfo'));
+  const [notification, notify] = useNotification();
 
   useEffect(() => setUser(session), [session]);
 
@@ -56,21 +59,35 @@ const Header = () => {
     setUser(newUser);
     hideModal();
   };
+  const signout = async () => {
+    try {
+      await post('/auth/signout');
+      router.push('/');
+      setUser(null);
+    } catch (err) {
+      console.error(err);
+      notify('error', 'Не удаётся выйти. Попробуйте перезагрузить страницу');
+    }
+  };
   return (
     <header className="app-header">
+      {notification}
       <Modal>
         <AuthForm type={authType} onSuccess={onSuccess}/>
       </Modal>
       <a className="app-header-logo" href="/">Nice header there</a>
-      <nav className="app-header-nav">
-        {user ? <>
-          <Button className="app-header-nav-btn" link="/categories">Категории</Button>
+      {user ? <>
+        <Button className="app-header-nav-btn" link="/categories">Категории</Button>
+        <nav className="app-header-auth">
           <Button className="app-header-nav-btn" link="/profile">{user.name ? user.name : 'Профиль'}</Button>
-        </> : <>
+          <Button className="app-header-nav-btn" onClick={signout}>Выйти</Button>
+        </nav>
+      </> : (
+        <nav className="app-header-auth">
           <Button className="app-header-nav-btn" onClick={showForm('signup')}>Создать аккаунт</Button>
           <Button className="app-header-nav-btn" onClick={showForm('signin')}>Войти</Button>
-        </>}
-      </nav>
+        </nav>
+      )}
     </header>
   );
 };
@@ -81,10 +98,10 @@ class MyApp extends App {
   }
 
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
     return (
       <Container>
-        <Header/>
+        <Header router={router}/>
         <Component {...pageProps}/>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
       </Container>
@@ -92,4 +109,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp;
+export default withRouter(MyApp);
