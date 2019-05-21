@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
-import { useDocument } from '../index';
+import { useDocument, canEdit } from '../index';
 import { useRequest, get } from '../api';
 import Button from '../components/button';
 
@@ -24,10 +24,15 @@ const Categories = () => {
         {items.map(category => (
           <div className="category" key={category.id}>
             <header className="category__header">
-              <div>{category.name}</div>
-              <i className="category__header__close-btn" onClick={() => removeItem(category.id)}>
-                close
-              </i>
+              <input className="category__name editable"
+                defaultValue={category.name}
+                disabled={!canEdit(category)}
+              />
+              {canEdit(category) && (
+                <i className="category__close-btn" onClick={() => removeItem(category.id)}>
+                  close
+                </i>
+              )}
             </header>
             <div className="category__test-list">
               {category.tests.map(test => (

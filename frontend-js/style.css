@@ -182,7 +182,12 @@ a {
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
   position: relative;
 }
-.category__header__close-btn {
+.category__name {
+  color: #000;
+  margin: 0 auto;
+  text-align: center;
+}
+.category__close-btn {
   position: absolute;
   top: 0;
   right: 5px;
