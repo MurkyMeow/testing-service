@@ -16,7 +16,7 @@ export const TestCard = ({ className, test, onDelete }) => {
     <div className={`test-card ${className}`}>
       {notification}
       <div className="test-card__summary">
-        {(user.role === 'admin' || user.id === test.creator_id) && <>
+        {user && (user.role === 'admin' || user.id === test.creator_id) && <>
           <Link href={`/test_edit?id=${test.id}`}>
             <i className="test-card__edit-btn">edit</i>
           </Link>
