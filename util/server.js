@@ -34,7 +34,21 @@ module.exports.Rest = prefix => {
         ctx.body = await model.query().insert(body).eager(eager);
       });
       router.patch(name, async ctx => {
-        ctx.body = await model.query().upsertGraph(ctx.request.body);
+        const { id } = ctx.request.body;
+        const { role } = ctx.session.user;
+        if (!id) {
+          ctx.body = await model.query().upsertGraph({
+            ...ctx.request.body,
+            creator_id: ctx.session.user.id
+          });
+        } else {
+          const [item] = await model.query().where({ id });
+          if (role === 'admin' || ctx.session.user.id === item.creator_id) {
+            ctx.body = await model.query().upsertGraph(ctx.request.body);
+          } else {
+            ctx.throw(403, 'forbidden');
+          }
+        }
       });
       router.post(name, async ctx => {
         const { id, ...patch } = ctx.request.body;
@@ -42,7 +56,14 @@ module.exports.Rest = prefix => {
       });
       router.delete(name, async ctx => {
         const { id } = ctx.request.query;
-        ctx.body = await model.query().deleteById(id);
+        const { role } = ctx.session.user;
+        const [item] = await model.query().where({ id });
+        if (role === 'admin' || ctx.session.user.id === item.creator_id) {
+          await model.query().deleteById(id);
+          ctx.body = { ok: true };
+        } else {
+          ctx.throw(403, 'forbidden');
+        }
       });
     }
   };
