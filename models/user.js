@@ -1,6 +1,5 @@
 const { Model } = require('objection');
 const bcrypt = require('bcryptjs');
-const Answer = require('./answer');
 
 module.exports = class extends Model {
   static get tableName() {
@@ -8,15 +7,25 @@ module.exports = class extends Model {
   }
 
   static get relationMappings() {
+    const Test = require('./test');
+    const Result = require('./result');
     return {
-      answers: {
+      tests: {
         relation: Model.HasManyRelation,
-        classModel: Answer,
+        modelClass: Test,
         join: {
           from: 'user.id',
-          to: 'answer.user_id'
+          to: 'test.creator_id'
         }
-      }
+      },
+      results: {
+        relation: Model.HasManyRelation,
+        modelClass: Result,
+        join: {
+          from: 'user.id',
+          to: 'result.user_id'
+        }
+      },
     };
   }
 
