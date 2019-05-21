@@ -4,60 +4,77 @@ import { useDocument, canEdit } from '../index';
 import { useRequest, get } from '../api';
 import Button from '../components/button';
 
+const Test = ({ test, finished }) => (
+  <div className={`page-categories__test ${finished ? '--finished' : ''}`}>
+    <span className="page-categories__test-name">{test.name}</span>
+    <span> {finished ? '(Пройден)' : ''}</span>
+  </div>
+);
+
+const Category = ({ category, stats, onRemove }) => (
+  <div className="page-categories__category">
+    <header className="page-categories__category-header">
+      <input className="page-categories__category-name editable"
+        defaultValue={category.name}
+        disabled={!canEdit(category)}
+      />
+      {canEdit(category) && (
+        <i className="page-categories__category-delete-btn" onClick={onRemove}>
+            close
+        </i>
+      )}
+    </header>
+    <div className="page-categories__category-test-list">
+      {category.tests.map(test => (
+        <Test test={test} key={test.id}
+          finished={stats.find(x => x.test && x.test.id === test.id)}
+        />
+      ))}
+      <Link href={`/test_edit?category_id=${category.id}`}>
+        <div className="page-categories__test-add-btn">Добавить тест</div>
+      </Link>
+    </div>
+    <div className="page-categories__category-summary">
+      <div><i>info</i>6</div>
+      <div><i>query_builder</i>60</div>
+      {category.creator && (
+        <Link href={`/profile?id=${category.creator.id}`}>
+          <div className="page-categories__category-creator">
+            Создатель: {category.creator && category.creator.name}
+          </div>
+        </Link>
+      )}
+      <Button link={`/category?id=${category.id}`}>Перейти</Button>
+    </div>
+  </div>
+);
+
 const Categories = () => {
   const [name, setName] = useState('');
   const { items, addItem, removeItem } = useDocument('/test/categories', {
     relation: '[tests, creator]',
     samples: '30',
   });
-  const [, stats] = useRequest(() => get('/stats/tests'));
-  const finished = test =>
-    stats && stats.find(x => x.test && x.test.id === test.id);
+  const [, stats = []] = useRequest(() => get('/stats/tests'));
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
       <div className="page-categories__add">
-        <input className="page-categories__add__input" placeholder="Название категории" onChange={e => setName(e.target.value)}/>
-        <Button className="page-categories__add__btn" onClick={() => addItem({ name })}>+</Button>
+        <input className="page-categories__add-input"
+          placeholder="Название категории"
+          onChange={e => setName(e.target.value)}
+        />
+        <Button className="page-categories__add-btn"
+          onClick={() => addItem({ name })}>
+          +
+        </Button>
       </div>
       <div className="page-categories__category-list">
         {items.map(category => (
-          <div className="category" key={category.id}>
-            <header className="category__header">
-              <input className="category__name editable"
-                defaultValue={category.name}
-                disabled={!canEdit(category)}
-              />
-              {canEdit(category) && (
-                <i className="category__close-btn" onClick={() => removeItem(category.id)}>
-                  close
-                </i>
-              )}
-            </header>
-            <div className="category__test-list">
-              {category.tests.map(test => (
-                <div className={`category__test-list__test ${finished(test) ? '--finished' : ''}`} key={test.id}>
-                  <span className="category__test-list__test__name">{test.name}</span>
-                  <span> {finished(test) ? '(Пройден)' : ''}</span>
-                </div>
-              ))}
-              <Link href={`/test_edit?category_id=${category.id}`}>
-                <div className="category__test-list__add-btn">Добавить тест</div>
-              </Link>
-            </div>
-            <div className="category__summary">
-              <div><i>info</i>6</div>
-              <div><i>query_builder</i>60</div>
-              {category.creator && (
-                <Link href={`/profile?id=${category.creator.id}`}>
-                  <div className="category__summary-creator">
-                    Создатель: {category.creator && category.creator.name}
-                  </div>
-                </Link>
-              )}
-              <Button link={`/category?id=${category.id}`}>Перейти</Button>
-            </div>
-          </div>
+          <Category category={category} stats={stats}
+            key={category.id}
+            onRemove={() => removeItem(category.id)}
+          />
         ))}
       </div>
     </div>
