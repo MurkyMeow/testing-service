@@ -7,7 +7,7 @@ import Button from '../components/button';
 const Categories = () => {
   const [name, setName] = useState('');
   const { items, addItem, removeItem } = useDocument('/test/categories', {
-    relation: 'tests',
+    relation: '[tests, creator]',
     samples: '30',
   });
   const [loadingStats, stats] = useRequest(() => get('/stats/tests'));
@@ -43,6 +43,13 @@ const Categories = () => {
             <div className="category__summary">
               <div><i>info</i>6</div>
               <div><i>query_builder</i>60</div>
+              {category.creator && (
+                <Link href={`/profile?id=${category.creator.id}`}>
+                  <div className="category__summary-creator">
+                    Создатель: {category.creator && category.creator.name}
+                  </div>
+                </Link>
+              )}
               <Button link={`/category?id=${category.id}`}>Перейти</Button>
             </div>
           </div>

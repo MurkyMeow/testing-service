@@ -238,6 +238,15 @@ a {
     margin-right: 2px;
   }
 }
+.category__summary-creator {
+  font-size: 12px;
+  color: #eaeaea;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
 
 .test-card__summary {
   display: flex;
