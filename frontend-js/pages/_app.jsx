@@ -11,21 +11,12 @@ const AuthForm = ({ type, onSuccess }) => {
   const signup = type === 'signup';
   const submit = async e => {
     e.preventDefault();
-    const form = e.target.parentNode;
-    const [email, password, passwordAgain] = form;
-    if (!form.reportValidity()) return;
-    if (signup) {
-      if (password.value !== passwordAgain.value) {
-        passwordAgain.setCustomValidity('Пароль не совпадает');
-        passwordAgain.reportValidity();
-        return;
-      }
-      passwordAgain.setCustomValidity('');
-    }
+    const data = new FormData(e.target);
     try {
-      const user = await post(signup ? '/auth/signup' : '/auth/signin', {
-        email: email.value,
-        password: password.value
+      const endpoint = signup ? '/auth/signup' : '/auth/signin';
+      const user = await post(endpoint, {
+        email: data.get('email'),
+        password: data.get('password'),
       });
       onSuccess(user);
     } catch (err) {
@@ -33,15 +24,24 @@ const AuthForm = ({ type, onSuccess }) => {
       else notify('error', 'Не удаётся войти. Попробуйте перезагрузить страницу.');
     }
   };
+  const onConfirmChange = ({ target }) => {
+    const validity = target.value !== target.previousSibling.value
+      ? 'Пароли не совпадают'
+      : '';
+    target.setCustomValidity(validity);
+  };
   return (
-    <form className="app-auth">
+    <form className="app-auth" onSubmit={submit}>
       <div className="app-auth-header">Заполните поля</div>
       <input className="app-auth-field" name="email" placeholder="Email" required/>
       <input className="app-auth-field" name="password" placeholder="Пароль" required/>
       {signup && (
-        <input className="app-auth-field" name="passwordAgain" placeholder="Повторите пароль" required/>
+        <input className="app-auth-field" name="passwordAgain" required
+          placeholder="Повторите пароль"
+          onChange={onConfirmChange}
+        />
       )}
-      <Button className="app-auth-btn" onClick={submit}>Войти</Button>
+      <Button className="app-auth-btn">Войти</Button>
     </form>
   );
 };
