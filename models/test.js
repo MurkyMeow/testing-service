@@ -20,7 +20,16 @@ module.exports = class extends Model {
   static get relationMappings() {
     const Question = require('./question');
     const Category = require('./category');
+    const User = require('./user');
     return {
+      creator: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: User,
+        join: {
+          from: 'test.creator_id',
+          to: 'user.id'
+        }
+      },
       questions: {
         relation: Model.HasManyRelation,
         modelClass: Question,
