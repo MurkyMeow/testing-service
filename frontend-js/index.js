@@ -4,6 +4,11 @@ import { remove, put, get } from './api';
 const state = {};
 const listeners = {};
 
+const setGlobalState = (key, value) => {
+  state[key] = value;
+  listeners[key].forEach(handler => handler(value));
+};
+
 const useGlobalState = (key, initial) => {
   if (!(key in state)) {
     state[key] = initial;
@@ -15,10 +20,7 @@ const useGlobalState = (key, initial) => {
     listener.push(setValue);
     return () => listener.splice(listener.indexOf(setValue), 1);
   });
-  const update = newValue => {
-    state[key] = newValue;
-    listener.forEach(handler => handler(newValue));
-  };
+  const update = newValue => setGlobalState(key, newValue);
   return [value, update];
 };
 
@@ -66,6 +68,7 @@ const canEdit = item =>
 export {
   state,
   useGlobalState,
+  setGlobalState,
   useDocument,
   withKey,
   getKey,
