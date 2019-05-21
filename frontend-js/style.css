@@ -131,8 +131,8 @@ a {
 .notification {
   position: fixed;
   top: 100px;
-  left: calc(50% - 100px);
-  width: 200px;
+  left: calc(50% - 150px);
+  width: 300px;
   padding: 10px;
   border-radius: 8px;
   text-align: center;
