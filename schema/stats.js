@@ -23,7 +23,7 @@ rest.router.get('/profile', async ctx => {
   const [profile] = await User.query()
     .where({ id })
     .eager('[tests, results.test]');
-  if (!profile) ctx.throw('Requested profile does not exist', 404);
+  if (!profile) ctx.throw(404, 'Requested profile does not exist');
   ctx.body = profile;
 });
 
