@@ -5,6 +5,7 @@ const state = {};
 const listeners = {};
 
 const setGlobalState = (key, value) => {
+  if (!(key in state)) throw new Error(`setting unknown key: ${key}`);
   state[key] = value;
   listeners[key].forEach(handler => handler(value));
 };
@@ -65,6 +66,13 @@ const getKey = object => object.id || object[key];
 const canEdit = item =>
   item && state.user && (state.user.role === 'admin' || state.user.id === item.creator_id);
 
+const notify = (type, text, timeout = 2500) => {
+  setGlobalState('notification', {
+    type, text, timeout,
+  });
+  setTimeout(() => setGlobalState('notification', {}), timeout);
+};
+
 export {
   state,
   useGlobalState,
@@ -73,4 +81,5 @@ export {
   withKey,
   getKey,
   canEdit,
+  notify,
 };

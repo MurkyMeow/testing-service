@@ -140,7 +140,11 @@ a {
   animation:
     appear .5s,
     appear .5s calc(var(--duration) - .5s) reverse forwards;
+  z-index: 10;
 
+  &.--hidden {
+    display: none;
+  }
   &.--error {
     background: #ff1744;
   }

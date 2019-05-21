@@ -1,11 +1,9 @@
 import Link from 'next/link';
 import Button from './button';
 import { remove } from '../api';
-import { canEdit } from '../index';
-import { useNotification } from './notification';
+import { canEdit, notify } from '../index';
 
 export const TestCard = ({ className, test, onDelete }) => {
-  const [notification, notify] = useNotification();
   const removeItem = async () => {
     remove(`/test/tests?id=${test.id}`)
       .then(onDelete)
@@ -13,7 +11,6 @@ export const TestCard = ({ className, test, onDelete }) => {
   };
   return (
     <div className={`test-card ${className}`}>
-      {notification}
       <div className="test-card__summary">
         {canEdit(test) && <>
           <Link href={`/test_edit?id=${test.id}`}>

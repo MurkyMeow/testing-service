@@ -2,8 +2,7 @@ import App, { Container } from 'next/app';
 import { withRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useModal } from '../components/modal';
-import { useNotification } from '../components/notification';
-import { useGlobalState } from '../index';
+import { useGlobalState, notify } from '../index';
 import { get, post, useRequest } from '../api';
 import Button from '../components/button';
 import '../style.css';
@@ -23,11 +22,16 @@ const AuthForm = ({ type, onSuccess }) => {
       }
       passwordAgain.setCustomValidity('');
     }
-    const user = await post(signup ? '/auth/signup' : '/auth/signin', {
-      email: email.value,
-      password: password.value
-    });
-    onSuccess(user);
+    try {
+      const user = await post(signup ? '/auth/signup' : '/auth/signin', {
+        email: email.value,
+        password: password.value
+      });
+      onSuccess(user);
+    } catch (err) {
+      if (err.status === 400) notify('error', 'Неправильный логин или пароль');
+      else notify('error', 'Не удаётся войти. Попробуйте перезагрузить страницу.');
+    }
   };
   return (
     <form className="app-auth">
@@ -47,7 +51,6 @@ const Header = ({ router }) => {
   const [authType, setAuthType] = useState('signup');
   const [Modal, showModal, hideModal] = useModal(false);
   const [, session] = useRequest(() => get('/auth/userinfo'));
-  const [notification, notify] = useNotification();
 
   useEffect(() => setUser(session), [session]);
 
@@ -71,7 +74,6 @@ const Header = ({ router }) => {
   };
   return (
     <header className="app-header">
-      {notification}
       <Modal>
         <AuthForm type={authType} onSuccess={onSuccess}/>
       </Modal>
@@ -92,6 +94,16 @@ const Header = ({ router }) => {
   );
 };
 
+const Notification = () => {
+  const [{ type = 'hidden', timeout = 0, text }] = useGlobalState('notification', {});
+  return (
+    <div className={`notification --${type}`}
+      style={{ '--duration': `${timeout || 0}ms` }}>
+      <div className="notification__content">{text}</div>
+    </div>
+  );
+};
+
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     return Component.getInitialProps ? Component.getInitialProps(ctx) : {};
@@ -101,6 +113,7 @@ class MyApp extends App {
     const { Component, pageProps, router } = this.props;
     return (
       <Container>
+        <Notification/>
         <Header router={router}/>
         <Component {...pageProps}/>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>

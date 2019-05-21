@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
-import { useDocument, canEdit } from '../index';
+import { useDocument, canEdit, notify } from '../index';
 import { useRequest, get, post } from '../api';
-import { useNotification } from '../components/notification';
 import { Editable } from '../components/editable';
 import Button from '../components/button';
 
@@ -14,14 +13,12 @@ const Test = ({ test, finished }) => (
 );
 
 const Category = ({ category, stats, onRemove }) => {
-  const [notification, notify] = useNotification();
   const changeName = name => {
     post('/test/categories', { id: category.id, name })
       .catch(() => notify('error', 'Не удалось поменять название'));
   };
   return (
     <div className="page-categories__category">
-      {notification}
       <header className="page-categories__category-header">
         <Editable className="page-categories__category-name"
           initial={category.name}
