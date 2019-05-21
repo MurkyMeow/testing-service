@@ -1,5 +1,6 @@
 const router = require('koa-joi-router');
 const User = require('../models/user');
+const { guard } = require('../util/server');
 
 const auth = router();
 
@@ -21,6 +22,8 @@ auth.post('/signup', async ctx => {
   }
   ctx.body = { ok: true };
 });
+
+auth.use(guard());
 
 auth.post('/signout', async ctx => {
   ctx.session = null;
