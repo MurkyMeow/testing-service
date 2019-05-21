@@ -296,6 +296,16 @@ a {
     margin-right: 5px;
   }
 }
+.test-card__creator {
+  font-size: 12px;
+  cursor: pointer;
+  color: lightgray;
+  margin-top: 5px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
 
 .page-categories__add {
   display: flex;

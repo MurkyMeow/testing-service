@@ -4,7 +4,9 @@ import { useRequest, get } from '../api';
 import Button from '../components/button';
 
 const Category = ({ router }) => {
-  const [, items, setItems] = useRequest(() => get(`/test/tests?category_id=${router.query.id}`));
+  const [, items, setItems] = useRequest(() =>
+    get(`/test/tests?category_id=${router.query.id}&eager=creator`)
+  );
   const addTest = () => {
     router.push(`/test_edit?category_id=${router.query.id}`);
   };
