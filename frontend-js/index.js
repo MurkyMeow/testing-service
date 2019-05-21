@@ -60,10 +60,14 @@ const key = Symbol('');
 const withKey = object => ({ ...object, [key]: Math.random() });
 const getKey = object => object.id || object[key];
 
+const canEdit = item =>
+  item && state.user && (state.user.role === 'admin' || state.user.id === item.creator_id);
+
 export {
   state,
   useGlobalState,
   useDocument,
   withKey,
   getKey,
+  canEdit,
 };

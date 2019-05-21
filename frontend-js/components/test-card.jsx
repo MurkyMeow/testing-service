@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import Button from './button';
 import { remove } from '../api';
-import { useGlobalState } from '../index';
+import { canEdit } from '../index';
 import { useNotification } from './notification';
 
 export const TestCard = ({ className, test, onDelete }) => {
-  const [user] = useGlobalState('user');
   const [notification, notify] = useNotification();
   const removeItem = async () => {
     remove(`/test/tests?id=${test.id}`)
@@ -16,7 +15,7 @@ export const TestCard = ({ className, test, onDelete }) => {
     <div className={`test-card ${className}`}>
       {notification}
       <div className="test-card__summary">
-        {user && (user.role === 'admin' || user.id === test.creator_id) && <>
+        {canEdit(test) && <>
           <Link href={`/test_edit?id=${test.id}`}>
             <i className="test-card__edit-btn">edit</i>
           </Link>
