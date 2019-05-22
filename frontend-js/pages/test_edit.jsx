@@ -32,7 +32,7 @@ const TestEdit = ({ router }) => {
 
   useEffect(() => {
     if (!id) return;
-    get(`/test/tests?id=${id}&eager=[questions.answers]`)
+    get(`/test/tests?id=${id}&include=name,questions(text,answers(text,correct))`)
       .then(([res]) => {
         setName(res.name);
         if (res.questions.length) setQuestions(res.questions);

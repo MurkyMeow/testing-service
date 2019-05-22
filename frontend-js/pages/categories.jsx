@@ -59,8 +59,7 @@ const Category = ({ category, stats, onRemove }) => {
 
 const Categories = () => {
   const [name, setName] = useState('');
-  const { items, addItem, removeItem } = useDocument('/test/categories', {
-    relation: '[tests, creator]',
+  const { items, addItem, removeItem } = useDocument('/test/categories?include=name,tests(name),creator(name)', {
     samples: '30',
   });
   const [, stats = []] = useRequest(() => get('/stats/tests'));

@@ -48,6 +48,7 @@
     "no-await-in-loop": "off",
     "function-paren-newline": "off",
     "no-underscore-dangle": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "operator-linebreak": "off"
   }
 }

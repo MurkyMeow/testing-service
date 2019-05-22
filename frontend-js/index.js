@@ -64,7 +64,8 @@ const withKey = object => ({ ...object, [key]: Math.random() });
 const getKey = object => object.id || object[key];
 
 const canEdit = item =>
-  item && state.user && (state.user.role === 'admin' || state.user.id === item.creator_id);
+  item && item.creator && state.user &&
+  (state.user.role === 'admin' || state.user.id === item.creator.id);
 
 const notify = (type, text, timeout = 2500) => {
   setGlobalState('notification', {

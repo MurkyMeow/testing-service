@@ -24,7 +24,7 @@ const Question = ({ data, checked, onToggle }) => (
 const Test = ({ router }) => {
   const { id } = router.query;
   const [slide, setSlide] = useState(0);
-  const [, test] = useRequest(() => get(`/test/tests?id=${id}&eager=[questions.answers]`), { only: true });
+  const [, test] = useRequest(() => get(`/test/tests?id=${id}&include=name,questions(text,answers(text))`), { only: true });
   const [answers, setAnswers] = useState({});
   const finish = async () => {
     // eslint-disable-next-line no-restricted-globals
