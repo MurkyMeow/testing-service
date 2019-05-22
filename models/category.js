@@ -5,6 +5,14 @@ module.exports = class extends Model {
     return 'category';
   }
 
+  static get schema() {
+    return {
+      name: {
+        access: 'any',
+      },
+    };
+  }
+
   static get relationMappings() {
     const Test = require('./test');
     const User = require('./user');

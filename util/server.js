@@ -1,20 +1,24 @@
 const Router = require('koa-joi-router');
+const { makeQuery } = require('./parser');
+
+const isCreator = async (ctx, model) => {
+  if (ctx.session.user.role === 'admin') return true;
+  const { id } = ctx.method === 'GET' || ctx.method === 'DELETE'
+    ? ctx.request.query
+    : ctx.request.body;
+  const item = await model.query().findById(id);
+  return ctx.session.user.id === item.creator_id;
+};
 
 const standard = {
   get: {
-    authorize: () => true,
     where: query => ({ id: query.id }),
   },
   put: {
     verify: () => true,
   },
   patch: {
-    authorize: async (ctx, model) => {
-      const { id } = ctx.request.body;
-      if (!id || ctx.session.user.role === 'admin') return true;
-      const [item] = await model.query().where({ id });
-      return item.creator_id === ctx.session.user.id;
-    },
+    authorize: isCreator,
   },
 };
 
@@ -33,18 +37,18 @@ const Rest = prefix => {
     router,
     register: (name, model, options = {}) => {
       router.get(name, async ctx => {
-        const authorize = (options.get && options.get.authorize) || standard.get.authorize;
-        ctx.assert(await authorize(ctx, model), 403, 'Forbidden');
-
-        const { id, samples, eager } = ctx.request.query;
+        const { id, samples, include } = ctx.request.query;
+        ctx.assert(include, 400,
+          'What fields should i give you? Please, specify the "include" param'
+        );
+        ctx.meta = { userIsCreator: id && await isCreator(ctx, model) };
+        const query = makeQuery(ctx, model, include);
         if (samples) {
-          ctx.body = await model.query().limit(samples).eager(eager);
+          ctx.body = await query.limit(samples);
         } else {
           const { where } = id ? standard.get : options.get;
           if (!where) ctx.throw('Couldnt find a `where` handler. Did you forget to specify id?', 400);
-          ctx.body = await model.query()
-            .where(where(ctx.request.query))
-            .eager(eager);
+          ctx.body = await query.where(where(ctx.request.query));
         }
       });
       router.use(guard());

@@ -6,6 +6,17 @@ module.exports = class extends Model {
     return 'answer';
   }
 
+  static get schema() {
+    return {
+      text: {
+        access: 'any',
+      },
+      correct: {
+        access: 'creator',
+      },
+    };
+  }
+
   static get relationMappings() {
     return {
       question: {

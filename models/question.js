@@ -10,6 +10,14 @@ module.exports = class extends Model {
     return ids.every(id => questionAnswers.find(x => x.id === id));
   }
 
+  static get schema() {
+    return {
+      text: {
+        access: 'any',
+      },
+    };
+  }
+
   static get relationMappings() {
     const Answer = require('./answer');
     const Test = require('./test');
