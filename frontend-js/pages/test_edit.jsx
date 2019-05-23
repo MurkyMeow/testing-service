@@ -3,6 +3,7 @@ import { withRouter } from 'next/router';
 import produce from 'immer';
 import { get, patch } from '../api';
 import { getKey, withKey } from '../index';
+import { Editable } from '../components/editable';
 import Button from '../components/button';
 
 const makeAnswer = () => withKey({
@@ -92,10 +93,10 @@ const TestEdit = ({ router }) => {
   };
   return (
     <form className="test-add-page" onSubmit={submit} ref={form}>
-      <input className="page-title editable --name"
+      <Editable className="page-title --name" required
+        placeholder="Название теста"
         value={name}
         onChange={e => setName(e.target.value)}
-        placeholder="Название теста" required
       />
       {questions.map((question, questionIndex) => (
         <div className="test-add-page__question" key={getKey(question)}>
@@ -105,8 +106,7 @@ const TestEdit = ({ router }) => {
               close
             </i>
           )}
-          <input className="editable --question"
-            placeholder="Вопрос" required
+          <Editable className="--question" placeholder="Вопрос" required
             value={question.text}
             onChange={e => setQuestionText(questionIndex, e.target.value)}
           />
@@ -115,8 +115,7 @@ const TestEdit = ({ router }) => {
               <input type="checkbox" checked={answer.correct}
                 onChange={e => checkAnswer(questionIndex, answerIndex, e.target.checked)}
               />
-              <input className="editable --answer" required
-                placeholder="Ответ"
+              <Editable className="--answer" placeholder="Ответ" required
                 value={answer.text}
                 onChange={e => setAnswerText(questionIndex, answerIndex, e.target.value)}
               />
