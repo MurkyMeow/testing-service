@@ -18,7 +18,9 @@ const standard = {
     verify: () => true,
   },
   patch: {
-    authorize: isCreator,
+    verify: async ctx => {
+      ctx.throw(403, 'Forbidden');
+    },
   },
 };
 
@@ -60,8 +62,9 @@ const Rest = prefix => {
       });
       router.patch(name, async ctx => {
         const { body } = ctx.request;
-        const { authorize } = options.patch || standard.patch;
-        ctx.assert(await authorize(ctx, model), 403, 'Forbidden');
+        ctx.assert(await isCreator(ctx, model), 403, 'Forbidden');
+        const verify = (options.patch && options.patch.verify) || standard.patch.verify;
+        if (verify) await verify(ctx, model);
         const patch = body.id
           ? body
           : { ...body, creator_id: ctx.session.user.id };

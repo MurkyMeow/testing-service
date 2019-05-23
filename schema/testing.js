@@ -21,6 +21,17 @@ rest.register('/tests', Test, {
   get: {
     where: query => ({ category_id: query.category_id }),
   },
+  patch: {
+    verify: async ctx => {
+      const { name, questions = [] } = ctx.request.body;
+      ctx.assert(name, 400, 'Test should have a name');
+      ctx.assert(questions.length, 400, 'Test cant be empty');
+      ctx.assert(questions.every(x => x.text), 400, 'Every question should have a text');
+      ctx.assert(questions.every(x => x.answers.every(ans => ans.text)), 400, 'Every answer should have a text');
+      ctx.assert(questions.every(x => x.answers.some(ans => ans.correct)), 400, 'Every question should have at least one correct answer');
+      return true;
+    }
+  },
 });
 rest.router.get('/result', async ctx => {
   const { test_id } = ctx.request.query;
