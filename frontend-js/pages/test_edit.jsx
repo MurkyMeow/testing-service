@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useReducer, useEffect } from 'react';
 import { withRouter } from 'next/router';
 import produce from 'immer';
 import { get, patch } from '../api';
@@ -20,71 +20,66 @@ const prevented = func => e => {
   if (func) func();
 };
 
+function reducer(questions, action) {
+  const update = draft => produce(questions, draft);
+  switch (action.type) {
+    case 'set':
+      return action.value;
+    case 'add-question':
+      return [...questions, makeQuestion()];
+    case 'remove-question':
+      return questions.filter((_, i) => i !== action.index);
+    case 'set-question-text':
+      return update(_questions => {
+        _questions[action.index].text = action.text;
+      });
+    case 'add-answer':
+      return update(_questions => {
+        _questions[action.questionIndex].answers.push(makeAnswer());
+      });
+    case 'remove-answer':
+      return update(_questions => {
+        _questions[action.questionIndex].answers.splice(action.answerIndex, 1);
+      });
+    case 'set-answer-text':
+      return update(_questions => {
+        const question = _questions[action.questionIndex];
+        question.answers[action.answerIndex].text = action.text;
+      });
+    case 'check-answer':
+      return update(_questions => {
+        const question = _questions[action.questionIndex];
+        question.answers[action.answerIndex].correct = action.checked;
+      });
+    default:
+      throw new Error(`Unknown action: ${action && action.type}`);
+  }
+}
+
 const TestEdit = ({ router }) => {
   const { category_id, id } = router.query;
   const form = useRef();
   const [name, setName] = useState('');
   const [saved, setSaved] = useState(Boolean(id));
-  const [questions, setQuestions] = useState([makeQuestion()]);
-
-  const update = draft => {
-    setQuestions(produce(questions, draft));
-    setSaved(false);
-  };
-  const changeName = e => {
-    setName(e.target.value);
-    setSaved(false);
-  };
+  const [initialized, setInitialized] = useState(false);
+  const [questions, dispatch] = useReducer(reducer, [makeQuestion()]);
 
   useEffect(() => {
     if (!id) return;
     get(`/test/tests?id=${id}&include=name,questions(text,answers(text,correct))`)
       .then(([res]) => {
         setName(res.name);
-        if (res.questions.length) setQuestions(res.questions);
+        if (res.questions.length) dispatch({ type: 'set', value: res.questions });
+        setInitialized(true);
       })
       .catch(console.error);
   }, []);
 
-  const addQuestion = () => {
-    update(_questions => {
-      _questions.push(makeQuestion());
-    });
-  };
-  const removeQuestion = index => {
-    update(_questions => {
-      _questions.splice(index, 1);
-    });
-  };
-  const setQuestionText = (index, text) => {
-    update(_questions => {
-      const question = _questions[index];
-      question.text = text;
-    });
-  };
+  useEffect(() => {
+    if (!initialized && !saved) return;
+    setSaved(false);
+  }, [name, questions]);
 
-  const addAnswer = questionIndex => {
-    update(_questions => {
-      _questions[questionIndex].answers.push(makeAnswer());
-    });
-  };
-  const removeAnswer = (questionIndex, answerIndex) => {
-    update(_questions => {
-      _questions[questionIndex].answers.splice(answerIndex, 1);
-    });
-  };
-  const setAnswerText = (questionIndex, answerIndex, text) => {
-    update(_questions => {
-      const { answers } = _questions[questionIndex];
-      answers[answerIndex].text = text;
-    });
-  };
-  const checkAnswer = (questionIndex, answerIndex, checked) => {
-    update(_questions => {
-      const answer = _questions[questionIndex].answers[answerIndex];
-      answer.correct = checked;
-    });
-  };
   const submit = async e => {
     e.preventDefault();
     if (!form.current.reportValidity()) return;
@@ -101,45 +96,59 @@ const TestEdit = ({ router }) => {
       <Editable className="page-title --name" required
         placeholder="Название теста"
         value={name}
-        onChange={changeName}
+        onChange={e => setName(e.target.value)}
       />
       {questions.map((question, questionIndex) => (
         <div className="test-add-page__question" key={getKey(question)}>
           {questions.length > 1 && (
             <i className="test-add-page__remove-btn"
-              onClick={() => removeQuestion(questionIndex)}>
+              onClick={() => dispatch({ type: 'remove-question', questionIndex })}>
               close
             </i>
           )}
           <Editable className="--question" placeholder="Вопрос" required
             value={question.text}
-            onChange={e => setQuestionText(questionIndex, e.target.value)}
+            onChange={e => dispatch({
+              type: 'set-question-text',
+              index: questionIndex,
+              text: e.target.value,
+            })}
           />
           {question.answers.map((answer, answerIndex) => (
             <div className="test-add-page__question__answer" key={getKey(answer)}>
               <input type="checkbox" checked={answer.correct}
-                onChange={e => checkAnswer(questionIndex, answerIndex, e.target.checked)}
+                onChange={e => dispatch({
+                  type: 'check-answer',
+                  questionIndex,
+                  answerIndex,
+                  checked: e.target.checked,
+                })}
               />
               <Editable className="--answer" placeholder="Ответ" required
                 value={answer.text}
-                onChange={e => setAnswerText(questionIndex, answerIndex, e.target.value)}
+                onChange={e => dispatch({
+                  type: 'set-answer-text',
+                  questionIndex,
+                  answerIndex,
+                  text: e.target.value,
+                })}
               />
               {question.answers.length > 2 && (
                 <i className="test-add-page__remove-btn"
-                  onClick={() => removeAnswer(questionIndex, answerIndex)}>
+                  onClick={() => dispatch({ type: 'remove-answer', questionIndex, answerIndex })}>
                   close
                 </i>
               )}
             </div>
           ))}
           <Button className="test-add-page__question__add-btn"
-            onClick={prevented(() => addAnswer(questionIndex))}>
+            onClick={prevented(() => dispatch({ type: 'add-answer', questionIndex }))}>
             Добавить ответ
           </Button>
         </div>
       ))}
       <Button className="test-add-page__add-btn"
-        onClick={prevented(addQuestion)}>
+        onClick={prevented(() => dispatch({ type: 'add-question' }))}>
         Добавить вопрос
       </Button>
       {saved ? (
