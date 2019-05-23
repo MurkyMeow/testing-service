@@ -2,10 +2,10 @@ const Router = require('koa-joi-router');
 const { makeQuery } = require('./parser');
 
 const isCreator = async (ctx, model) => {
-  if (ctx.session.user.role === 'admin') return true;
   const { id } = ctx.method === 'GET' || ctx.method === 'DELETE'
     ? ctx.request.query
     : ctx.request.body;
+  if (!id || ctx.session.user.role === 'admin') return true;
   const item = await model.query().findById(id);
   return ctx.session.user.id === item.creator_id;
 };
