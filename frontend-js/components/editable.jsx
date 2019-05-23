@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const Editable = ({ className = '', initial = '', onAlter, ...props }) => {
+export const Editable = ({ className = '', initial, onAlter, ...props }) => {
   const [value, setValue] = useState(initial);
   const onBlur = e => {
     if (value === e.target.value) return;
