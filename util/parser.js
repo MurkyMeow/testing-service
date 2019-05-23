@@ -31,6 +31,8 @@ function parse(ctx, [field, ...rest], builder) {
     builder.select(field);
   } else {
     const [eager, eagerRest] = half(field, '(');
+    const relations = Object.keys(builder.modelClass().getRelations());
+    ctx.assert(relations.includes(eager), 400, `Unknown relation: ${eager}`);
     builder
       .mergeEager(eager)
       .modifyEager(eager, eagerBuilder => {
