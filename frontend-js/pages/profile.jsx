@@ -23,7 +23,7 @@ const Profile = ({ router }) => {
       <Editable className="profile__name" placeholder="Сменить имя"
         disabled={user && user.id !== profile.id}
         initial={profile.name || profile.id}
-        onChange={changeName}
+        onAlter={changeName}
       />
       {profile.results.length > 0 && <>
         <h3>Пройденные тесты:</h3>

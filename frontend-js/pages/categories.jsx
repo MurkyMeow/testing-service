@@ -23,7 +23,7 @@ const Category = ({ category, stats, onRemove }) => {
         <Editable className="page-categories__category-name"
           initial={category.name}
           disabled={!canEdit(category)}
-          onChange={changeName}
+          onAlter={changeName}
         />
         {canEdit(category) && (
           <i className="page-categories__category-delete-btn" onClick={onRemove}>
