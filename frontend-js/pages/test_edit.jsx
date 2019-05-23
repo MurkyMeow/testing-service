@@ -26,8 +26,13 @@ const TestEdit = ({ router }) => {
   const [name, setName] = useState('');
   const [saved, setSaved] = useState(Boolean(id));
   const [questions, setQuestions] = useState([makeQuestion()]);
+
   const update = draft => {
     setQuestions(produce(questions, draft));
+    setSaved(false);
+  };
+  const changeName = e => {
+    setName(e.target.value);
     setSaved(false);
   };
 
@@ -96,7 +101,7 @@ const TestEdit = ({ router }) => {
       <Editable className="page-title --name" required
         placeholder="Название теста"
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={changeName}
       />
       {questions.map((question, questionIndex) => (
         <div className="test-add-page__question" key={getKey(question)}>
