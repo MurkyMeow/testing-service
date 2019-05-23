@@ -102,7 +102,7 @@ const TestEdit = ({ router }) => {
         <div className="test-add-page__question" key={getKey(question)}>
           {questions.length > 1 && (
             <i className="test-add-page__remove-btn"
-              onClick={() => dispatch({ type: 'remove-question', questionIndex })}>
+              onClick={() => dispatch({ type: 'remove-question', index: questionIndex })}>
               close
             </i>
           )}
