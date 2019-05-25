@@ -38,7 +38,7 @@ const Profile = ({ router }) => {
       {profile.tests.length > 0 && <>
         <h3 className="profile__tests-title">Опубликованные тесты:</h3>
         <div className="profile__tests">
-          {profile.tests.map(test => (
+          {profile.tests.map(x => ({ ...x, creator: user })).map(test => (
             <TestCard className="profile__test" test={test} key={test.id}/>
           ))}
         </div>
