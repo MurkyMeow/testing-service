@@ -56,9 +56,9 @@ const Rest = prefix => {
       router.use(guard());
       router.put(name, async ctx => {
         const { verify } = options.put || standard.put;
-        const { eager = '', ...body } = ctx.request.body;
+        const { include, ...body } = ctx.request.body;
         ctx.assert(await verify(ctx.request.body), 409, 'This item already exists');
-        ctx.body = await model.query().insert(body).eager(eager);
+        ctx.body = await makeQuery(ctx, model, include).insert(body);
       });
       router.patch(name, async ctx => {
         const { body } = ctx.request;
