@@ -76,7 +76,7 @@ const TestEdit = ({ router }) => {
   }, []);
 
   useEffect(() => {
-    if (!initialized && !saved) return;
+    if (!initialized) return;
     setSaved(false);
   }, [name, questions]);
 
