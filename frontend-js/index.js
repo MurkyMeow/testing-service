@@ -35,15 +35,15 @@ const useDocument = (endpoint, options = {}) => {
     return `${endpoint}?`;
   };
   const refresh = () => {
-    const { samples, relation } = options;
+    const { samples, include } = options;
     const url = samples ? `${ep()}samples=${samples}` : ep();
-    get(relation ? `${url}&eager=${relation}` : url)
+    get(include ? `${url}&include=${include}` : url)
       .then(res => setItems(res))
       .catch(console.error);
   };
   const addItem = params => {
-    const { relation } = options;
-    put(ep(), relation ? { ...params, eager: relation } : params)
+    const { include } = options;
+    put(ep(), include ? { ...params, include } : params)
       .then(item => setItems([...items, item]))
       .catch(console.error);
   };
