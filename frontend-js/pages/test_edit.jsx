@@ -14,10 +14,57 @@ const makeQuestion = () => withKey({
   text: '',
   answers: [makeAnswer(), makeAnswer()],
 });
+const makeResult = () => withKey({ text: '', score: 0 });
 
 const prevented = func => e => {
   e.preventDefault();
   if (func) func();
+};
+
+const ConclusionForm = ({ max }) => {
+  const [results, setResults] = useState([]);
+  const add = () => {
+    setResults([...results, makeResult()]);
+  };
+  const setScore = (index, score) => {
+    setResults(results.map((el, i) => i === index
+      ? { ...el, score }
+      : el
+    ));
+  };
+  const close = index => {
+    setResults(results.filter((_, i) => index !== i));
+  };
+  const getOptions = () =>
+    [...Array(max + 1).keys()]
+      .map(text => withKey({ text }))
+      .filter(x => !results.some(res => Number(res.score) === x.text));
+  return <>
+    <h2>Результаты:</h2>
+    <div className="test-add-page__conclusion-form">
+      {results.map((res, i) => (
+        <div className="test-add-page__conclusion" key={getKey(res)}>
+          <select value={res.score} onChange={e => setScore(i, e.target.value)}>
+            <option disabled>Кол-во баллов</option>
+            {getOptions().map(val => (
+              <option key={getKey(val)}>{val.text}</option>
+            ))}
+          </select>
+          <textarea/>
+          <i className="test-add-page__conclusion-close"
+            onClick={() => close(i)}>
+              close
+          </i>
+        </div>
+      ))}
+    </div>
+    {results.length < max && (
+      <div className="test-add-page__conclusion-add" onClick={add}>+</div>
+    )}
+    <Button className="test-add-page__send-btn" onClick={prevented()}>
+      Сохранить
+    </Button>
+  </>;
 };
 
 function reducer(questions, action) {
@@ -159,6 +206,10 @@ const TestEdit = ({ router }) => {
       ) : (
         <Button className="test-add-page__send-btn">Сохранить</Button>
       )}
+      <ConclusionForm max={
+        questions
+          .reduce((acc, el) => acc + el.answers.map(ans => ans.correct).length, 0)
+      }/>
     </form>
   );
 };

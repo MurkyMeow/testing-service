@@ -585,6 +585,47 @@ a {
   margin: 10px auto 0;
   padding: 5px 8px;
 }
-.test-add-page__add-btn {
-  margin-bottom: 50px;
+.test-add-page__send-btn {
+  margin: 50px 0;
+}
+.test-add-page__conclusion {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  user-select: none;
+
+  & input, textarea {
+    font: inherit;
+    color: #cecece;
+    background: transparent;
+  }
+  & input {
+    width: 50px;
+    text-align: center;
+    border: none;
+  }
+  & textarea {
+    resize: none;
+    width: 200px;
+    height: 100px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: 1px dashed darkcyan;
+    border-radius: 5px;
+  }
+  & span {
+    color: #898989;
+  }
+}
+.test-add-page__conclusion-close {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: -30px;
+}
+.test-add-page__conclusion-add {
+  font-size: 35px;
+  color: gray;
+  cursor: pointer;
 }
