@@ -40,9 +40,6 @@ const Rest = prefix => {
     register: (name, model, options = {}) => {
       router.get(name, async ctx => {
         const { id, samples, include } = ctx.request.query;
-        ctx.assert(include, 400,
-          'What fields should i give you? Please, specify the "include" param'
-        );
         ctx.meta = { userIsCreator: id && await isCreator(ctx, model) };
         const query = makeQuery(ctx, model, include);
         if (samples) {

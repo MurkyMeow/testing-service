@@ -46,6 +46,9 @@ function parse(ctx, [field, ...rest], builder) {
 }
 
 function makeQuery(ctx, model, requestedFields) {
+  ctx.assert(requestedFields, 400,
+    'What fields should i give you? Please, specify the "include" param'
+  );
   const fields = split(requestedFields);
   const builder = model.query().select('id');
   return parse(ctx, fields, builder);
