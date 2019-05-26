@@ -23,8 +23,9 @@ function half(str, char) {
 
 function parse(ctx, [field, ...rest], builder) {
   if (!field.includes('(')) {
-    const validator = builder.modelClass().schema[field];
-    ctx.assert(validator, 400, `Field "${field}" is not present in the schema`);
+    const { schema } = builder.modelClass();
+    ctx.assert(schema && schema[field], 400, `Field "${field}" is not present in the schema`);
+    const validator = schema[field];
     const { access } = validator;
     const allowed = access === 'any' || (access === 'creator' && ctx.meta.userIsCreator);
     ctx.assert(allowed, 403, `You are not allowed to get "${field}" field`);
