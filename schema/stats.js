@@ -12,8 +12,8 @@ rest.router.get('/tests', async ctx => {
 
 rest.router.get('/profile', async ctx => {
   const id = ctx.request.query.id || ctx.session.user.id;
-  const [profile] = await User.query()
-    .where({ id })
+  const profile = await User.query()
+    .findById(id)
     .eager('[tests, results.test]');
   if (!profile) ctx.throw(404, 'Requested profile does not exist');
   ctx.body = profile;
@@ -24,7 +24,7 @@ rest.router.use(guard());
 rest.router.post('/name', async ctx => {
   const { name } = ctx.request.body;
   await User.query()
-    .where({ id: ctx.session.user.id })
+    .findById(ctx.session.user.id)
     .update({ name });
   ctx.session.user.name = name;
   ctx.body = { ok: true };
