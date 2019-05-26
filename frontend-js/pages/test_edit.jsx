@@ -14,43 +14,55 @@ const makeQuestion = () => withKey({
   text: '',
   answers: [makeAnswer(), makeAnswer()],
 });
-const makeResult = () => withKey({ text: '', score: 0 });
+const makeConclusion = (min_score = 0) => withKey({ text: '', min_score });
 
 const prevented = func => e => {
   e.preventDefault();
   if (func) func();
 };
 
-const ConclusionForm = ({ max }) => {
-  const [results, setResults] = useState([]);
+const ConclusionForm = ({ testId, initial, max }) => {
+  const [conclusions, setConclusions] = useState(initial);
   const add = () => {
-    setResults([...results, makeResult()]);
+    setConclusions([...conclusions, makeConclusion()]);
   };
-  const setScore = (index, score) => {
-    setResults(results.map((el, i) => i === index
-      ? { ...el, score }
+  const setScore = (index, min_score) => {
+    setConclusions(conclusions.map((el, i) => i === index
+      ? { ...el, min_score }
+      : el
+    ));
+  };
+  const setText = (index, text) => {
+    setConclusions(conclusions.map((el, i) => i === index
+      ? { ...el, text }
       : el
     ));
   };
   const close = index => {
-    setResults(results.filter((_, i) => index !== i));
+    setConclusions(conclusions.filter((_, i) => index !== i));
   };
   const getOptions = () =>
-    [...Array(max + 1).keys()]
-      .map(text => withKey({ text }))
-      .filter(x => !results.some(res => Number(res.score) === x.text));
+    [...Array(max + 1).keys()].map(makeConclusion);
+
+  const save = async () => {
+    await patch('/test/result', { test_id: testId, conclusions });
+  };
   return <>
     <h2>Результаты:</h2>
     <div className="test-add-page__conclusion-form">
-      {results.map((res, i) => (
+      {conclusions.map((res, i) => (
         <div className="test-add-page__conclusion" key={getKey(res)}>
-          <select value={res.score} onChange={e => setScore(i, e.target.value)}>
+          <select value={res.min_score} onChange={e => setScore(i, e.target.value)}>
             <option disabled>Кол-во баллов</option>
             {getOptions().map(val => (
-              <option key={getKey(val)}>{val.text}</option>
+              <option key={getKey(val)} value={val.min_score}>
+                Не менее  {val.min_score} из {max}
+              </option>
             ))}
           </select>
-          <textarea/>
+          <textarea placeholder="Описание" value={res.text}
+            onChange={e => setText(i, e.target.value)}
+          />
           <i className="test-add-page__conclusion-close"
             onClick={() => close(i)}>
               close
@@ -58,10 +70,10 @@ const ConclusionForm = ({ max }) => {
         </div>
       ))}
     </div>
-    {results.length < max && (
+    {conclusions.length < max && (
       <div className="test-add-page__conclusion-add" onClick={add}>+</div>
     )}
-    <Button className="test-add-page__send-btn" onClick={prevented()}>
+    <Button className="test-add-page__send-btn" onClick={prevented(save)}>
       Сохранить
     </Button>
   </>;
@@ -110,12 +122,14 @@ const TestEdit = ({ router }) => {
   const [saved, setSaved] = useState(Boolean(id));
   const [initialized, setInitialized] = useState(false);
   const [questions, dispatch] = useReducer(reducer, [makeQuestion()]);
+  const [conclusions, setConclusions] = useState();
 
   useEffect(() => {
     if (!id) return;
-    get(`/test/tests?id=${id}&include=name,questions(text,answers(text,correct))`)
+    get(`/test/tests?id=${id}&include=name,questions(text,answers(text,correct)),conclusions(min_score,text)`)
       .then(([res]) => {
         setName(res.name);
+        setConclusions(res.conclusions);
         if (res.questions.length) dispatch({ type: 'set', value: res.questions });
         setInitialized(true);
       })
@@ -206,10 +220,13 @@ const TestEdit = ({ router }) => {
       ) : (
         <Button className="test-add-page__send-btn">Сохранить</Button>
       )}
-      <ConclusionForm max={
-        questions
-          .reduce((acc, el) => acc + el.answers.map(ans => ans.correct).length, 0)
-      }/>
+      {initialized && id && (
+        <ConclusionForm
+          testId={id}
+          initial={conclusions}
+          max={questions.reduce((acc, el) => acc + el.answers.filter(ans => ans.correct).length, 0)}
+        />
+      )}
     </form>
   );
 };

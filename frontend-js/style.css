@@ -590,26 +590,23 @@ a {
 }
 .test-add-page__conclusion {
   position: relative;
-  display: flex;
-  align-items: center;
   margin-bottom: 20px;
   user-select: none;
 
-  & input, textarea {
+  & textarea {
     font: inherit;
     color: #cecece;
     background: transparent;
   }
-  & input {
-    width: 50px;
-    text-align: center;
-    border: none;
+  & select {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
   }
   & textarea {
     resize: none;
     width: 200px;
     height: 100px;
-    margin-left: 10px;
     padding: 5px 10px;
     border: 1px dashed darkcyan;
     border-radius: 5px;
@@ -621,7 +618,7 @@ a {
 .test-add-page__conclusion-close {
   cursor: pointer;
   position: absolute;
-  top: 0;
+  top: -5px;
   right: -30px;
 }
 .test-add-page__conclusion-add {
