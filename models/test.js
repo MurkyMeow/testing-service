@@ -14,6 +14,7 @@ module.exports = class extends Model {
   }
 
   static get relationMappings() {
+    const Conclusion = require('./conclusion');
     const Question = require('./question');
     const Category = require('./category');
     const User = require('./user');
@@ -24,6 +25,14 @@ module.exports = class extends Model {
         join: {
           from: 'test.creator_id',
           to: 'user.id'
+        }
+      },
+      conclusions: {
+        relation: Model.HasManyRelation,
+        modelClass: Conclusion,
+        join: {
+          from: 'test.id',
+          to: 'conclusion.test_id'
         }
       },
       questions: {
