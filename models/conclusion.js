@@ -5,6 +5,17 @@ module.exports = class extends Model {
     return 'conclusion';
   }
 
+  static get schema() {
+    return {
+      text: {
+        access: 'any',
+      },
+      min_score: {
+        access: 'any',
+      },
+    };
+  }
+
   static get relationMappings() {
     const Test = require('./test');
     const User = require('./user');
