@@ -2,6 +2,7 @@ const Category = require('../models/category');
 const Test = require('../models/test');
 const Question = require('../models/question');
 const Result = require('../models/result');
+const Conclusion = require('../models/conclusion');
 const { Rest } = require('../util/server');
 
 const rest = Rest('/test');
@@ -40,6 +41,18 @@ rest.router.get('/result', async ctx => {
     score: result.score,
     conclusion: await result.conclusion()
   };
+});
+rest.router.patch('/result', async ctx => {
+  const { test_id, conclusions } = ctx.request.body;
+  ctx.assert(Array.isArray(conclusions), 400, 'Conclusions should be an array');
+  ctx.assert(conclusions.every(x => x.min_score >= 0), 400, 'Min score should be a positive number');
+  ctx.assert(conclusions.every(x => x.text), 400, 'Every result should have a text');
+  const unique = new Set(conclusions.map(x => Number(x.min_score)));
+  ctx.assert(unique.size === conclusions.length, 400, 'You can not have conclusions with similar score');
+  await Conclusion.query()
+    .where({ test_id })
+    .upsertGraph(conclusions.map(x => ({ ...x, test_id })));
+  ctx.body = { ok: true };
 });
 rest.router.post('/answer', async ctx => {
   const { testId, answers } = ctx.request.body;
