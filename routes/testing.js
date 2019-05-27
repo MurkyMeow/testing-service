@@ -69,8 +69,7 @@ rest.router.post('/answer', async ctx => {
       else incorrect.add(id);
     }
   }
-  const max = questions.reduce((acc, el) => acc + el.answers.length, 0);
-  const score = (Math.max(correct.size - incorrect.size, 0) / max).toFixed(1);
+  const score = Math.max(correct.size - incorrect.size, 0);
   const opts = { user_id: ctx.session.user.id, test_id: testId };
   const [result] = await Result.query().where(opts);
   if (result) {

@@ -9,7 +9,7 @@ module.exports = class extends Model {
   async conclusion() {
     const items = await Conclusion.query()
       .where({ test_id: this.test_id })
-      .where('min_score', '<', this.score);
+      .where('min_score', '<=', this.score);
     const [conclusion] = items.sort((a, b) => b.min_score - a.min_score);
     return conclusion ? conclusion.text : '';
   }
