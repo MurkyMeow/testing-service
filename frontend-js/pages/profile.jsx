@@ -30,7 +30,13 @@ const Profile = ({ router }) => {
         {profile.results.map(result => result.test && (
           <Link href={`/test?id=${result.test_id}`} key={result.id}>
             <div className="profile__finished-test" key={result.id}>
-              {result.test.name} ({result.score} из {result.maxScore}) — {result.conclusion}
+              {result.test.name} ({result.score} из {result.maxScore})
+              {result.conclusion && <>
+                <div class="profile__finished-test-conclusion">
+                  {result.conclusion}
+                </div>
+                <i>info</i>
+              </>}
             </div>
           </Link>
         ))}
