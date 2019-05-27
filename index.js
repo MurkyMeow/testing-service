@@ -6,9 +6,9 @@ const { Model } = require('objection');
 const knex = require('knex');
 const env = require('./env');
 const config = require('./knexfile');
-const auth = require('./schema/auth');
-const testing = require('./schema/testing');
-const stats = require('./schema/stats');
+const auth = require('./routes/auth');
+const testing = require('./routes/testing');
+const stats = require('./routes/stats');
 
 Model.knex(knex(config.development));
 
