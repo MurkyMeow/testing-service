@@ -30,7 +30,7 @@ const Profile = ({ router }) => {
         {profile.results.map(result => result.test && (
           <Link href={`/test?id=${result.test_id}`} key={result.id}>
             <div className="profile__finished-test" key={result.id}>
-              {result.test.name} — {result.score * 100}%
+              {result.test.name} ({result.score} из {result.maxScore}) — {result.conclusion}
             </div>
           </Link>
         ))}

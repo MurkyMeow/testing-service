@@ -517,9 +517,10 @@ a {
 .result-page {
   text-align: center;
 }
-.result-page__result {
+.result-page__score {
   font-size: 30px;
   font-style: italic;
+  margin-bottom: 10px;
 }
 .result-page__conclusion {
   font-size: 18px;
