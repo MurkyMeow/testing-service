@@ -3,7 +3,7 @@ import Button from './button';
 import { remove } from '../api';
 import { canEdit, notify } from '../index';
 
-export const TestCard = ({ className, test, onDelete }) => {
+export const TestCard = ({ className, test, editable, onDelete }) => {
   const removeItem = async () => {
     remove(`/test/tests?id=${test.id}`)
       .then(onDelete)
@@ -12,7 +12,7 @@ export const TestCard = ({ className, test, onDelete }) => {
   return (
     <div className={`test-card ${className}`}>
       <div className="test-card__summary">
-        {canEdit(test) && <>
+        {(editable || canEdit(test)) && <>
           <Link href={`/test_edit?id=${test.id}`}>
             <i className="test-card__edit-btn">edit</i>
           </Link>
