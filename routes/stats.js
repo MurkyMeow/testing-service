@@ -16,6 +16,11 @@ rest.router.get('/profile', async ctx => {
     .findById(id)
     .eager('[tests, results.test]');
   if (!profile) ctx.throw(404, 'Requested profile does not exist');
+  // TODO: this is hacky, refactor somehow?
+  for (const result of profile.results) {
+    result.conclusion = await result.conclusion();
+    result.maxScore = await result.test.maxScore();
+  }
   ctx.body = profile;
 });
 
