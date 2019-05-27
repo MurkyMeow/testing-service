@@ -37,9 +37,9 @@ rest.register('/tests', Test, {
 rest.router.get('/result', async ctx => {
   const { test_id } = ctx.request.query;
   const [result] = await Result.query().where({ user_id: ctx.session.user.id, test_id });
-  const maxScore = await Test.query().findById(test_id).maxScore();
+  const test = await Test.query().findById(test_id);
   ctx.body = {
-    maxScore,
+    maxScore: await test.maxScore(),
     score: result.score,
     conclusion: await result.conclusion()
   };
