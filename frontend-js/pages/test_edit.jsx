@@ -70,7 +70,7 @@ const ConclusionForm = ({ testId, initial, max }) => {
         </div>
       ))}
     </div>
-    {conclusions.length < max && (
+    {conclusions.length <= max && (
       <div className="test-add-page__conclusion-add" onClick={add}>+</div>
     )}
     <Button className="test-add-page__send-btn" onClick={prevented(save)}>
