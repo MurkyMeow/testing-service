@@ -12,8 +12,8 @@ rest.register('/questions', Question, {
     where: query => ({ test_id: query.test_id }),
   },
   put: {
-    verify: async body => {
-      const items = await Test.query().where({ id: body.test_id });
+    verify: async ctx => {
+      const items = await Test.query().where({ id: ctx.request.body.test_id });
       return items.length > 0;
     },
   },
