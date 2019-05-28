@@ -38,7 +38,7 @@ const Rest = prefix => {
   return {
     router,
     register: (name, model, options = {}) => {
-      router.get(name, async ctx => {
+      async function handleGet(ctx) {
         const { id, samples, include } = ctx.request.query;
         ctx.meta = { userIsCreator: id && await isCreator(ctx, model) };
         const query = makeQuery(ctx, model, include);
@@ -49,9 +49,9 @@ const Rest = prefix => {
           if (!where) ctx.throw('Couldnt find a `where` handler. Did you forget to specify id?', 400);
           ctx.body = await query.where(where(ctx.request.query));
         }
-      });
-      router.use(guard());
-      router.put(name, async ctx => {
+      }
+
+      async function handlePut(ctx) {
         const { verify } = options.put || standard.put;
         const { include, ...body } = ctx.request.body;
         ctx.assert(await verify(ctx), 409, 'This item already exists');
@@ -59,8 +59,9 @@ const Rest = prefix => {
           ...body,
           creator_id: ctx.session.user.id,
         });
-      });
-      router.patch(name, async ctx => {
+      }
+
+      async function handlePatch(ctx) {
         const { body } = ctx.request;
         ctx.assert(await isCreator(ctx, model), 403, 'Forbidden');
         const verify = (options.patch && options.patch.verify) || standard.patch.verify;
@@ -69,12 +70,14 @@ const Rest = prefix => {
           ? body
           : { ...body, creator_id: ctx.session.user.id };
         ctx.body = await model.query().upsertGraph(patch);
-      });
-      router.post(name, async ctx => {
+      }
+
+      async function handlePost(ctx) {
         const { id, ...patch } = ctx.request.body;
         ctx.body = await model.query().findById(id).patch(patch);
-      });
-      router.delete(name, async ctx => {
+      }
+
+      async function handleDelete(ctx) {
         const { id } = ctx.request.query;
         const { role } = ctx.session.user;
         const [item] = await model.query().where({ id });
@@ -84,7 +87,14 @@ const Rest = prefix => {
         } else {
           ctx.throw(403, 'forbidden');
         }
-      });
+      }
+
+      router.get(name, handleGet);
+      router.use(guard());
+      router.put(name, handlePut);
+      router.post(name, handlePost);
+      router.patch(name, handlePatch);
+      router.delete(name, handleDelete);
     }
   };
 };
