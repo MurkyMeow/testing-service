@@ -65,7 +65,7 @@ const useDocument = (endpoint, options = {}) => {
     try {
       await remove(`${ep()}id=${id}`);
       setItems(items.filter(x => x.id !== id));
-      notify('error', 'Успешно удалено');
+      notify('success', 'Успешно удалено');
     } catch (err) {
       notify('error', 'Не удалось удалить');
     }
