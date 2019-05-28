@@ -6,7 +6,15 @@ const Conclusion = require('../models/conclusion');
 const { Rest } = require('../util/server');
 
 const rest = Rest('/test');
-rest.register('/categories', Category);
+rest.register('/categories', Category, {
+  put: {
+    verify: async ctx => {
+      const { name } = ctx.request.body;
+      ctx.assert(name, 400, 'Category should have a name');
+      return true;
+    },
+  }
+});
 rest.register('/questions', Question, {
   get: {
     where: query => ({ test_id: query.test_id }),
