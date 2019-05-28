@@ -1,4 +1,4 @@
-import { useState, useRef, useReducer, useEffect } from 'react';
+import { useState, useLayoutEffect, useRef, useReducer, useEffect } from 'react';
 import { withRouter } from 'next/router';
 import produce from 'immer';
 import { get, patch } from '../api';
@@ -16,13 +16,36 @@ const makeQuestion = () => withKey({
 });
 const makeConclusion = (min_score = 0) => withKey({ text: '', min_score });
 
-const prevented = func => e => {
-  e.preventDefault();
-  if (func) func();
-};
+function useSave(isSaved, autoInit, reactTo) {
+  const [saved, setSaved] = useState(isSaved);
+  const [initialized, setInitialized] = useState(false);
+
+  useLayoutEffect(() => {
+    if (autoInit) setInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (initialized) setSaved(false);
+  }, reactTo);
+
+  const saveButton = ({ className, onClick }) => (
+    <Button className={className} onClick={saved ? null : onClick}
+      variant={saved ? 'disabled' : ''}>
+      {saved ? 'Сохранено' : 'Сохранить'}
+    </Button>
+  );
+
+  return {
+    saved,
+    setSaved,
+    saveButton,
+    initialize: () => setInitialized(true),
+  };
+}
 
 const ConclusionForm = ({ testId, initial, max }) => {
   const [conclusions, setConclusions] = useState(initial);
+  const { saveButton, setSaved } = useSave(true, true, [conclusions]);
   const add = () => {
     setConclusions([...conclusions, makeConclusion()]);
   };
@@ -46,6 +69,7 @@ const ConclusionForm = ({ testId, initial, max }) => {
 
   const save = async () => {
     await patch('/test/result', { test_id: testId, conclusions });
+    setSaved(true);
   };
   return <>
     <h2>Результаты:</h2>
@@ -73,9 +97,7 @@ const ConclusionForm = ({ testId, initial, max }) => {
     {conclusions.length <= max && (
       <div className="test-add-page__conclusion-add" onClick={add}>+</div>
     )}
-    <Button className="test-add-page__send-btn" onClick={prevented(save)}>
-      Сохранить
-    </Button>
+    {saveButton({ className: 'test-add-page__send-btn', onClick: save })}
   </>;
 };
 
@@ -119,10 +141,13 @@ const TestEdit = ({ router }) => {
   const { category_id, id } = router.query;
   const form = useRef();
   const [name, setName] = useState('');
-  const [saved, setSaved] = useState(Boolean(id));
-  const [initialized, setInitialized] = useState(false);
   const [questions, dispatch] = useReducer(reducer, [makeQuestion()]);
   const [conclusions, setConclusions] = useState();
+  const {
+    setSaved,
+    initialize,
+    saveButton,
+  } = useSave(Boolean(id), false, [name, questions]);
 
   useEffect(() => {
     if (!id) return;
@@ -131,18 +156,12 @@ const TestEdit = ({ router }) => {
         setName(res.name);
         setConclusions(res.conclusions);
         if (res.questions.length) dispatch({ type: 'set', value: res.questions });
-        setInitialized(true);
+        initialize();
       })
       .catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (!initialized) return;
-    setSaved(false);
-  }, [name, questions]);
-
-  const submit = async e => {
-    e.preventDefault();
+  const submit = async () => {
     if (!form.current.reportValidity()) return;
     if (category_id && !id) {
       const res = await patch('/test/tests', { category_id, name, questions });
@@ -153,7 +172,7 @@ const TestEdit = ({ router }) => {
     setSaved(true);
   };
   return (
-    <form className="test-add-page" onSubmit={submit} ref={form}>
+    <form className="test-add-page" onSubmit={e => e.preventDefault()} ref={form}>
       <Editable className="page-title --name" required
         placeholder="Название теста"
         value={name}
@@ -203,24 +222,17 @@ const TestEdit = ({ router }) => {
             </div>
           ))}
           <Button className="test-add-page__question__add-btn"
-            onClick={prevented(() => dispatch({ type: 'add-answer', questionIndex }))}>
+            onClick={() => dispatch({ type: 'add-answer', questionIndex })}>
             Добавить ответ
           </Button>
         </div>
       ))}
       <Button className="test-add-page__add-btn"
-        onClick={prevented(() => dispatch({ type: 'add-question' }))}>
+        onClick={() => dispatch({ type: 'add-question' })}>
         Добавить вопрос
       </Button>
-      {saved ? (
-        <Button className="test-add-page__send-btn" variant="disabled"
-          onClick={prevented()}>
-          Сохранено
-        </Button>
-      ) : (
-        <Button className="test-add-page__send-btn">Сохранить</Button>
-      )}
-      {initialized && id && (
+      {saveButton({ className: 'test-add-page__send-btn', onClick: submit })}
+      {conclusions && id && (
         <ConclusionForm
           testId={id}
           initial={conclusions}
