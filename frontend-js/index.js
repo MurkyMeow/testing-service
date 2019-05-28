@@ -25,6 +25,13 @@ const useGlobalState = (key, initial) => {
   return [value, update];
 };
 
+const notify = (type, text, timeout = 2500) => {
+  setGlobalState('notification', {
+    type, text, timeout,
+  });
+  setTimeout(() => setGlobalState('notification', {}), timeout);
+};
+
 const useDocument = (endpoint, options = {}) => {
   const [items, setItems] = useGlobalState(endpoint, []);
   const ep = () => {
@@ -34,23 +41,34 @@ const useDocument = (endpoint, options = {}) => {
     }
     return `${endpoint}?`;
   };
-  const refresh = () => {
+  const refresh = async () => {
     const { samples, include } = options;
     const url = samples ? `${ep()}samples=${samples}` : ep();
-    get(include ? `${url}&include=${include}` : url)
-      .then(res => setItems(res))
-      .catch(console.error);
+    try {
+      const res = await get(include ? `${url}&include=${include}` : url);
+      setItems(res);
+    } catch (err) {
+      notify('error', 'Сбой получения данных');
+    }
   };
-  const addItem = params => {
+  const addItem = async params => {
     const { include } = options;
-    put(ep(), include ? { ...params, include } : params)
-      .then(item => setItems([...items, item]))
-      .catch(console.error);
+    try {
+      const item = await put(ep(), include ? { ...params, include } : params)
+      notify('success', 'Успешно создано');
+      setItems([...items, item]);
+    } catch (err) {
+      notify('error', 'Не удалось создать');
+    }
   };
-  const removeItem = id => {
-    remove(`${ep()}id=${id}`)
-      .then(() => setItems(items.filter(x => x.id !== id)))
-      .catch(console.error);
+  const removeItem = async id => {
+    try {
+      await remove(`${ep()}id=${id}`);
+      setItems(items.filter(x => x.id !== id));
+      notify('error', 'Успешно удалено');
+    } catch (err) {
+      notify('error', 'Не удалось удалить');
+    }
   };
   useEffect(() => {
     if (!items.length) refresh();
@@ -66,13 +84,6 @@ const getKey = object => object.id || object[key];
 const canEdit = item =>
   item && item.creator && state.user &&
   (state.user.role === 'admin' || state.user.id === item.creator.id);
-
-const notify = (type, text, timeout = 2500) => {
-  setGlobalState('notification', {
-    type, text, timeout,
-  });
-  setTimeout(() => setGlobalState('notification', {}), timeout);
-};
 
 export {
   state,
