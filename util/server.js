@@ -55,7 +55,10 @@ const Rest = prefix => {
         const { verify } = options.put || standard.put;
         const { include, ...body } = ctx.request.body;
         ctx.assert(await verify(ctx), 409, 'This item already exists');
-        ctx.body = await makeQuery(ctx, model, include).insert(body);
+        ctx.body = await makeQuery(ctx, model, include).insert({
+          ...body,
+          creator_id: ctx.session.user.id,
+        });
       });
       router.patch(name, async ctx => {
         const { body } = ctx.request;
