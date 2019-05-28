@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import Link from 'next/link';
 import { useDocument, canEdit, notify } from '../index';
 import { useRequest, get, post } from '../api';
@@ -58,22 +58,26 @@ const Category = ({ category, stats, onRemove }) => {
 };
 
 const Categories = () => {
-  const [name, setName] = useState('');
+  const input = useRef();
   const { items, addItem, removeItem } = useDocument('/test/categories', {
     samples: '30',
     include: 'name,tests(name),creator(name)',
   });
   const [, stats = []] = useRequest(() => get('/stats/tests'));
+  const add = async () => {
+    if (!input.current.reportValidity()) return;
+    await addItem({ name: input.current.value });
+    input.current.value = '';
+  };
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
       <div className="page-categories__add">
-        <input className="page-categories__add-input"
+        <input className="page-categories__add-input" ref={input}
           placeholder="Название категории"
-          onChange={e => setName(e.target.value)}
+          required
         />
-        <Button className="page-categories__add-btn"
-          onClick={() => addItem({ name })}>
+        <Button className="page-categories__add-btn" onClick={add}>
           +
         </Button>
       </div>
