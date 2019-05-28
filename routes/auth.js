@@ -1,26 +1,33 @@
 const router = require('koa-joi-router');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { guard } = require('../util/server');
 
 const auth = router();
 
+const getSessionInfo = user => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+});
+
 auth.post('/signin', async ctx => {
   const { email, password } = ctx.request.body;
-  const user = await User.signin(email, password);
-  ctx.assert(user, 400, 'Invalid login');
+  const [user] = await User.query().where({ email });
+  const valid = user && bcrypt.compareSync(password, user.password);
+  ctx.assert(valid, 400, 'Invalid login');
   ctx.session.user = user;
-  ctx.body = { id: user.id, name: user.name, email: user.email };
+  ctx.body = getSessionInfo(user);
 });
 
 auth.post('/signup', async ctx => {
   const { email, password } = ctx.request.body;
-  try {
-    const id = await User.signup(email, password);
-    ctx.assert(id, 500);
-  } catch (err) {
-    ctx.throw(400, err);
-  }
-  ctx.body = { ok: true };
+  const [user] = await User.query().where({ email });
+  ctx.assert(!user, 400, 'That email is busy');
+  const hash = bcrypt.hashSync(password, 8);
+  const newUser = await User.query().insert({ email, password: hash });
+  ctx.session.user = newUser;
+  ctx.body = getSessionInfo(newUser);
 });
 
 auth.use(guard());
@@ -31,8 +38,8 @@ auth.post('/signout', async ctx => {
 });
 
 auth.get('/userinfo', async ctx => {
-  if (!ctx.session.user) ctx.throw(403, 'You ane not authorized');
-  ctx.body = ctx.session.user;
+  ctx.assert(ctx.session.user, 403, 'You are not authorized');
+  ctx.body = getSessionInfo(ctx.session.user);
 });
 
 auth.prefix('/auth');
