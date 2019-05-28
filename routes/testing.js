@@ -6,6 +6,7 @@ const Conclusion = require('../models/conclusion');
 const { Rest } = require('../util/server');
 
 const rest = Rest('/test');
+
 rest.register('/categories', Category, {
   put: {
     verify: async ctx => {
@@ -15,6 +16,7 @@ rest.register('/categories', Category, {
     },
   }
 });
+
 rest.register('/questions', Question, {
   get: {
     where: query => ({ test_id: query.test_id }),
@@ -26,6 +28,7 @@ rest.register('/questions', Question, {
     },
   },
 });
+
 rest.register('/tests', Test, {
   get: {
     where: query => ({ category_id: query.category_id }),
@@ -42,6 +45,7 @@ rest.register('/tests', Test, {
     }
   },
 });
+
 rest.router.get('/result', async ctx => {
   const { test_id } = ctx.request.query;
   const [result] = await Result.query().where({ user_id: ctx.session.user.id, test_id });
@@ -52,6 +56,7 @@ rest.router.get('/result', async ctx => {
     conclusion: await result.conclusion()
   };
 });
+
 rest.router.patch('/result', async ctx => {
   const { test_id, conclusions } = ctx.request.body;
   ctx.assert(Array.isArray(conclusions), 400, 'Conclusions should be an array');
@@ -64,6 +69,7 @@ rest.router.patch('/result', async ctx => {
     .upsertGraph(conclusions.map(x => ({ ...x, test_id })));
   ctx.body = { ok: true };
 });
+
 rest.router.post('/answer', async ctx => {
   const { testId, answers } = ctx.request.body;
   const questions = await Question.query()
