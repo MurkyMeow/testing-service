@@ -654,3 +654,18 @@ a {
   color: gray;
   cursor: pointer;
 }
+
+.page-flex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background: #9ba5b3;
+  padding: 5px;
+}
+.page-item {
+	background: #2e5b61;
+	font-size: 2.5rem;
+	color: #eee;
+	margin: 5px;
+	padding: 15px;
+}
