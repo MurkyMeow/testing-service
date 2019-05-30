@@ -455,8 +455,12 @@ a {
   height: 100%;
   cursor: pointer;
   background: #7802cc;
+  border-radius: 0 50% 50% 0;
   z-index: 1;
 
+  &:last-child {
+    border-radius: 50% 0 0 50%;
+  }
   &.--right {
     left: calc(100% - 30px);
   }
