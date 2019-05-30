@@ -33,10 +33,10 @@ const AuthForm = ({ type, onSuccess }) => {
   return (
     <form className="app-auth" onSubmit={submit}>
       <div className="app-auth-header">Заполните поля</div>
-      <input className="app-auth-field" name="email" placeholder="Email" required/>
-      <input className="app-auth-field" name="password" placeholder="Пароль" required/>
+      <input className="app-auth-field" name="email" type="email" placeholder="Email" required/>
+      <input className="app-auth-field" name="password" type="password" placeholder="Пароль" required/>
       {signup && (
-        <input className="app-auth-field" name="passwordAgain" required
+        <input className="app-auth-field" name="passwordAgain" type="password" required
           placeholder="Повторите пароль"
           onChange={onConfirmChange}
         />
