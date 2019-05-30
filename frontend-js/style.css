@@ -262,17 +262,15 @@ a {
 }
 .page-categories__category-header {
   position: relative;
-  color: #000;
   font-weight: bold;
   text-align: center;
-  background: #fff;
+  background: #c92834;
   padding: 5px 0;
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5);
   position: relative;
 }
 .page-categories__category-name {
   font-size: 16px;
-  color: #000;
   width: 85%;
   margin: 0 auto;
   text-align: center;
@@ -290,7 +288,7 @@ a {
 .page-categories__category-test-list {
   margin: 0;
   padding: 20px 10px 10px;
-  background: #9e1b92;
+  background: #332936;
 }
 .page-categories__test {
   margin-bottom: 10px;
@@ -321,7 +319,7 @@ a {
   display: flex;
   align-items: center;
   padding: 5px 10px;
-  background: #711368;
+  background: #3f344e;
 
   & > div {
     font-weight: bold;
@@ -338,6 +336,7 @@ a {
 
   & i {
     font-size: 16px;
+    font-weight: 100;
     margin-right: 2px;
   }
 }
