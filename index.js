@@ -1,6 +1,8 @@
 const Koa = require('koa');
+const Next = require('next');
 const cors = require('@koa/cors');
 const session = require('koa-session');
+const router = require('koa-joi-router');
 const bodyParser = require('koa-bodyparser');
 const { Model } = require('objection');
 const knex = require('knex');
@@ -12,16 +14,30 @@ const stats = require('./routes/stats');
 
 Model.knex(knex(config.development));
 
-const app = new Koa();
-app.keys = [env.secret];
-app.use(cors({ credentials: true }));
-app.use(bodyParser());
-app.use(session({ maxAge: 86400000 }, app));
+const next = Next({ dev: false, dir: 'frontend-js' });
 
-app.use(auth.middleware());
-app.use(testing.middleware());
-app.use(stats.middleware());
-app.use(async ctx => ctx.throw(404, 'Not found'));
+next.prepare().then(() => {
+  const app = new Koa();
+  const routes = router();
+  const handle = next.getRequestHandler();
 
-app.listen(4000);
-console.log('running on http://localhost:4000');
+  app.keys = [env.secret];
+  app.use(cors({ credentials: true }));
+  app.use(bodyParser());
+  app.use(session({ maxAge: 86400000 }, app));
+
+  app.use(auth.middleware());
+  app.use(testing.middleware());
+  app.use(stats.middleware());
+
+  routes.get('*', async ctx => {
+    await handle(ctx.req, ctx.res);
+    ctx.res.statusCode = 200;
+  });
+
+  app.use(routes.middleware());
+  app.use(async ctx => ctx.throw(404, 'Not found'));
+
+  app.listen(4000);
+  console.log('running on http://localhost:4000');
+});

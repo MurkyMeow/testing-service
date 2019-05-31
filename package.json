@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node .",
     "dev": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
+    "build": "next build frontend-js",
+    "serve": "next frontend-js",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -13,14 +15,19 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^2.2.3",
+    "@zeit/next-css": "^1.0.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "immer": "^3.1.2",
     "knex": "^0.16.3",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^6.0.0",
     "koa-session": "^5.11.0",
+    "next": "^8.1.0",
     "objection": "^1.6.7",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "sqlite3": "^4.0.6"
   },
   "devDependencies": {
@@ -28,6 +35,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-react": "^7.13.0",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "precss": "^4.0.0"
   }
 }
