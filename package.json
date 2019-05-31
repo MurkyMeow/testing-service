@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
+    "start": "node .",
+    "dev": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
     "lint": "eslint ."
   },
   "keywords": [],
