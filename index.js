@@ -12,11 +12,13 @@ const auth = require('./routes/auth');
 const testing = require('./routes/testing');
 const stats = require('./routes/stats');
 
-Model.knex(knex(config.development));
+const { NODE_ENV = 'development' } = process.env;
+
+Model.knex(knex(config[NODE_ENV]));
 
 const next = Next({
   dir: 'frontend-js',
-  dev: process.env.NODE_ENV !== 'production',
+  dev: NODE_ENV === 'development',
 });
 
 next.prepare().then(() => {

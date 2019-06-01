@@ -3,9 +3,7 @@ exports.up = knex =>
     table.increments('id').primary();
     table.string('text').notNullable();
     table.integer('correct').notNullable();
-    table.integer('question_id').unsigned().notNullable();
-    table.foreign('question_id').references('id').inTable('question')
-      .onDelete('CASCADE');
+    table.integer('question_id').references('question.id').onDelete('CASCADE');
   });
 
 exports.down = knex =>
