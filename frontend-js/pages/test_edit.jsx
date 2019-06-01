@@ -2,9 +2,16 @@ import { useState, useLayoutEffect, useRef, useReducer, useEffect } from 'react'
 import { withRouter } from 'next/router';
 import produce from 'immer';
 import { get, patch } from '../api';
-import { getKey, withKey } from '../index';
+import { getKey, withKey, notify } from '../index';
 import { Editable } from '../components/editable';
 import Button from '../components/button';
+
+const showError = err => {
+  const message = err.status === 400
+    ? 'Проверьте правильность данных'
+    : 'Ошибка при сохранении';
+  notify('error', message);
+};
 
 const makeAnswer = () => withKey({
   text: '',
@@ -71,8 +78,12 @@ const ConclusionForm = ({ testId, initial, max }) => {
     [...Array(max + 1).keys()].map(makeConclusion);
 
   const save = async () => {
-    await patch('/test/result', { test_id: testId, conclusions });
-    setSaved(true);
+    try {
+      await patch('/test/result', { test_id: testId, conclusions });
+      setSaved(true);
+    } catch (err) {
+      showError(err);
+    }
   };
   return <>
     <h2>Результаты:</h2>
@@ -166,13 +177,17 @@ const TestEdit = ({ router }) => {
 
   const submit = async () => {
     if (!form.current.reportValidity()) return;
-    if (category_id && !id) {
-      const res = await patch('/test/tests', { category_id, name, questions });
-      router.push(`/test_edit?id=${res.id}`);
-    } else {
-      await patch('/test/tests', { id, name, questions });
+    try {
+      if (category_id && !id) {
+        const res = await patch('/test/tests', { category_id, name, questions });
+        router.push(`/test_edit?id=${res.id}`);
+      } else {
+        await patch('/test/tests', { id, name, questions });
+      }
+      setSaved(true);
+    } catch (err) {
+      showError(err);
     }
-    setSaved(true);
   };
   return (
     <form className="test-add-page" onSubmit={e => e.preventDefault()} ref={form}>
