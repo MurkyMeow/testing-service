@@ -16,7 +16,7 @@ module.exports = class extends Model {
 
   async maxScore() {
     const rightAnswers = Question.relatedQuery('answers')
-      .where({ correct: 1 })
+      .where({ correct: true })
       .count()
       .as('maxScore');
     const data = await Question.query()
