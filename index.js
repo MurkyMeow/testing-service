@@ -14,7 +14,7 @@ const stats = require('./routes/stats');
 
 Model.knex(knex(config.development));
 
-const next = Next({ dev: false });
+const next = Next({ dev: false, dir: './frontend-js' });
 
 next.prepare().then(() => {
   const app = new Koa();

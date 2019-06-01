@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node .",
     "dev": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
-    "now-build": "next build frontend-js && mv frontend-js/.next .next",
+    "now-build": "next build frontend-js",
     "serve": "next frontend-js",
     "lint": "eslint ."
   },
