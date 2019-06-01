@@ -142,7 +142,7 @@ const TestEdit = ({ router }) => {
   const form = useRef();
   const [name, setName] = useState('');
   const [questions, dispatch] = useReducer(reducer, [makeQuestion()]);
-  const [conclusions, setConclusions] = useState();
+  const [conclusions, setConclusions] = useState([]);
   const {
     setSaved,
     initialize,
@@ -232,7 +232,7 @@ const TestEdit = ({ router }) => {
         Добавить вопрос
       </Button>
       {saveButton({ className: 'test-add-page__send-btn', onClick: submit })}
-      {conclusions && id && (
+      {id && (
         <ConclusionForm
           testId={id}
           initial={conclusions}
