@@ -4,7 +4,8 @@ exports.up = knex =>
     table.string('text').notNullable();
     table.integer('correct').notNullable();
     table.integer('question_id').unsigned().notNullable();
-    table.foreign('question_id').references('id').inTable('question');
+    table.foreign('question_id').references('id').inTable('question')
+      .onDelete('CASCADE');
   });
 
 exports.down = knex =>
