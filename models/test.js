@@ -22,7 +22,7 @@ module.exports = class extends Model {
     const data = await Question.query()
       .where({ test_id: this.id })
       .select(rightAnswers);
-    return data ? data.reduce((acc, el) => acc + el.maxScore, 0) : null;
+    return data ? data.reduce((acc, el) => acc + Number(el.maxScore), 0) : null;
   }
 
   static get relationMappings() {
