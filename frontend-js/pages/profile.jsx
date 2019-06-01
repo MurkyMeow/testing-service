@@ -18,11 +18,12 @@ const Profile = ({ router }) => {
   if (status.error === 404) return <div className="page-title">Этот профиль не существует =(</div>;
   if (status.error) return <div className="page-title">Не удалось загрузить профиль.</div>;
   if (!profile) return <div className="page-title">Загрузка...</div>;
+  const ours = user && user.id === profile.id;
   return (
     <div className="profile">
       <Editable className="profile__name" placeholder="Сменить имя"
-        disabled={user && user.id !== profile.id}
-        initial={profile.name || profile.id}
+        disabled={!ours}
+        initial={profile.name || (ours ? '' : `Пользователь №${profile.id}`)}
         onAlter={changeName}
       />
       {profile.results.length > 0 && <>
