@@ -1,5 +1,5 @@
 const withCSS = require('@zeit/next-css');
 
 module.exports = withCSS({
-  distDir: '../.next',
+  distDir: '~/var/task',
 });
