@@ -33,7 +33,7 @@ const Profile = ({ router }) => {
             <div className="profile__finished-test" key={result.id}>
               {result.test.name} ({result.score} из {result.maxScore})
               {result.conclusion && <>
-                <div class="profile__finished-test-conclusion">
+                <div className="profile__finished-test-conclusion">
                   {result.conclusion}
                 </div>
                 <i>info</i>
