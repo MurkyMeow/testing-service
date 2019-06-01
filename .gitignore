@@ -1,5 +1,5 @@
 node_modules
-frontend/package-lock.json
+package-lock.json
 elm-stuff
 dist
 *.bak
