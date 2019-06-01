@@ -75,7 +75,7 @@ rest.router.post('/answer', async ctx => {
   const questions = await Question.query()
     .where({ test_id: testId })
     .eager('answers')
-    .modifyEager('answers', m => m.where({ correct: 1 }));
+    .modifyEager('answers', m => m.where({ correct: true }));
   const correct = new Set();
   const incorrect = new Set();
   for (const [questionId, answerIds] of Object.entries(answers)) {

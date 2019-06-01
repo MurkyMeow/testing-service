@@ -8,7 +8,7 @@ import Button from '../components/button';
 
 const makeAnswer = () => withKey({
   text: '',
-  correct: 0,
+  correct: false,
 });
 const makeQuestion = () => withKey({
   text: '',

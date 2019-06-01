@@ -37,7 +37,7 @@ function parse(ctx, [field, ...rest], builder) {
     builder
       .mergeEager(eager)
       .modifyEager(eager, eagerBuilder => {
-        eagerBuilder.select('id');
+        eagerBuilder.select('id').orderBy('id', 'asc');
         const subfields = split(eagerRest.replace(/\)$/, ''));
         parse(ctx, subfields, eagerBuilder);
       });
@@ -51,7 +51,7 @@ function makeQuery(ctx, model, requestedFields) {
     'What fields should i give you? Please, specify the "include" param'
   );
   const fields = split(requestedFields);
-  const builder = model.query().select('id');
+  const builder = model.query().select('id').orderBy('id', 'asc');
   return parse(ctx, fields, builder);
 }
 
