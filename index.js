@@ -39,5 +39,5 @@ next.prepare().then(() => {
   app.use(async ctx => ctx.throw(404, 'Not found'));
 
   app.listen(process.env.PORT);
-  console.log('ready on lala');
+  console.log('ready on port', process.env.PORT);
 });
