@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "knex migrate:latest && knex seed:run && next build frontend-js && node .",
+    "start": "knex migrate:latest && knex seed:run && next build frontend-js && NODE_ENV=production node .",
     "dev": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
     "serve": "next frontend-js",
     "lint": "eslint ."
