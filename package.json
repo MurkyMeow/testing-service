@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
+    "start": "knex migrate:latest && knex seed:run && next build frontend-js && node .",
     "dev": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
-    "now-build": "next build frontend-js",
     "serve": "next frontend-js",
     "lint": "eslint ."
   },
@@ -26,6 +25,7 @@
     "koa-session": "^5.11.0",
     "next": "^8.1.0",
     "objection": "^1.6.7",
+    "precss": "^4.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "sqlite3": "^4.0.6"
@@ -35,7 +35,6 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-react": "^7.13.0",
-    "nodemon": "^1.18.10",
-    "precss": "^4.0.0"
+    "nodemon": "^1.18.10"
   }
 }

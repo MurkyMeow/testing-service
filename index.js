@@ -14,7 +14,7 @@ const stats = require('./routes/stats');
 
 Model.knex(knex(config.development));
 
-const next = Next({ dev: false, dir: './frontend-js' });
+const next = Next({ dev: false, dir: 'frontend-js' });
 
 next.prepare().then(() => {
   const app = new Koa();
@@ -38,6 +38,6 @@ next.prepare().then(() => {
   app.use(routes.middleware());
   app.use(async ctx => ctx.throw(404, 'Not found'));
 
-  app.listen(4000);
-  console.log('running on http://localhost:4000');
+  app.listen(process.env.PORT);
+  console.log('ready on port', process.env.PORT);
 });

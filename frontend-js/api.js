@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export const get = (url, options) =>
-  fetch(`http://localhost:4000${url}`, {
+  fetch(url, {
     ...options,
     credentials: 'include',
   }).then(res => {
