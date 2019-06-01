@@ -5,5 +5,12 @@ module.exports = {
       filename: './system-testing.sqlite'
     },
     useNullAsDefault: true
-  }
+  },
+  production: {
+    client: 'sqlite3',
+    connection: {
+      filename: './system-testing.sqlite'
+    },
+    useNullAsDefault: true
+  },
 };
