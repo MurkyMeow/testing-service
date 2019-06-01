@@ -1,10 +1,10 @@
-exports.seed = (knex, Promise) => Promise.all([
-  knex('category').insert([
+exports.seed = async knex => {
+  await knex('category').insert([
     { name: 'Курс 1', creator_id: 1 },
     { name: 'Курс 2', creator_id: 1 },
     { name: 'Методические тесты', creator_id: 1 },
-  ]),
-  knex('test').insert([
+  ]);
+  await knex('test').insert([
     { category_id: 1, name: 'Тест на конфликтность', creator_id: 1 },
     { category_id: 1, name: 'Тест на уверенность', creator_id: 1 },
     { category_id: 1, name: 'Тест на страстность', creator_id: 1 },
@@ -23,8 +23,8 @@ exports.seed = (knex, Promise) => Promise.all([
     { category_id: 3, name: 'Методика "Мотивы профессиональной деятельности"', creator_id: 1 },
     { category_id: 3, name: 'Методика "Личностная готовность к переменам"', creator_id: 1 },
     { category_id: 3, name: 'Опросник "Карьерные ориентации"', creator_id: 1 },
-  ]),
-  knex('question').insert([
+  ]);
+  await knex('question').insert([
     { test_id: 1, text: 'Быть или не быть?' },
     { test_id: 1, text: 'Почему яблоко упало на ученного?' },
     { test_id: 1, text: 'Как перестать думать о белом тигре?' },
@@ -32,8 +32,8 @@ exports.seed = (knex, Promise) => Promise.all([
     { test_id: 1, text: 'Вы любите ананасы?' },
     { test_id: 11, text: 'Вам часто кажется, что у вас все получиться?' },
     { test_id: 11, text: 'Вы уверенный в себе человек?' }
-  ]),
-  knex('answer').insert([
+  ]);
+  await knex('answer').insert([
     { question_id: 3, text: 'вспомнить о зеленой обезьяне', correct: 1 },
     { question_id: 3, text: 'я и так о нем не думаю, другие вещи затмевают его', correct: 1 },
     { question_id: 3, text: 'Понятия не имею, теперь сидит в башке', correct: 0 },
@@ -52,9 +52,9 @@ exports.seed = (knex, Promise) => Promise.all([
     { question_id: 8, text: 'Я даже познакомиться стремаю, о чем Вы?', correct: 0 },
     { question_id: 6, text: 'Выгода', correct: 1 },
     { question_id: 6, text: 'Компромисс', correct: 1 },
-  ]),
-  knex('conclusion').insert([
+  ]);
+  await knex('conclusion').insert([
     { test_id: 1, min_score: 0, text: 'Вы можете избегать конфликты, но могли бы их еще и предотвращать' },
     { test_id: 1, min_score: 0.9, text: 'Любой конфликт не представляет для вас угрозы' },
-  ])
-]);
+  ]);
+};
