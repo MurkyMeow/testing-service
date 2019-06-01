@@ -1,10 +1,12 @@
 module.exports = {
   development: {
-    client: 'sqlite3',
+    client: 'pg',
     connection: {
-      filename: './system-testing.sqlite'
+      host: 'localhost',
+      user: 'postgres',
+      password: '12345',
+      database: 'postgres'
     },
-    useNullAsDefault: true
   },
   production: {
     client: 'pg',
