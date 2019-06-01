@@ -59,14 +59,22 @@ rest.router.get('/result', async ctx => {
 
 rest.router.patch('/result', async ctx => {
   const { test_id, conclusions } = ctx.request.body;
+  ctx.assert(test_id, 400, 'Dont forget to specify test_id!');
   ctx.assert(Array.isArray(conclusions), 400, 'Conclusions should be an array');
   ctx.assert(conclusions.every(x => x.min_score >= 0), 400, 'Min score should be a positive number');
   ctx.assert(conclusions.every(x => x.text), 400, 'Every result should have a text');
+
   const unique = new Set(conclusions.map(x => Number(x.min_score)));
   ctx.assert(unique.size === conclusions.length, 400, 'You can not have conclusions with similar score');
+
+  await Conclusion.query()
+    .whereNotIn('id', conclusions.map(x => x.id).filter(x => x))
+    .andWhere({ test_id })
+    .del();
   await Conclusion.query()
     .where({ test_id })
     .upsertGraph(conclusions.map(x => ({ ...x, test_id })));
+
   ctx.body = { ok: true };
 });
 
