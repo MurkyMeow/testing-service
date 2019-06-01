@@ -46,6 +46,9 @@ function useSave(isSaved, autoInit, reactTo) {
 const ConclusionForm = ({ testId, initial, max }) => {
   const [conclusions, setConclusions] = useState(initial);
   const { saveButton, setSaved } = useSave(true, true, [conclusions]);
+  useEffect(() => {
+    setConclusions(initial);
+  }, [initial]);
   const add = () => {
     setConclusions([...conclusions, makeConclusion()]);
   };
