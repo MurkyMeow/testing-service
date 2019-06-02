@@ -2,7 +2,7 @@
   --black: #100e17;
   --black-lighter: #312d3c;
   --orange-gradient: linear-gradient(90deg, #fc6572, #ff805a, #ff9747);
-  --violet-gradient: linear-gradient(to left, #6900b2, #c02d7d);
+  --violet-gradient: linear-gradient(to right, #b701ac, #4e007e);
   --shadow: 1px 3px 4px var(--black);
   font-family: Arial, Helvetica, sans-serif
 }
@@ -10,7 +10,7 @@
 body {
   margin: 0;
   color: #fff;
-  background: var(--black);
+  background:#4a0079;
 }
 
 i {
@@ -50,13 +50,12 @@ a {
 
 .button {
   display: inline-block;
-  padding: 8px 15px;
+  padding: 5px 15px;
   border: none;
-  border-radius: 15px;
+  border-radius: 8px;
   color: white;
   cursor: pointer;
-  background: var(--orange-gradient);
-  transition: .3s box-shadow;
+  background: #f66200;
   text-align: center;
   text-decoration: none;
   font-weight: bold;
@@ -264,7 +263,7 @@ a {
   pointer-events: none;
   z-index: 1;
   padding: 5px 10px;
-  background: indigo;
+  background: #2d0153;
   animation: appear .25s forwards;
 }
 
@@ -283,6 +282,7 @@ a {
 }
 .page-categories__add-btn {
   padding: 6px 10px;
+  border-radius: 50%;
 }
 .page-categories__category-list {
   display: flex;
