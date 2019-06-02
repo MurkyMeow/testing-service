@@ -12,12 +12,13 @@ rest.router.get('/tests', async ctx => {
 });
 
 rest.router.get('/profile', async ctx => {
-  const id = ctx.request.query.id || ctx.session.user.id;
+  const userid = ctx.session.user && ctx.session.user.id;
+  const id = Number(ctx.request.query.id) || userid;
   const fields = `
     name,
     tests(
-      name,
-      results(score,user(name))
+      name
+      ${id === userid ? ',results(score,user(name))' : ''}
     ),
     results(
       score,

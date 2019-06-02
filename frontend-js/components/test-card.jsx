@@ -20,7 +20,7 @@ export const TestCard = ({ className, test, editable, onDelete }) => {
           <i className="test-card__delete-btn" onClick={removeItem}>close</i>
         </>}
         <div className="test-card__name">{test.name}</div>
-        {test.results.length && <>
+        {test.results && test.results.length && <>
           <div className="test-card__results-header">Результаты пользователей:</div>
           <div className="test-card__results">
             {test.results.map(res => (
