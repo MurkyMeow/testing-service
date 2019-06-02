@@ -24,9 +24,7 @@ export const TestCard = ({ className, test, editable, onDelete }) => {
           <div className="test-card__results-header">Результаты пользователей:</div>
           <div className="test-card__results">
             {test.results.map(res => (
-              <Link href={`/profile?id=${res.user.id}`} key={res.id}>
-                <TestResult result={res}/>
-              </Link>
+              <TestResult result={res} key={res.id}/>
             ))}
           </div>
         </>}

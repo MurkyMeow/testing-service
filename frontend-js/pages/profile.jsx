@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { withRouter } from 'next/router';
 import { useGlobalState } from '../index';
 import { get, useRequest, post } from '../api';
@@ -30,9 +29,7 @@ const Profile = ({ router }) => {
       {profile.results.length > 0 && <>
         <h3>Пройденные тесты:</h3>
         {profile.results.map(result => result.test && (
-          <Link href={`/test?id=${result.test_id}`} key={result.id}>
-            <TestResult result={result}/>
-          </Link>
+          <TestResult result={result} key={result.id}/>
         ))}
       </>}
       {profile.tests.length > 0 && <>
