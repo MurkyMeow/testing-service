@@ -1,5 +1,6 @@
 const { Rest } = require('../util/server');
 const { guard } = require('../util/server');
+const { makeQuery } = require('../util/parser');
 const Result = require('../models/result');
 const User = require('../models/user');
 
@@ -12,15 +13,19 @@ rest.router.get('/tests', async ctx => {
 
 rest.router.get('/profile', async ctx => {
   const id = ctx.request.query.id || ctx.session.user.id;
-  const profile = await User.query()
-    .findById(id)
-    .eager('[tests, results.test]');
-  if (!profile) ctx.throw(404, 'Requested profile does not exist');
-  // TODO: this is hacky, refactor somehow?
-  for (const result of profile.results) {
-    result.conclusion = await result.conclusion();
-    result.maxScore = await result.test.maxScore();
-  }
+  const fields = `
+    name,
+    tests(
+      name,
+      results(score,user(name))
+    ),
+    results(
+      score,
+      test(name)
+    )
+  `;
+  const profile = await makeQuery(ctx, User, fields).findById(id);
+  ctx.assert(profile, 404, 'Requested profile does not exist');
   ctx.body = profile;
 });
 

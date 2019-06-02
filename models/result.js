@@ -6,12 +6,25 @@ module.exports = class extends Model {
     return 'result';
   }
 
-  async conclusion() {
-    const items = await Conclusion.query()
-      .where({ test_id: this.test_id })
-      .where('min_score', '<=', this.score);
-    const [conclusion] = items.sort((a, b) => b.min_score - a.min_score);
-    return conclusion ? conclusion.text : '';
+  static get schema() {
+    return {
+      score: {
+        access: 'any',
+      },
+    };
+  }
+
+  async $afterGet() {
+    if (this.test_id || this.test) {
+      const test_id = this.test_id || this.test.id;
+      const [conclusion] = await Conclusion.query()
+        .where({ test_id })
+        .where('min_score', '<=', this.score)
+        .orderBy('min_score', 'DESC');
+      this.conclusion = conclusion ? conclusion.text : '';
+    } else {
+      this.conclusion = '';
+    }
   }
 
   static get relationMappings() {

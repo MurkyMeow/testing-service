@@ -48,12 +48,16 @@ rest.register('/tests', Test, {
 
 rest.router.get('/result', async ctx => {
   const { test_id } = ctx.request.query;
-  const [result] = await Result.query().where({ user_id: ctx.session.user.id, test_id });
-  const test = await Test.query().findById(test_id);
+  const test = await Test.query().findById(test_id)
+    .eager('results')
+    .modifyEager('results', m => {
+      m.findOne({ user_id: ctx.session.user.id });
+    });
+  const [result] = test.results;
   ctx.body = {
-    maxScore: await test.maxScore(),
     score: result.score,
-    conclusion: await result.conclusion()
+    maxScore: test.maxScore,
+    conclusion: result.conclusion,
   };
 });
 

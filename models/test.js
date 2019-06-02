@@ -14,20 +14,21 @@ module.exports = class extends Model {
     };
   }
 
-  async maxScore() {
+  async $afterGet() {
     const rightAnswers = Question.relatedQuery('answers')
       .where({ correct: true })
       .count()
       .as('maxScore');
-    const data = await Question.query()
+    const answers = await Question.query()
       .where({ test_id: this.id })
       .select(rightAnswers);
-    return data ? data.reduce((acc, el) => acc + Number(el.maxScore), 0) : null;
+    this.maxScore = answers.reduce((acc, el) => acc + Number(el.maxScore), 0);
   }
 
   static get relationMappings() {
     const Conclusion = require('./conclusion');
     const Category = require('./category');
+    const Result = require('./result');
     const User = require('./user');
     return {
       creator: {
@@ -44,6 +45,14 @@ module.exports = class extends Model {
         join: {
           from: 'test.id',
           to: 'conclusion.test_id'
+        }
+      },
+      results: {
+        relation: Model.HasManyRelation,
+        modelClass: Result,
+        join: {
+          from: 'test.id',
+          to: 'result.test_id'
         }
       },
       questions: {
