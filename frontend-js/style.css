@@ -185,8 +185,13 @@ a {
   margin-bottom: 10px;
 }
 .test-card__results-header {
-  margin: 10px 0 5px;
+  margin: 10px 0;
   text-decoration: underline;
+}
+.test-card__results {
+  & .test-result {
+    margin-bottom: 5px;
+  }
 }
 .test-card__edit-btn,
 .test-card__delete-btn {
