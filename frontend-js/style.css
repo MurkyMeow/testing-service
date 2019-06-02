@@ -184,8 +184,9 @@ a {
 .test-card__name {
   margin-bottom: 10px;
 }
-.test-card__description {
-  margin: auto 0;
+.test-card__results-header {
+  margin: 10px 0 5px;
+  text-decoration: underline;
 }
 .test-card__edit-btn,
 .test-card__delete-btn {

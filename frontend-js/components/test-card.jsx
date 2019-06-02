@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Button from './button';
 import { remove } from '../api';
 import { canEdit, notify } from '../index';
+import { TestResult } from './test-result';
 
 export const TestCard = ({ className, test, editable, onDelete }) => {
   const removeItem = async () => {
@@ -19,7 +20,16 @@ export const TestCard = ({ className, test, editable, onDelete }) => {
           <i className="test-card__delete-btn" onClick={removeItem}>close</i>
         </>}
         <div className="test-card__name">{test.name}</div>
-        <div className="test-card__description">Описание</div>
+        {test.results.length && <>
+          <div className="test-card__results-header">Результаты пользователей:</div>
+          <div className="test-card__results">
+            {test.results.map(res => (
+              <Link href={`/profile?id=${res.user.id}`} key={res.id}>
+                <TestResult result={res}/>
+              </Link>
+            ))}
+          </div>
+        </>}
       </div>
       <div className="test-card__stats">
         {test.questions && (
