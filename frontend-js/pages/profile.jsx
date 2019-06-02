@@ -4,6 +4,7 @@ import { useGlobalState } from '../index';
 import { get, useRequest, post } from '../api';
 import { TestCard } from '../components/test-card';
 import { Editable } from '../components/editable';
+import { TestResult } from '../components/test-result';
 
 const Profile = ({ router }) => {
   const [user, setUser] = useGlobalState('user');
@@ -30,15 +31,7 @@ const Profile = ({ router }) => {
         <h3>Пройденные тесты:</h3>
         {profile.results.map(result => result.test && (
           <Link href={`/test?id=${result.test_id}`} key={result.id}>
-            <div className="profile__finished-test" key={result.id}>
-              {result.test.name} ({result.score} из {result.maxScore})
-              {result.conclusion && <>
-                <div className="profile__finished-test-conclusion">
-                  {result.conclusion}
-                </div>
-                <i>info</i>
-              </>}
-            </div>
+            <TestResult result={result}/>
           </Link>
         ))}
       </>}
