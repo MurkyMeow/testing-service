@@ -11,7 +11,7 @@ export const TestResult = ({ result }) => (
     <div className="test-result">
       {result.test
         ? result.test.name
-        : result.user.name
+        : result.user.name || `Пользователь №${result.user.id}`
       }
       {result.test
         ? ` (${result.score} из ${result.test.maxScore})`
