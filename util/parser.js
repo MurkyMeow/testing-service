@@ -50,7 +50,7 @@ function makeQuery(ctx, model, requestedFields) {
   ctx.assert(requestedFields, 400,
     'What fields should i give you? Please, specify the "include" param'
   );
-  const fields = split(requestedFields);
+  const fields = split(requestedFields.replace(/\s+|\n/gm, ''));
   const builder = model.query().select('id').orderBy('id', 'asc');
   return parse(ctx, fields, builder);
 }
