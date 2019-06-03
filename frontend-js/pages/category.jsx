@@ -4,23 +4,29 @@ import { useRequest, get } from '../api';
 import Button from '../components/button';
 
 const Category = ({ router }) => {
-  const [, items, setItems] = useRequest(() =>
-    get(`/test/tests?category_id=${router.query.id}&include=name,creator(name)`)
-  );
+  const req = () => get(`/test/categories?id=${router.query.id}&include=
+    name,
+    tests(name,creator(name))
+  `);
+  const [, category, setCategory] = useRequest(req, { only: true });
   const addTest = () => {
     router.push(`/test_edit?category_id=${router.query.id}`);
   };
   const deleteTest = id => {
-    setItems(items.filter(x => x.id !== id));
+    setCategory({
+      ...category,
+      tests: category.tests.filter(x => x.id !== id)
+    });
   };
-  if (!items) return <div className="page-title">Загрузка...</div>;
+  if (!category) return <div className="page-title">Загрузка...</div>;
   return (
     <div className="category-page">
-      {!items.length && <>
+      <div className="page-title">{category.name}</div>
+      {!category.tests.length && <>
         <div className="page-title">Добавить первый тест в этой категории..?</div>
       </>}
       <div className="category-page__test-list">
-        {items.map(test => (
+        {category.tests.map(test => (
           <TestCard test={test} key={test.id} onDelete={() => deleteTest(test.id)}/>
         ))}
       </div>

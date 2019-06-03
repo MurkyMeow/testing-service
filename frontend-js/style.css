@@ -426,7 +426,6 @@ a {
   display: grid;
   grid-template-columns: repeat(3, 300px);
   justify-content: center;
-  padding: 20px;
 
   & .test-card {
     margin: 20px;
