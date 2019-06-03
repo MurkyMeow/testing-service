@@ -18,9 +18,6 @@ rest.register('/categories', Category, {
 });
 
 rest.register('/questions', Question, {
-  get: {
-    where: query => ({ test_id: query.test_id }),
-  },
   put: {
     verify: async ctx => {
       const items = await Test.query().where({ id: ctx.request.body.test_id });
@@ -30,9 +27,6 @@ rest.register('/questions', Question, {
 });
 
 rest.register('/tests', Test, {
-  get: {
-    where: query => ({ category_id: query.category_id }),
-  },
   patch: {
     verify: async ctx => {
       const { name, questions = [] } = ctx.request.body;
