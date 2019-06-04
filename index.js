@@ -30,6 +30,7 @@ next.prepare().then(() => {
   app.use(cors({ credentials: true }));
   app.use(bodyParser());
   app.use(session({ maxAge: 86400000 }, app));
+  app.use(require('koa-static')(`${__dirname}/assets`));
 
   app.use(auth.middleware());
   app.use(testing.middleware());
