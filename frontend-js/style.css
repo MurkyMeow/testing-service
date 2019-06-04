@@ -156,22 +156,6 @@ a {
   }
 }
 
-.list-page {
-  margin-top: 20px;
-}
-.list-page-title {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 30px;
-}
-.list-page-items {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, var(--column-width));
-  justify-content: center;
-  gap: 20px;
-}
-
 .test-card__summary {
   display: flex;
   flex-direction: column;
