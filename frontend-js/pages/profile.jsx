@@ -38,7 +38,7 @@ const Profile = ({ router }) => {
           {profile.tests.map(test => (
             <TestCard className="profile__test" key={test.id}
               test={test}
-              editable={test.creator_id === user.id}
+              editable={profile.id === user.id}
             />
           ))}
         </div>
