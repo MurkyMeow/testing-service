@@ -63,7 +63,7 @@ const Rest = prefix => {
         const { body } = ctx.request;
         ctx.assert(await isCreator(ctx, model), 403, 'Forbidden');
         const verify = (options.patch && options.patch.verify) || standard.patch.verify;
-        if (verify) await verify(ctx, model);
+        await verify(ctx, model);
         const patch = body.id
           ? body
           : { ...body, creator_id: ctx.session.user.id };
