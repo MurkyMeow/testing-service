@@ -26,9 +26,7 @@ const standard = {
 
 const guard = role => async (ctx, next) => {
   const { user } = ctx.session;
-  if (!user || (role && user.role !== role)) {
-    ctx.throw(403, 'Forbidden');
-  }
+  ctx.assert(user && (!role || user.role === role), 403);
   await next();
 };
 
@@ -46,7 +44,7 @@ const Rest = prefix => {
           ctx.body = await query.limit(samples);
         } else {
           const { where } = id ? standard.get : options.get;
-          if (!where) ctx.throw('Couldnt find a `where` handler. Did you forget to specify id?', 400);
+          ctx.assert(where, 400, 'Couldnt find a `where` handler. Did you forget to specify id?');
           ctx.body = await query.where(where(ctx.request.query));
         }
       }
@@ -81,12 +79,9 @@ const Rest = prefix => {
         const { id } = ctx.request.query;
         const { role } = ctx.session.user;
         const [item] = await model.query().where({ id });
-        if (role === 'admin' || ctx.session.user.id === item.creator_id) {
-          await model.query().deleteById(id);
-          ctx.body = { ok: true };
-        } else {
-          ctx.throw(403, 'forbidden');
-        }
+        ctx.assert(role === 'admin' || ctx.session.user.id === item.creator_id, 403);
+        await model.query().deleteById(id);
+        ctx.body = { ok: true };
       }
 
       router.get(name, handleGet);
