@@ -32,6 +32,23 @@ rest.router.get('/profile', async ctx => {
 
 rest.router.use(guard());
 
+rest.router.get('/profiles', async ctx => {
+  ctx.assert(ctx.session.user.role === 'admin', 403);
+  const { role = '' } = ctx.request.query;
+  ctx.body = await makeQuery(ctx, User, 'name').where({ role });
+});
+
+rest.router.post('/assign', async ctx => {
+  ctx.assert(ctx.session.user.role === 'admin', 403);
+  const { id, role } = ctx.request.body;
+  const notSelf = Number(id) !== ctx.session.user.id;
+  ctx.assert(notSelf, 400, 'Cant change your own role');
+  const user = await makeQuery(ctx, User, 'name').findById(id);
+  ctx.assert(user, 404);
+  await user.$query().update({ role });
+  ctx.body = user;
+});
+
 rest.router.post('/name', async ctx => {
   const { name } = ctx.request.body;
   await User.query()

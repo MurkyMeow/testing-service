@@ -7,6 +7,7 @@ const auth = router();
 
 const getSessionInfo = user => ({
   id: user.id,
+  role: user.role,
   name: user.name,
   email: user.email,
 });

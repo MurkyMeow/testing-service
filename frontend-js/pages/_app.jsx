@@ -80,6 +80,9 @@ const Header = ({ router }) => {
       <a className="app-header-logo" href="/">Nice header there</a>
       {user ? <>
         <Button className="app-header-nav-btn" link="/categories">Категории</Button>
+        {user.role === 'admin' && (
+          <Button className="app-header-nav-btn" link="/moderation">Модерация</Button>
+        )}
         <nav className="app-header-auth">
           <Button className="app-header-nav-btn" link="/profile">{user.name ? user.name : 'Профиль'}</Button>
           <Button className="app-header-nav-btn" onClick={signout}>Выйти</Button>

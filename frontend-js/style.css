@@ -299,6 +299,28 @@ a {
   }
 }
 
+.page-moderation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.page-moderation__teacher {
+  margin-bottom: 15px;
+
+  & .button {
+    font-size: 12px;
+    margin-left: 10px;
+  }
+}
+.page-moderation__form {
+  margin-top: 30px;
+
+  & input {
+    font: inherit;
+    margin-right: 10px;
+  }
+}
+
 .page-categories__add {
   display: flex;
   justify-content: center;
