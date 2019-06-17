@@ -16,6 +16,7 @@ rest.router.get('/profile', async ctx => {
   const id = Number(ctx.request.query.id) || userid;
   const fields = `
     name,
+    role,
     tests(
       name
       ${id === userid ? ',results(score,user(name))' : ''}

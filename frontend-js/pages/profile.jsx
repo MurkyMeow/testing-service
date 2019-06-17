@@ -21,6 +21,11 @@ const Profile = ({ router }) => {
   const ours = user && user.id === profile.id;
   return (
     <div className="profile">
+      <h2>
+        {profile.role === 'teacher' && 'Преподаватель'}
+        {profile.role === 'admin' && 'Администратор'}
+        {!profile.role && 'Студент'}
+      </h2>
       <Editable className="profile__name" placeholder="Сменить имя"
         disabled={!ours}
         initial={profile.name || (ours ? '' : `Пользователь №${profile.id}`)}

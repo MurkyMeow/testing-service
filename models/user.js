@@ -10,6 +10,9 @@ module.exports = class extends Model {
       name: {
         access: 'any',
       },
+      role: {
+        access: 'any',
+      },
     };
   }
 
