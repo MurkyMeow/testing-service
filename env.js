@@ -1,5 +1,5 @@
 module.exports = {
-  localhost: '192.168.0.106',
+  localhost: 'localhost',
   secret: 'LinuxMacWindowsLinuxMacWindowsLinuxMacWindows',
   admin: {
     email: 'feel@my',
