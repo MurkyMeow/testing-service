@@ -84,12 +84,13 @@ const Rest = prefix => {
         ctx.body = { ok: true };
       }
 
-      router.get(name, handleGet);
-      router.use(guard('teacher'));
-      router.put(name, handlePut);
-      router.post(name, handlePost);
-      router.patch(name, handlePatch);
-      router.delete(name, handleDelete);
+      router
+        .get(name, handleGet)
+        .use(name, guard('teacher'))
+        .put(name, handlePut)
+        .post(name, handlePost)
+        .patch(name, handlePatch)
+        .delete(name, handleDelete);
     }
   };
 };

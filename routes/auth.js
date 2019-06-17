@@ -12,6 +12,8 @@ const salt = 8;
     role: 'admin',
     email: admin.email,
     password: bcrypt.hashSync(admin.password, salt),
+  }, {
+    insertMissing: true,
   });
 })();
 

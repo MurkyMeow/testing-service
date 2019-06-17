@@ -1,12 +1,15 @@
 module.exports = {
   development: {
-    client: 'pg',
+    client: 'sqlite3',
     connection: {
-      host: 'localhost',
-      user: 'postgres',
-      password: '12345',
-      database: 'postgres'
+      filename: './system-testing.sqlite',
     },
+    useNullAsDefault: true,
+    pool: {
+      afterCreate(conn, cb) {
+        conn.run('PRAGMA foreign_keys = ON', cb);
+      }
+    }
   },
   production: {
     client: 'pg',
