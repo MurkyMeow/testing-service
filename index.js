@@ -45,6 +45,9 @@ next.prepare().then(() => {
   app.use(async ctx => ctx.throw(404, 'Not found'));
 
   const port = process.env.PORT || 4000;
-  app.listen(port);
-  console.log('ready on port', port);
+  app.listen(port, env.localhost);
+  console.log(NODE_ENV === 'development'
+    ? `ready on ${env.localhost}:${port}`
+    : 'running'
+  );
 });
