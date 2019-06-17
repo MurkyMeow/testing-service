@@ -1,7 +1,19 @@
 const router = require('koa-joi-router');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const { admin } = require('../env');
 const { guard } = require('../util/server');
+
+const salt = 8;
+
+(async () => {
+  await User.query().upsertGraph({
+    id: 1,
+    role: 'admin',
+    email: admin.email,
+    password: bcrypt.hashSync(admin.password, salt),
+  });
+})();
 
 const auth = router();
 
@@ -25,7 +37,7 @@ auth.post('/signup', async ctx => {
   const { email, password } = ctx.request.body;
   const [user] = await User.query().where({ email });
   ctx.assert(!user, 400, 'That email is busy');
-  const hash = bcrypt.hashSync(password, 8);
+  const hash = bcrypt.hashSync(password, salt);
   const newUser = await User.query().insert({ email, password: hash });
   ctx.session.user = newUser;
   ctx.body = getSessionInfo(newUser);
