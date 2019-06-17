@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import Link from 'next/link';
-import { useDocument, canEdit, notify } from '../index';
+import { useDocument, canEdit, notify, canCreate } from '../index';
 import { useRequest, get, post } from '../api';
 import { Editable } from '../components/editable';
 import Button from '../components/button';
@@ -37,9 +37,11 @@ const Category = ({ category, stats, onRemove }) => {
             finished={stats.find(x => x.test && x.test.id === test.id)}
           />
         ))}
-        <Link href={`/test_edit?category_id=${category.id}`}>
-          <div className="page-categories__test-add-btn">Добавить тест</div>
-        </Link>
+        {canCreate() && (
+          <Link href={`/test_edit?category_id=${category.id}`}>
+            <div className="page-categories__test-add-btn">Добавить тест</div>
+          </Link>
+        )}
       </div>
       <div className="page-categories__category-summary">
         <div><i>info</i>6</div>
@@ -72,15 +74,17 @@ const Categories = () => {
   return (
     <div className="page-categories">
       <div className="page-title">Категории</div>
-      <div className="page-categories__add">
-        <input className="page-categories__add-input" ref={input}
-          placeholder="Название категории"
-          required
-        />
-        <Button className="page-categories__add-btn" onClick={add}>
-          +
-        </Button>
-      </div>
+      {canCreate() && (
+        <div className="page-categories__add">
+          <input className="page-categories__add-input" ref={input}
+            placeholder="Название категории"
+            required
+          />
+          <Button className="page-categories__add-btn" onClick={add}>
+            +
+          </Button>
+        </div>
+      )}
       <div className="page-categories__category-list">
         {items.map(category => (
           <Category category={category} stats={stats}

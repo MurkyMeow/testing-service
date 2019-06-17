@@ -85,6 +85,10 @@ const canEdit = item =>
   item && item.creator && state.user &&
   (state.user.role === 'admin' || state.user.id === item.creator.id);
 
+const canCreate = () =>
+  state.user &&
+    (state.user.role === 'admin' || state.user.role === 'teacher');
+
 export {
   state,
   useGlobalState,
@@ -93,5 +97,6 @@ export {
   withKey,
   getKey,
   canEdit,
+  canCreate,
   notify,
 };

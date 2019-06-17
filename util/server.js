@@ -26,7 +26,7 @@ const standard = {
 
 const guard = role => async (ctx, next) => {
   const { user } = ctx.session;
-  ctx.assert(user && (!role || user.role === role), 403);
+  ctx.assert(user && (!role || user.role === 'admin' || user.role === role), 403);
   await next();
 };
 
@@ -85,7 +85,7 @@ const Rest = prefix => {
       }
 
       router.get(name, handleGet);
-      router.use(guard());
+      router.use(guard('teacher'));
       router.put(name, handlePut);
       router.post(name, handlePost);
       router.patch(name, handlePatch);

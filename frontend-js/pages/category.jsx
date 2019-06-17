@@ -1,6 +1,7 @@
 import { withRouter } from 'next/router';
 import { TestCard } from '../components/test-card';
 import { useRequest, get } from '../api';
+import { canCreate } from '../index';
 import Button from '../components/button';
 
 const Category = ({ router }) => {
@@ -22,7 +23,7 @@ const Category = ({ router }) => {
   return (
     <div className="category-page">
       <div className="page-title">{category.name}</div>
-      {!category.tests.length && <>
+      {canCreate() && !category.tests.length && <>
         <div className="page-title">Добавить первый тест в этой категории..?</div>
       </>}
       <div className="category-page__test-list">
@@ -30,7 +31,9 @@ const Category = ({ router }) => {
           <TestCard test={test} key={test.id} onDelete={() => deleteTest(test.id)}/>
         ))}
       </div>
-      <Button className="category-page__add-btn" onClick={addTest}>+</Button>
+      {canCreate() && (
+        <Button className="category-page__add-btn" onClick={addTest}>+</Button>
+      )}
     </div>
   );
 };
