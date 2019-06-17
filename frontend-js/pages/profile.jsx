@@ -7,13 +7,17 @@ import { TestResult } from '../components/test-result';
 
 const Profile = ({ router }) => {
   const [user, setUser] = useGlobalState('user');
-  const [status, profile] = useRequest(() =>
+  const [status, profile, setProfile] = useRequest(() =>
     get(`/stats/profile?id=${router.query.id || ''}`)
   );
 
   const changeName = async name => {
     await post('/stats/name/', { name });
     setUser({ ...user, name });
+  };
+  const onTestDelete = id => {
+    const tests = profile.tests.filter(x => x.id !== id);
+    setProfile({ ...profile, tests });
   };
   if (status.error === 404) return <div className="page-title">Этот профиль не существует =(</div>;
   if (status.error) return <div className="page-title">Не удалось загрузить профиль.</div>;
@@ -44,6 +48,7 @@ const Profile = ({ router }) => {
             <TestCard className="profile__test" key={test.id}
               test={test}
               editable={profile.id === user.id}
+              onDelete={() => onTestDelete(test.id)}
             />
           ))}
         </div>
