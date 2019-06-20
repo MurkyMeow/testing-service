@@ -535,14 +535,17 @@ a {
 .test-page__question {
   --slide-width: 500px;
   --spacing: calc((100vw - var(--slide-width)) / 4);
-  --middle: calc(50vw - var(--slide-width) / 2 - var(--spacing));
   --step: calc(var(--slide-width) + 2 * var(--spacing));
   width: var(--slide-width);
   margin: 0 var(--spacing);
   flex-shrink: 0;
   background: #6900b2;
-  transform: translateX(calc(var(--middle) - var(--slide-index) * var(--step)));
+  transform: translateX(calc(-1 * var(--slide-index) * var(--step)));
   transition: transform .35s;
+
+  &:nth-child(2) {
+    margin-left: var(--spacing * 2);
+  }
 }
 .test-page__question__title {
   font-size: 20px;
