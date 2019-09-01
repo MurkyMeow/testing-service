@@ -1,8 +1,7 @@
 import { gql } from 'apollo-server-koa';
-import { GraphQLModule } from '@graphql-modules/core';
 import { User } from '../entity/user';
 
-export const UserModule = new GraphQLModule({
+export const UserModule = {
   typeDefs: gql`
     type Query {
       profile: User
@@ -14,7 +13,7 @@ export const UserModule = new GraphQLModule({
   `,
   resolvers: {
     Query: {
-      profile: (_, args) => User.findOne(args.id),
+      profile: (): Promise<User> => User.findOne(),
     },
   },
-});
+};

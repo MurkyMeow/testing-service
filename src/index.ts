@@ -7,12 +7,12 @@ import Router from '@koa/router';
 import session from 'koa-session';
 import bodyParser from 'koa-bodyparser';
 import kstatic from 'koa-static';
-import { AppModule } from './modules/index';
+import { modules } from './modules/index';
 import env from './env';
 
 const { NODE_ENV = 'development' } = process.env;
 
-createConnection().then(async () => {
+createConnection().then(() => {
   const app = new Koa();
   const router = Router();
 
@@ -23,8 +23,7 @@ createConnection().then(async () => {
   app.use(kstatic(`${__dirname}/assets`));
 
   const server = new ApolloServer({
-    schema: AppModule.schema,
-    context: AppModule.context,
+    modules,
   });
   server.applyMiddleware({ app });
 

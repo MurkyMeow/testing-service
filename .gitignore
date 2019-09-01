@@ -6,3 +6,4 @@ dist
 *~
 system-testing.sqlite
 .next
+db.sqlite
