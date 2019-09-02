@@ -1,6 +1,7 @@
 import { ApolloServer } from 'apollo-server-koa';
 import Koa, { ParameterizedContext } from 'koa';
 import { createConnection } from 'typeorm';
+import http from 'http';
 import Router from '@koa/router';
 import cors from '@koa/cors';
 import session from 'koa-session';
@@ -26,7 +27,7 @@ export function openDatabase(test: boolean) {
   });
 }
 
-export async function runServer(port = 4000): Promise<ApolloServer> {
+export async function runServer(port = 4000): Promise<http.Server> {
   const app = new Koa();
   const router = Router();
 
@@ -51,7 +52,7 @@ export async function runServer(port = 4000): Promise<ApolloServer> {
     ctx.res.statusCode = 200;
   });
   app.use(async ctx => ctx.throw(404, 'Not found'));
-
-  app.listen(port);
-  return server;
+  return http
+    .createServer(app.callback())
+    .listen(port);
 }

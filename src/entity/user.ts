@@ -1,13 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
+import crypto from 'crypto';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert } from 'typeorm';
 import { Category } from './category';
 import { Test } from './test';
 import { Result } from './result';
+import env from '../env';
 
 export enum Role {
   user,
   teacher,
   admin,
 }
+
+const getHash = (str: string): string =>
+  crypto.createHmac('sha512', env.secret)
+    .update(str)
+    .digest('hex');
 
 @Entity()
 export class User extends BaseEntity {
@@ -34,4 +41,15 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Result, result => result.user)
   results: Result[];
+
+  @BeforeInsert()
+  hashPassword() {
+    this.password = getHash(this.password);
+  }
+  comparePassword(password: string): boolean {
+    return crypto.timingSafeEqual(
+      Buffer.from(getHash(password), 'hex'),
+      Buffer.from(this.password, 'hex'),
+    );
+  }
 }

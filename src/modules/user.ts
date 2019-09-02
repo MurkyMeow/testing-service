@@ -1,15 +1,8 @@
 import { Field, ID, ObjectType, Resolver, Query, Arg, Ctx, Mutation, registerEnumType } from 'type-graphql';
-import crypto from 'crypto';
 import { Context } from '../server';
 import { User, Role } from '../entity/user';
-import env from '../env';
 
 registerEnumType(Role, { name: 'Role' });
-
-const getHash = (str: string): string =>
-  crypto.createHmac('sha512', env.secret)
-    .update(str)
-    .digest('hex');
 
 @ObjectType()
 class UserType {
@@ -57,7 +50,7 @@ export class UserResolver {
     newUser.role = Role.user;
     newUser.name = name;
     newUser.email = email;
-    newUser.password = getHash(password);
+    newUser.password = password;
     await newUser.save();
     return true;
   }
@@ -71,10 +64,7 @@ export class UserResolver {
     const user = await User.findOne({
       where: { email }
     });
-    const match = user && crypto.timingSafeEqual(
-      Buffer.from(getHash(password), 'hex'),
-      Buffer.from(user.password, 'hex'),
-    );
+    const match = user && user.comparePassword(password);
     ctx.assert(match, 403, 'Invalid login');
     ctx.session.user = user;
     return user;
