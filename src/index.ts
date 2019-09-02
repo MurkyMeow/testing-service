@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-koa';
-import Koa from 'koa';
+import Koa, { ParameterizedContext } from 'koa';
 import cors from '@koa/cors';
 import Router from '@koa/router';
 import session from 'koa-session';
@@ -11,6 +11,10 @@ import { modules } from './modules/index';
 import env from './env';
 
 const { NODE_ENV = 'development' } = process.env;
+
+export type Context = {
+  ctx: ParameterizedContext;
+};
 
 createConnection().then(() => {
   const app = new Koa();
@@ -24,6 +28,9 @@ createConnection().then(() => {
 
   const server = new ApolloServer({
     modules,
+    context: ({ ctx }) : Context => ({
+      ctx,
+    }),
   });
   server.applyMiddleware({ app });
 

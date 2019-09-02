@@ -3,6 +3,8 @@ import { Category } from './category';
 import { Test } from './test';
 import { Result } from './result';
 
+type Role = 'user' | 'teacher' | 'admin';
+
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -11,14 +13,14 @@ export class User extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
 
   @Column()
-  role: string;
+  role: Role;
 
   @OneToMany(() => Test, test => test.creator)
   tests: Test[];
