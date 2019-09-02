@@ -3,7 +3,11 @@ import { Category } from './category';
 import { Test } from './test';
 import { Result } from './result';
 
-type Role = 'user' | 'teacher' | 'admin';
+export enum Role {
+  user,
+  teacher,
+  admin,
+}
 
 @Entity()
 export class User extends BaseEntity {

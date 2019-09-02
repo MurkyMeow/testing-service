@@ -7,7 +7,7 @@ const { NODE_ENV = 'development' } = process.env;
 (async function() {
   await openDatabase(false);
   const port = Number(process.env.PORT) || 4000;
-  runServer(port);
+  await runServer(port);
   console.log(NODE_ENV === 'development'
     ? `ready on ${env.localhost}:${port}`
     : 'running'

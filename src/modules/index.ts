@@ -1,7 +1,10 @@
-import { UserModule } from './user';
-import { CategoryModule } from './category';
+import { buildSchema } from 'type-graphql';
+import { UserResolver } from './user';
+import { CategoryResolver } from './category';
 
-export const modules = [
-  UserModule,
-  CategoryModule,
-]
+export const getSchema = () => buildSchema({
+  resolvers: [
+    UserResolver,
+    CategoryResolver,
+  ]
+});

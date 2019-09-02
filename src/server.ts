@@ -7,7 +7,7 @@ import session from 'koa-session';
 import bodyParser from 'koa-bodyparser';
 import kstatic from 'koa-static';
 import env from './env';
-import { modules } from './modules/index';
+import { getSchema } from './modules/index';
 
 export type Context = {
   ctx: ParameterizedContext;
@@ -26,7 +26,7 @@ export function openDatabase(test: boolean) {
   });
 }
 
-export function runServer(port = 4000): ApolloServer {
+export async function runServer(port = 4000): Promise<ApolloServer> {
   const app = new Koa();
   const router = Router();
 
@@ -36,8 +36,10 @@ export function runServer(port = 4000): ApolloServer {
   app.use(session({ maxAge: 86400000 }, app));
   app.use(kstatic(`${__dirname}/assets`));
 
+  const schema = await getSchema();
+
   const server = new ApolloServer({
-    modules,
+    schema,
     context: ({ ctx }) : Context => ({
       ctx,
     }),

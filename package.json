@@ -28,9 +28,11 @@
     "precss": "^4.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "type-graphql": "^0.17.5",
     "typeorm": "^0.2.18"
   },
   "devDependencies": {
+    "@types/graphql": "^14.5.0",
     "@types/node": "^12.7.3",
     "sqlite3": "^4.0.9",
     "ts-node-dev": "^1.0.0-pre.42",
