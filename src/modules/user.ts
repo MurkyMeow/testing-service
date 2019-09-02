@@ -46,11 +46,9 @@ export class UserResolver {
       where: { email }
     });
     ctx.assert(!user, 409, 'That email is busy');
-    const newUser = new User();
-    newUser.role = Role.user;
-    newUser.name = name;
-    newUser.email = email;
-    newUser.password = password;
+    const newUser = User.create({
+      role: Role.user, name, email, password,
+    });
     await newUser.save();
     return true;
   }

@@ -15,9 +15,9 @@ class CategoryType {
 export class CategoryResolver {
   @Query(() => CategoryType)
   async addCategory(@Arg('name') name: string, @Ctx() { ctx }: Context) {
-    const category = new Category();
-    category.name = name;
-    category.creator = ctx.session.user;
+    const category = Category.create({
+      name, creator: ctx.session.user,
+    });
     return category.save();
   }
 
