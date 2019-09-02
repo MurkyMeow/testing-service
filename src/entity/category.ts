@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, BaseEntity, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './user';
 import { Test } from './test';
 
@@ -10,9 +10,9 @@ export class Category extends BaseEntity {
   @Column()
   name: string;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   creator: User;
 
-  @ManyToOne(() => Test, test => test.category)
+  @OneToMany(() => Test, test => test.category)
   tests: Test[];
 }

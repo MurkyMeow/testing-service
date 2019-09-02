@@ -25,7 +25,7 @@ const getHash = (str: string): string =>
 
 export const UserModule = {
   typeDefs: gql`
-    type Query {
+    extend type Query {
       self: User
       signout: Boolean
       signup(email: String!, name: String!, password: String!): Boolean
