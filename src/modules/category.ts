@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server-koa';
-import { Context } from '../index';
+import { Context } from '../server';
 import { Category } from '../entity/category';
 
 export const CategoryModule = {

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { gql } from 'apollo-server-koa';
-import { Context } from '../index';
+import { Context } from '../server';
 import { User } from '../entity/user';
 import env from '../env';
 
