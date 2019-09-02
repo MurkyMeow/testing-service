@@ -11,13 +11,6 @@ type SessionInfo = {
   email: string;
 };
 
-const getSessionInfo = (user: User): SessionInfo => ({
-  id: user.id,
-  role: user.role,
-  name: user.name,
-  email: user.email,
-});
-
 const getHash = (str: string): string =>
   crypto.createHmac('sha512', env.secret)
     .update(str)
@@ -42,7 +35,7 @@ export const UserModule = {
       async self({}, {}, { ctx }): Promise<SessionInfo> {
         ctx.assert(ctx.session.user, 401);
         const user = await User.findOne(ctx.session.user.id);
-        return getSessionInfo(user);
+        return user;
       },
       signout({}, {}, { ctx }): Boolean {
         ctx.assert(ctx.session.user, 401);
@@ -72,7 +65,7 @@ export const UserModule = {
         );
         ctx.assert(match, 403, 'Invalid login');
         ctx.session.user = user;
-        return getSessionInfo(user);
+        return user;
       },
     },
   },
