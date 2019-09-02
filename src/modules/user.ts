@@ -24,10 +24,16 @@ export const UserModule = {
       signup(email: String!, name: String!, password: String!): Boolean
       signin(email: String!, password: String!): User
     }
+    enum Role {
+      user
+      teacher
+      admin
+    }
     type User {
       id: ID!
       email: String!
       name: String!
+      role: Role!
     }
   `,
   resolvers: {
