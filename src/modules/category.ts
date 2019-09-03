@@ -1,24 +1,15 @@
-import { Field, ID, ObjectType, Resolver, Query, Arg, Ctx, Mutation } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, Mutation } from 'type-graphql';
 import { Context } from '../server';
 import { Category } from '../entity/category';
 
-@ObjectType()
-class CategoryType {
-  @Field(() => ID)
-  id: number;
-
-  @Field()
-  name: string;
-}
-
-@Resolver(CategoryType)
+@Resolver(Category)
 export class CategoryResolver {
-  @Query(() => [CategoryType])
+  @Query(() => [Category])
   getCategories() {
     return Category.find();
   }
 
-  @Mutation(() => CategoryType)
+  @Mutation(() => Category)
   async addCategory(@Arg('name') name: string, @Ctx() { ctx }: Context) {
     const category = Category.create({
       name, creator: ctx.session.user,
@@ -26,7 +17,7 @@ export class CategoryResolver {
     return category.save();
   }
 
-  @Mutation(() => CategoryType)
+  @Mutation(() => Category)
   async editCategory(
     @Arg('id') id: number,
     @Arg('name') name: string,

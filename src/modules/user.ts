@@ -1,27 +1,12 @@
-import { Field, ID, ObjectType, Resolver, Query, Arg, Ctx, Mutation, registerEnumType } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, Mutation, registerEnumType } from 'type-graphql';
 import { Context } from '../server';
 import { User, Role } from '../entity/user';
 
 registerEnumType(Role, { name: 'Role' });
 
-@ObjectType()
-class UserType {
-  @Field(() => ID)
-  id: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  name: string;
-
-  @Field(() => Role)
-  role: Role;
-}
-
-@Resolver(UserType)
+@Resolver(User)
 export class UserResolver {
-  @Query(() => UserType)
+  @Query(() => User)
   async self(@Ctx() { ctx, assert }: Context) {
     assert(ctx.session.user, 401);
     const user = await User.findOne(ctx.session.user.id);
@@ -53,7 +38,7 @@ export class UserResolver {
     return true;
   }
 
-  @Query(() => UserType)
+  @Query(() => User)
   async signin(
     @Arg('email') email: string,
     @Arg('password') password: string,
