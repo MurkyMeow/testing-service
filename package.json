@@ -6,7 +6,7 @@
   "scripts": {
     "start": "next build frontend-js && NODE_ENV=production node .",
     "dev": "ts-node-dev --no-notify src/index.ts",
-    "test": "jest --maxWorkers=4 --cache --preset ts-jest --test-environment node src/test",
+    "test": "mocha -r ts-node/register src/test/*.test.ts",
     "serve": "next frontend-js",
     "lint": "eslint ."
   },
@@ -33,13 +33,15 @@
     "typeorm": "^0.2.18"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.0",
     "@types/graphql": "^14.5.0",
-    "@types/jest": "^24.0.18",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.3",
     "axios": "^0.19.0",
-    "jest": "^24.9.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
     "sqlite3": "^4.0.9",
-    "ts-jest": "^24.0.2",
+    "ts-mocha": "^6.0.0",
     "ts-node-dev": "^1.0.0-pre.42",
     "typescript": "^3.5.3"
   }

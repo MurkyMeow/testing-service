@@ -8,7 +8,7 @@ const host = 'http://localhost:4000/graphql';
 let conn: Connection;
 let server: Server;
 
-beforeAll(async () => {
+before(async () => {
   server = await runServer();
 });
 beforeEach(async () => {
@@ -17,7 +17,7 @@ beforeEach(async () => {
 afterEach(async () => {
   await conn.close();
 });
-afterAll(async () => {
+after(async () => {
   await server.unref();
 });
 
