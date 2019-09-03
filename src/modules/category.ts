@@ -5,7 +5,7 @@ import { Category } from '../entity/category';
 @ObjectType()
 class CategoryType {
   @Field(() => ID)
-  id: string;
+  id: number;
 
   @Field()
   name: string;
@@ -13,7 +13,12 @@ class CategoryType {
 
 @Resolver(CategoryType)
 export class CategoryResolver {
-  @Query(() => CategoryType)
+  @Query(() => [CategoryType])
+  getCategories() {
+    return Category.find();
+  }
+
+  @Mutation(() => CategoryType)
   async addCategory(@Arg('name') name: string, @Ctx() { ctx }: Context) {
     const category = Category.create({
       name, creator: ctx.session.user,

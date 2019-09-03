@@ -16,13 +16,12 @@ beforeEach(async () => {
 });
 afterEach(async () => {
   await conn.close();
-})
+});
 afterAll(async () => {
   await server.unref();
-  await conn.close();
 });
 
-export async function req(query: string, variables: any) {
+export async function req(query: string, variables?: any) {
   const res = await axios.post(host, {
     query,
     variables,

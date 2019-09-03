@@ -6,7 +6,7 @@
   "scripts": {
     "start": "next build frontend-js && NODE_ENV=production node .",
     "dev": "ts-node-dev --no-notify src/index.ts",
-    "test": "jest --preset ts-jest --test-environment node src/test",
+    "test": "jest --maxWorkers=4 --cache --preset ts-jest --test-environment node src/test",
     "serve": "next frontend-js",
     "lint": "eslint ."
   },
