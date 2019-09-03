@@ -22,15 +22,15 @@ class UserType {
 @Resolver(UserType)
 export class UserResolver {
   @Query(() => UserType)
-  async self(@Ctx() { ctx }: Context) {
-    ctx.assert(ctx.session.user, 401);
+  async self(@Ctx() { ctx, assert }: Context) {
+    assert(ctx.session.user, 401);
     const user = await User.findOne(ctx.session.user.id);
     return user;
   }
 
   @Query(() => Boolean)
-  signout(@Ctx() { ctx }: Context): Boolean {
-    ctx.assert(ctx.session.user, 401);
+  signout(@Ctx() { ctx, assert }: Context): Boolean {
+    assert(ctx.session.user, 401);
     ctx.session.user = null;
     return true;
   }
@@ -40,12 +40,12 @@ export class UserResolver {
     @Arg('email') email: string,
     @Arg('name') name: string,
     @Arg('password') password: string,
-    @Ctx() { ctx }: Context
+    @Ctx() { assert }: Context
   ) {
     const user = await User.findOne({
       where: { email }
     });
-    ctx.assert(!user, 409, 'That email is busy');
+    assert(!user, 409, 'That email is busy');
     const newUser = User.create({
       role: Role.user, name, email, password,
     });
@@ -57,13 +57,13 @@ export class UserResolver {
   async signin(
     @Arg('email') email: string,
     @Arg('password') password: string,
-    @Ctx() { ctx }: Context
+    @Ctx() { ctx, assert }: Context
   ) {
     const user = await User.findOne({
       where: { email }
     });
     const match = user && user.comparePassword(password);
-    ctx.assert(match, 403, 'Invalid login');
+    assert(match, 403, 'Invalid login');
     ctx.session.user = user;
     return user;
   }

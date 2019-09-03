@@ -22,22 +22,29 @@ export class CategoryResolver {
   }
 
   @Mutation(() => CategoryType)
-  async editCategory(@Arg('id') id: number, @Arg('name') name: string, @Ctx() { ctx }: Context) {
+  async editCategory(
+    @Arg('id') id: number,
+    @Arg('name') name: string,
+    @Ctx() { ctx, assert }: Context
+  ) {
     const category = await Category.findOne(id, {
       relations: ['creator'],
     });
     const isCreator = ctx.session.user.id === category.creator.id;
-    ctx.assert(isCreator, 403);
+    assert(isCreator, 403);
     category.name = name;
     return category.save();
   }
 
   @Mutation(() => Boolean)
-  async deleteCategory(@Arg('id') id: number, @Ctx() { ctx }: Context) {
+  async deleteCategory(
+    @Arg('id') id: number,
+    @Ctx() { ctx, assert }: Context
+  ) {
     const category = await Category.findOne(id, {
       relations: ['creator'],
     });
-    ctx.assert(ctx.session.user.id === category.creator.id, 403);
+    assert(ctx.session.user.id === category.creator.id, 403);
     await category.remove();
     return true;
   }

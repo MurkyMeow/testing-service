@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-koa';
+import { ApolloServer, ApolloError } from 'apollo-server-koa';
 import Koa, { ParameterizedContext } from 'koa';
 import { createConnection } from 'typeorm';
 import http from 'http';
@@ -12,6 +12,7 @@ import { getSchema } from './modules/index';
 
 export type Context = {
   ctx: ParameterizedContext;
+  assert(cond: boolean, code: string | number, msg?: string): void;
 };
 
 export function openDatabase(test: boolean) {
@@ -43,6 +44,9 @@ export async function runServer(port = 4000): Promise<http.Server> {
     schema,
     context: ({ ctx }) : Context => ({
       ctx,
+      assert(cond, code, msg) {
+        if (!cond) throw new ApolloError(msg || '', code.toString());
+      },
     }),
   });
   server.applyMiddleware({ app });

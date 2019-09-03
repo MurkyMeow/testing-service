@@ -19,6 +19,7 @@ afterEach(async () => {
 })
 afterAll(async () => {
   await server.unref();
+  await conn.close();
 });
 
 export async function req(query: string, variables: any) {
@@ -26,5 +27,9 @@ export async function req(query: string, variables: any) {
     query,
     variables,
   });
-  return { ...res, data: res.data.data };
+  return {
+    ...res,
+    data: res.data.data,
+    errors: res.data.errors,
+  };
 }
