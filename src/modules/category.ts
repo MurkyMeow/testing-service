@@ -9,6 +9,11 @@ export class CategoryResolver {
     return Category.find();
   }
 
+  @Query(() => Category)
+  getCategory(@Arg('id') id: number) {
+    return Category.findOne(id);
+  }
+
   @Mutation(() => Category)
   async addCategory(@Arg('name') name: string, @Ctx() { ctx }: Context) {
     const category = Category.create({
