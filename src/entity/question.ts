@@ -18,6 +18,9 @@ export class Question extends BaseEntity {
   @Field(() => Test)
   test: Test;
 
+  @Column({ nullable: true })
+  testId: number;
+
   @OneToMany(() => Answer, answer => answer.question)
   @Field(() => Answer)
   answers: Answer[];

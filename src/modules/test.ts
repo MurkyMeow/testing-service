@@ -1,7 +1,9 @@
-import { Resolver, Query, Arg, Ctx, Mutation, ID, Field, InputType } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, Mutation, ID, Field, InputType, FieldResolver, Root } from 'type-graphql';
 import { Context } from '../server';
 import { Test } from '../entity/test';
 import { Category } from '../entity/category';
+import { Question } from '../entity/question';
+import { User } from '../entity/user';
 
 @InputType()
 class AnswerInput {
@@ -34,19 +36,34 @@ export class TestResolver {
     return Test.findOne(id);
   }
 
+  @FieldResolver()
+  creator(@Root() test: Test): Promise<User> {
+    return User.findOne(test.creatorId);
+  }
+
+  @FieldResolver()
+  category(@Root() test: Test): Promise<Category> {
+    return Category.findOne(test.categoryId);
+  }
+
+  @FieldResolver()
+  questions(@Root() test: Test): Promise<Question[]> {
+    const where = { testId: test.id };
+    return Question.find({ where });
+  }
+
   @Mutation(() => Test)
   async addTest(
     @Arg('name') name: string,
-    @Arg('categoryID') categoryID: number,
+    @Arg('categoryId') categoryId: number,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
     @Ctx() { ctx }: Context,
   ): Promise<Test> {
-    const category = await Category.findOne(categoryID)
     const test = Test.create({
       name,
-      category,
-      questions: questions,
+      questions,
       creator: ctx.session.user,
+      category: { id: categoryId },
     });
     return test.save();
   }
@@ -55,14 +72,14 @@ export class TestResolver {
   async editTest(
     @Ctx() { ctx, assert }: Context,
     @Arg('id', () => ID) id: number,
-    @Arg('name') name?: string,
-    // @Arg('questions', () => Question) questions?: Quest/ion[],
+    @Arg('name') name: string,
+    @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
   ): Promise<Test> {
     const test = await Test.findOne(id);
     assert(test != null, 404);
-    assert(test.creator.id === ctx.session.user.id, 403);
-    if (name) test.name = name;
-    // if (questions) test.questions = questions;
+    assert(test.creatorId === ctx.session.user.id, 403);
+    test.name = name;
+    test.questions = questions.map(q => Question.create(q));
     return test.save();
   }
 
@@ -73,7 +90,7 @@ export class TestResolver {
   ): Promise<boolean> {
     const test = await Test.findOne(id);
     assert(test != null, 404);
-    assert(test.creator.id === ctx.session.user.id, 403);
+    assert(test.creatorId === ctx.session.user.id, 403);
     await test.remove();
     return true;
   }

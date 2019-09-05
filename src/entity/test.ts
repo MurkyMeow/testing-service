@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { MinLength } from 'class-validator';
 import { Category } from './category';
 import { User } from './user';
 import { Question } from './question';
 import { Conclusion } from './conclusion';
+import { MinLength } from 'class-validator';
 
 @Entity()
 @ObjectType()
@@ -21,11 +21,17 @@ export class Test extends BaseEntity {
   @Field(() => User)
   creator: User;
 
+  @Column({ nullable: true })
+  creatorId: number;
+
   @ManyToOne(() => Category, category => category.tests)
   @Field(() => Category)
   category: Category;
 
-  @OneToMany(() => Question, question => question.test)
+  @Column({ nullable: true })
+  categoryId: number;
+
+  @OneToMany(() => Question, question => question.test, { cascade: true })
   @Field(() => [Question])
   @MinLength(1)
   questions: Question[];
