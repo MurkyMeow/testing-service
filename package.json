@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "next build frontend-js && NODE_ENV=production node .",
-    "dev": "nodemon --ignore ./frontend --ignore ./frontend-js -e js,gql .",
+    "dev": "ts-node-dev --no-notify src/index.ts",
+    "test": "mocha -r ts-node/register src/test/*.test.ts",
     "serve": "next frontend-js",
     "lint": "eslint ."
   },
@@ -14,29 +15,34 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^2.2.3",
+    "@koa/router": "^8.0.0",
     "@zeit/next-css": "^1.0.1",
+    "apollo-server-koa": "^2.9.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "immer": "^3.1.2",
-    "knex": "^0.16.3",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
-    "koa-joi-router": "^6.0.0",
     "koa-session": "^5.11.0",
     "koa-static": "^5.0.0",
-    "next": "^8.1.0",
-    "objection": "^1.6.7",
     "pg": "^7.11.0",
     "precss": "^4.0.0",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "type-graphql": "^0.17.5",
+    "typeorm": "^0.2.18"
   },
   "devDependencies": {
-    "eslint": "^5.15.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-react": "^7.13.0",
-    "nodemon": "^1.18.10",
-    "sqlite3": "^4.0.9"
+    "@types/chai": "^4.2.0",
+    "@types/graphql": "^14.5.0",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.7.3",
+    "axios": "^0.19.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "sqlite3": "^4.0.9",
+    "ts-mocha": "^6.0.0",
+    "ts-node-dev": "^1.0.0-pre.42",
+    "typescript": "^3.5.3"
   }
 }
