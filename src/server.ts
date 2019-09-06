@@ -1,5 +1,6 @@
 import { ApolloServer, ApolloError } from 'apollo-server-koa';
-import Koa, { ParameterizedContext } from 'koa';
+import { GraphQLSchema } from 'graphql';
+import Koa from 'koa';
 import { createConnection } from 'typeorm';
 import http from 'http';
 import Router from '@koa/router';
@@ -8,10 +9,12 @@ import session from 'koa-session';
 import bodyParser from 'koa-bodyparser';
 import kstatic from 'koa-static';
 import env from './env';
-import { getSchema } from './modules/index';
+import { User } from './entity/user';
 
 export type Context = {
-  ctx: ParameterizedContext;
+  session: {
+    user: User;
+  };
   assert(cond: boolean, code: string | number, msg?: string): void;
 };
 
@@ -28,7 +31,15 @@ export function openDatabase(test: boolean) {
   });
 }
 
-export async function runServer(port = 4000): Promise<http.Server> {
+export function assert(
+  cond: boolean,
+  code: string | number,
+  msg?: string
+) {
+  if (!cond) throw new ApolloError(msg || '', code.toString());
+}
+
+export async function runServer(port = 4000, schema: GraphQLSchema): Promise<http.Server> {
   const app = new Koa();
   const router = Router();
 
@@ -38,15 +49,11 @@ export async function runServer(port = 4000): Promise<http.Server> {
   app.use(session({ maxAge: 86400000 }, app));
   app.use(kstatic(`${__dirname}/assets`));
 
-  const schema = await getSchema();
-
   const server = new ApolloServer({
     schema,
     context: ({ ctx }) : Context => ({
-      ctx,
-      assert(cond, code, msg) {
-        if (!cond) throw new ApolloError(msg || '', code.toString());
-      },
+      session: ctx.session,
+      assert,
     }),
   });
   server.applyMiddleware({ app });

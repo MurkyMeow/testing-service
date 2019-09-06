@@ -15,23 +15,20 @@ export class CategoryResolver {
   }
 
   @Mutation(() => Category)
-  async addCategory(@Arg('name') name: string, @Ctx() { ctx }: Context) {
-    const category = Category.create({
-      name, creator: ctx.session.user,
-    });
-    return category.save();
+  addCategory(@Arg('name') name: string, @Ctx() { session }: Context) {
+    return Category.create({ name, creator: session.user }).save();
   }
 
   @Mutation(() => Category)
   async editCategory(
     @Arg('id') id: number,
     @Arg('name') name: string,
-    @Ctx() { ctx, assert }: Context
+    @Ctx() { session, assert }: Context
   ) {
     const category = await Category.findOne(id, {
       relations: ['creator'],
     });
-    const isCreator = ctx.session.user.id === category.creator.id;
+    const isCreator = session.user.id === category.creator.id;
     assert(isCreator, 403);
     category.name = name;
     return category.save();
@@ -40,12 +37,12 @@ export class CategoryResolver {
   @Mutation(() => Boolean)
   async deleteCategory(
     @Arg('id') id: number,
-    @Ctx() { ctx, assert }: Context
+    @Ctx() { session, assert }: Context
   ) {
     const category = await Category.findOne(id, {
       relations: ['creator'],
     });
-    assert(ctx.session.user.id === category.creator.id, 403);
+    assert(session.user.id === category.creator.id, 403);
     await category.remove();
     return true;
   }

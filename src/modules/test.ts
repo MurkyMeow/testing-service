@@ -57,27 +57,27 @@ export class TestResolver {
     @Arg('name') name: string,
     @Arg('categoryId', () => ID) categoryId: number,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
-    @Ctx() { ctx }: Context,
+    @Ctx() { session }: Context,
   ): Promise<Test> {
     const test = Test.create({
       name,
       questions,
       categoryId,
-      creator: ctx.session.user,
+      creator: session.user,
     });
     return test.save();
   }
 
   @Mutation(() => Test)
   async editTest(
-    @Ctx() { ctx, assert }: Context,
+    @Ctx() { session, assert }: Context,
     @Arg('id', () => ID) id: number,
     @Arg('name') name: string,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
   ): Promise<Test> {
     const test = await Test.findOne(id);
     assert(test != null, 404);
-    assert(test.creatorId === ctx.session.user.id, 403);
+    assert(test.creatorId === session.user.id, 403);
     test.name = name;
     test.questions = questions.map(q => Question.create(q));
     return test.save();
@@ -86,11 +86,11 @@ export class TestResolver {
   @Mutation(() => Boolean)
   async deleteTest(
     @Arg('id', () => ID) id: number,
-    @Ctx() { ctx, assert }: Context,
+    @Ctx() { session, assert }: Context,
   ): Promise<boolean> {
     const test = await Test.findOne(id);
     assert(test != null, 404);
-    assert(test.creatorId === ctx.session.user.id, 403);
+    assert(test.creatorId === session.user.id, 403);
     await test.remove();
     return true;
   }

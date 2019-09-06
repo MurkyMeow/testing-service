@@ -7,16 +7,15 @@ registerEnumType(Role, { name: 'Role' });
 @Resolver(User)
 export class UserResolver {
   @Query(() => User)
-  async self(@Ctx() { ctx, assert }: Context) {
-    assert(ctx.session.user, 401);
-    const user = await User.findOne(ctx.session.user.id);
-    return user;
+  self(@Ctx() { session, assert }: Context) {
+    assert(Boolean(session.user), 401);
+    return session.user;
   }
 
   @Query(() => Boolean)
-  signout(@Ctx() { ctx, assert }: Context): Boolean {
-    assert(ctx.session.user, 401);
-    ctx.session.user = null;
+  signout(@Ctx() { session, assert }: Context): Boolean {
+    assert(Boolean(session.user), 401);
+    session.user = null;
     return true;
   }
 
@@ -42,14 +41,14 @@ export class UserResolver {
   async signin(
     @Arg('email') email: string,
     @Arg('password') password: string,
-    @Ctx() { ctx, assert }: Context
+    @Ctx() { session, assert }: Context
   ) {
     const user = await User.findOne({
       where: { email }
     });
     const match = user && user.comparePassword(password);
     assert(match, 403, 'Invalid login');
-    ctx.session.user = user;
+    session.user = user;
     return user;
   }
 }
