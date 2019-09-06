@@ -1,6 +1,7 @@
 import { User, Role } from '../entity/user';
 import { Category } from '../entity/category';
-import { req } from './setup';
+import { req, getUser } from './setup';
+import { Test } from '../entity/test';
 
 const signupMutation = `
   mutation($email: String!, $name: String!, $password: String!) {
@@ -70,24 +71,22 @@ describe('user resolvers', () => {
   });
   it('rejects invalid password', async () => {
     await User.create({ ...user, role: Role.user }).save();
-    const { errors } = await req(signinQuery, {
-      email: user.email,
-      password: '____',
-    });
-    expect(errors).toBeTruthy();
-    expect(errors[0].extensions.code).toEqual('403');
+    const login = req(signinQuery, { email: user.email, password: '____' });
+    await expect(login).rejects.toBeDefined();
   });
 });
 
 describe('category resolvers', () => {
   it('adds a category', async () => {
-    const res = await req(addCategoryMutation, { name: 'test' });
+    const user = await getUser();
+    const res = await req(addCategoryMutation, { name: 'test' }, user);
     expect(res.data).toBeTruthy();
     expect(res.data.addCategory.name).toEqual('test');
   });
   it('edits a category', async () => {
-    await Category.create({ name: '_' }).save();
-    const res = await req(editCategoryMutation, { id: 1, name: 'test' });
+    const user = await getUser();
+    await Category.create({ name: '_', creatorId: user.id }).save();
+    const res = await req(editCategoryMutation, { id: 1, name: 'test' }, user);
     expect(res.data).toBeTruthy();
     expect(res.data.editCategory.name).toEqual('test');
   });

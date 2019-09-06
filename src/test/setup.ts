@@ -1,15 +1,17 @@
-import axios from 'axios';
+import { graphql, GraphQLSchema } from 'graphql';
 import { Server } from 'http';
 import { Connection } from 'typeorm';
-import { runServer, openDatabase } from '../server';
-
-const host = 'http://localhost:4000/graphql';
+import { runServer, openDatabase, assert } from '../server';
+import { getSchema } from '../modules';
+import { User, Role } from '../entity/user';
 
 let conn: Connection;
 let server: Server;
+let schema: GraphQLSchema;
 
-before(async () => {
-  server = await runServer();
+beforeAll(async () => {
+  schema = await getSchema();
+  server = await runServer(4000, schema);
 });
 beforeEach(async () => {
   conn = await openDatabase(true);
@@ -17,18 +19,27 @@ beforeEach(async () => {
 afterEach(async () => {
   await conn.close();
 });
-after(async () => {
+afterAll(() => {
   server.unref();
 });
 
-export async function req(query: string, variables?: any) {
-  const res = await axios.post(host, {
-    query,
-    variables,
+export const getUser = () => User.create({
+  email: 'hello@world',
+  name: 'hello',
+  password: 'world',
+  role: Role.admin,
+}).save();
+
+export const req = (query: string, variables?: any, user?: User) =>
+  graphql({
+    schema,
+    source: query,
+    variableValues: variables,
+    contextValue: {
+      assert,
+      session: { user },
+    },
+  }).then(res => {
+    if (res.errors) throw res.errors;
+    return res;
   });
-  return {
-    ...res,
-    data: res.data.data,
-    errors: res.data.errors,
-  };
-}

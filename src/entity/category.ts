@@ -17,6 +17,9 @@ export class Category extends BaseEntity {
   @ManyToOne(() => User)
   creator: User;
 
+  @Column({ nullable: true })
+  creatorId: number;
+
   @OneToMany(() => Test, test => test.category)
   tests: Test[];
 }
