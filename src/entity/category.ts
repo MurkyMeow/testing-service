@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { User } from './user';
 import { Test } from './test';
 
@@ -7,7 +7,7 @@ import { Test } from './test';
 @ObjectType()
 export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column()

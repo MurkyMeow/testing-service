@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Test } from './test';
 import { Answer } from './answer';
 
@@ -7,7 +7,7 @@ import { Answer } from './answer';
 @ObjectType()
 export class Question extends BaseEntity {
   @PrimaryGeneratedColumn()
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column()

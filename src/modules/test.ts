@@ -1,4 +1,4 @@
-import { Resolver, Query, Arg, Ctx, Mutation, ID, Field, InputType, FieldResolver, Root } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, Mutation, Int, Field, InputType, FieldResolver, Root } from 'type-graphql';
 import { Context } from '../server';
 import { Test } from '../entity/test';
 import { Category } from '../entity/category';
@@ -7,7 +7,7 @@ import { User } from '../entity/user';
 
 @InputType()
 class AnswerInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number;
 
   @Field()
@@ -19,7 +19,7 @@ class AnswerInput {
 
 @InputType()
 class QuestionInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number;
 
   @Field()
@@ -32,7 +32,7 @@ class QuestionInput {
 @Resolver(Test)
 export class TestResolver {
   @Query(() => Test)
-  getTest(@Arg('id', () => ID) id: number): Promise<Test> {
+  getTest(@Arg('id', () => Int) id: number): Promise<Test> {
     return Test.findOne(id);
   }
 
@@ -55,7 +55,7 @@ export class TestResolver {
   @Mutation(() => Test)
   async addTest(
     @Arg('name') name: string,
-    @Arg('categoryId', () => ID) categoryId: number,
+    @Arg('categoryId', () => Int) categoryId: number,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
     @Ctx() { session }: Context,
   ): Promise<Test> {
@@ -71,7 +71,7 @@ export class TestResolver {
   @Mutation(() => Test)
   async editTest(
     @Ctx() { session, assert }: Context,
-    @Arg('id', () => ID) id: number,
+    @Arg('id', () => Int) id: number,
     @Arg('name') name: string,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
   ): Promise<Test> {
@@ -85,7 +85,7 @@ export class TestResolver {
 
   @Mutation(() => Boolean)
   async deleteTest(
-    @Arg('id', () => ID) id: number,
+    @Arg('id', () => Int) id: number,
     @Ctx() { session, assert }: Context,
   ): Promise<boolean> {
     const test = await Test.findOne(id);

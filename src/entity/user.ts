@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, BeforeInsert } from 'typeorm';
-import { Field, ID, ObjectType, registerEnumType } from 'type-graphql';
+import { Field, Int, ObjectType, registerEnumType } from 'type-graphql';
 import { Category } from './category';
 import { Test } from './test';
 import { Result } from './result';
@@ -23,7 +23,7 @@ const getHash = (str: string): string =>
 @ObjectType()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column()

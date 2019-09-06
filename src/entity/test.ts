@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Category } from './category';
 import { User } from './user';
 import { Question } from './question';
@@ -10,7 +10,7 @@ import { MinLength } from 'class-validator';
 @ObjectType()
 export class Test extends BaseEntity {
   @PrimaryGeneratedColumn()
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 
   @Column()
