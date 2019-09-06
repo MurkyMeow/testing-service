@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   cache: true,
   globals: {
-    'ts-node': {
+    'ts-jest': {
       isolatedModules: true,
       transpileOnly: true,
     },

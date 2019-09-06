@@ -99,3 +99,103 @@ describe('category resolvers', () => {
     expect(res.data.getCategories).toHaveLength(3);
   });
 });
+
+const addTestMutation = `
+  mutation($categoryId: Int!, $name: String!, $questions: [QuestionInput!]!) {
+    addTest(categoryId: $categoryId, name: $name, questions: $questions) {
+      name
+      questions {
+        text
+        answers {
+          text
+          correct
+        }
+      }
+    }
+  }
+`;
+const editTestMutation = `
+  mutation($id: Int!, $name: String!, $questions: [QuestionInput!]!) {
+    editTest(id: $id, name: $name, questions: $questions) {
+      id
+      name
+      questions {
+        id
+        text
+        answers {
+          id
+          text
+          correct
+        }
+      }
+    }
+  }
+`;
+const deleteTestMutation = `
+  mutation($id: Int!) {
+    deleteTest(id: $id)
+  }
+`;
+
+describe('test resolvers', () => {
+  const category = {
+    creatorId: 1,
+    name: 'a category',
+  };
+  const test = {
+    categoryId: 1,
+    creatorId: 1,
+    name: 'a test',
+    questions: [
+      {
+        text: 'foo?',
+        answers: [{ text: 'bar', correct: true }],
+      },
+      {
+        text: 'baz?',
+        answers: [{ text: 'qux', correct: true }],
+      },
+    ],
+  };
+  it('adds a test', async () => {
+    const user = await getUser();
+    await Category.insert(category);
+    const res = await req(addTestMutation, test, user);
+    const { creatorId, categoryId, ...rest } = test;
+    expect(res.data.addTest).toMatchObject(rest);
+    const dbtest = await Test.findOne({
+      relations: ['questions', 'questions.answers'],
+    });
+    expect(dbtest).toMatchObject(rest);
+  });
+  it('edits a test', async () => {
+    const user = await getUser();
+    await Category.create(category).save();
+    await Test.create(test).save();
+    const patch = {
+      id: 1,
+      name: 'updated',
+      questions: [
+        {
+          text: 'car?',
+          answers: [{ text: 'var', correct: true }],
+        },
+      ],
+    };
+    const res = await req(editTestMutation, patch, user);
+    expect(res.data.editTest).toMatchObject(patch);
+    const dbtest = await Test.findOne({
+      relations: ['questions', 'questions.answers'],
+    });
+    expect(dbtest).toMatchObject(patch);
+  });
+  it('deletes a test', async () => {
+    const user = await getUser();
+    await Category.create(category).save();
+    await Test.create(test).save();
+    const res = await req(deleteTestMutation, { id: 1 }, user);
+    expect(res.data.deleteTest).toBe(true);
+    const tests = await Test.find();
+    expect(tests).toHaveLength(0);
+  });
+});
