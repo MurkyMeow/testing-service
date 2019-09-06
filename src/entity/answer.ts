@@ -19,4 +19,7 @@ export class Answer extends BaseEntity {
 
   @ManyToOne(() => Question, question => question.answers)
   question: Question;
+
+  @Column({ nullable: true })
+  questionId: number;
 }

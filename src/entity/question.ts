@@ -21,7 +21,7 @@ export class Question extends BaseEntity {
   @Column({ nullable: true })
   testId: number;
 
-  @OneToMany(() => Answer, answer => answer.question)
-  @Field(() => Answer)
+  @OneToMany(() => Answer, answer => answer.question, { cascade: true })
+  @Field(() => [Answer])
   answers: Answer[];
 }

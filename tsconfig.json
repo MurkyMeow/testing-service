@@ -11,5 +11,5 @@
     "esModuleInterop": true
   },
   "exclude": ["node_modules", "frontend-js"],
-  "include": [ "src/**/*.ts" ]
+  "include": [ "src/**/*.ts"]
 }

@@ -18,7 +18,7 @@ afterEach(async () => {
   await conn.close();
 });
 after(async () => {
-  await server.unref();
+  server.unref();
 });
 
 export async function req(query: string, variables?: any) {

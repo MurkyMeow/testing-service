@@ -47,23 +47,23 @@ export class TestResolver {
   }
 
   @FieldResolver()
-  questions(@Root() test: Test): Promise<Question[]> {
+  async questions(@Root() test: Test): Promise<Question[]> {
     const where = { testId: test.id };
-    return Question.find({ where });
+    return test.questions || Question.find({ where });
   }
 
   @Mutation(() => Test)
   async addTest(
     @Arg('name') name: string,
-    @Arg('categoryId') categoryId: number,
+    @Arg('categoryId', () => ID) categoryId: number,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
     @Ctx() { ctx }: Context,
   ): Promise<Test> {
     const test = Test.create({
       name,
       questions,
+      categoryId,
       creator: ctx.session.user,
-      category: { id: categoryId },
     });
     return test.save();
   }
