@@ -8,6 +8,19 @@ import { User, Role } from '../entity/user';
 let conn: Connection;
 let server: Server;
 let schema: GraphQLSchema;
+let currentUser: User;
+
+const _user = new User();
+_user.email = 'hello@world';
+_user.name = 'hello';
+_user.password = 'world';
+_user.role = Role.admin;
+
+export const authenticate = async (user: User = _user) =>
+  currentUser = await user.save();
+
+export const signout = () =>
+  currentUser = null;
 
 beforeAll(async () => {
   schema = await getSchema();
@@ -17,20 +30,14 @@ beforeEach(async () => {
   conn = await openDatabase(true);
 });
 afterEach(async () => {
+  signout();
   await conn.close();
 });
 afterAll(() => {
   server.unref();
 });
 
-export const getUser = () => User.create({
-  email: 'hello@world',
-  name: 'hello',
-  password: 'world',
-  role: Role.admin,
-}).save();
-
-export const req = (query: string, variables?: any, user?: User) =>
+export const req = (query: string, variables?: any, user: User = currentUser) =>
   graphql({
     schema,
     source: query,

@@ -1,6 +1,6 @@
 import { User, Role } from '../entity/user';
 import { Category } from '../entity/category';
-import { req, getUser } from './setup';
+import { req, authenticate } from './setup';
 import { Test } from '../entity/test';
 
 const signupMutation = `
@@ -77,15 +77,14 @@ describe('user resolvers', () => {
 });
 
 describe('category resolvers', () => {
+  beforeEach(() => authenticate());
   it('adds a category', async () => {
-    const user = await getUser();
-    const res = await req(addCategoryMutation, { name: 'test' }, user);
+    const res = await req(addCategoryMutation, { name: 'test' });
     expect(res.addCategory.name).toEqual('test');
   });
   it('edits a category', async () => {
-    const user = await getUser();
-    await Category.create({ name: '_', creatorId: user.id }).save();
-    const res = await req(editCategoryMutation, { id: 1, name: 'test' }, user);
+    await Category.create({ name: '_', creatorId: 1 }).save();
+    const res = await req(editCategoryMutation, { id: 1, name: 'test' });
     expect(res.editCategory.name).toEqual('test');
   });
   it('gets the list of categories', async () => {
@@ -154,21 +153,23 @@ describe('test resolvers', () => {
       },
     ],
   };
+  beforeEach(async () => {
+    await authenticate();
+    await Category.create(category).save();
+    await Test.create(test).save();
+  });
   it('adds a test', async () => {
-    const user = await getUser();
-    await Category.insert(category);
-    const res = await req(addTestMutation, test, user);
-    const { creatorId, categoryId, ...rest } = test;
-    expect(res.addTest).toMatchObject(rest);
+    const newTest = { ...test, name: 'othername' };
+    const { creatorId, categoryId, ...rest } = newTest;
+    const { addTest } = await req(addTestMutation, newTest);
+    expect(addTest).toMatchObject(rest);
     const dbtest = await Test.findOne({
+      order: { id: 'DESC' },
       relations: ['questions', 'questions.answers'],
     });
     expect(dbtest).toMatchObject(rest);
   });
   it('edits a test', async () => {
-    const user = await getUser();
-    await Category.create(category).save();
-    await Test.create(test).save();
     const patch = {
       id: 1,
       name: 'updated',
@@ -179,7 +180,7 @@ describe('test resolvers', () => {
         },
       ],
     };
-    const res = await req(editTestMutation, patch, user);
+    const res = await req(editTestMutation, patch);
     expect(res.editTest).toMatchObject(patch);
     const dbtest = await Test.findOne({
       relations: ['questions', 'questions.answers'],
@@ -187,10 +188,7 @@ describe('test resolvers', () => {
     expect(dbtest).toMatchObject(patch);
   });
   it('deletes a test', async () => {
-    const user = await getUser();
-    await Category.create(category).save();
-    await Test.create(test).save();
-    const res = await req(deleteTestMutation, { id: 1 }, user);
+    const res = await req(deleteTestMutation, { id: 1 });
     expect(res.deleteTest).toBe(true);
     const tests = await Test.find();
     expect(tests).toHaveLength(0);
