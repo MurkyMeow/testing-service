@@ -1,5 +1,4 @@
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
   cache: true,
   globals: {
@@ -7,5 +6,10 @@ module.exports = {
       isolatedModules: true,
       transpileOnly: true,
     },
+  },
+  moduleFileExtensions: ['js', 'ts', 'vue', 'json'],
+  transform: {
+    '^.+\\.ts?$': 'ts-jest',
+    '^.+\\.vue$': 'vue-jest',
   },
 };

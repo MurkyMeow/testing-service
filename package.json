@@ -6,7 +6,9 @@
   "scripts": {
     "start": "next build frontend-js && NODE_ENV=production node .",
     "dev": "ts-node-dev --no-notify src/index.ts",
+    "dev:frontend": "ts-node-dev --no-notify src/index.ts --frontend",
     "test": "jest --maxWorkers=1 src/test",
+    "test:frontend": "jest --maxWorkers=1 src/test-frontend",
     "serve": "next frontend-js",
     "lint": "eslint ."
   },
@@ -24,6 +26,7 @@
     "koa-bodyparser": "^4.2.1",
     "koa-session": "^5.11.0",
     "koa-static": "^5.0.0",
+    "nuxt": "^2.9.2",
     "pg": "^7.11.0",
     "precss": "^4.0.0",
     "react": "^16.8.6",
@@ -32,14 +35,18 @@
     "typeorm": "^0.2.18"
   },
   "devDependencies": {
+    "@nuxt/typescript": "^2.8.1",
     "@types/graphql": "^14.5.0",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.3",
+    "@vue/test-utils": "^1.0.0-beta.29",
+    "core-js": "^2.6.9",
     "graphql": "^14.5.4",
     "jest": "^24.9.0",
     "sqlite3": "^4.0.9",
     "ts-jest": "^24.0.2",
     "ts-node-dev": "^1.0.0-pre.42",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "vue-jest": "^3.0.4"
   }
 }

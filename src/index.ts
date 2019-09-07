@@ -5,7 +5,7 @@ import env from './env';
 
 const { NODE_ENV = 'development' } = process.env;
 
-(async function() {
+async function start() {
   await openDatabase(false);
   const port = Number(process.env.PORT) || 4000;
   const schema = await getSchema();
@@ -14,4 +14,5 @@ const { NODE_ENV = 'development' } = process.env;
     ? `ready on ${env.localhost}:${port}`
     : 'running'
   );
-}())
+}
+start();

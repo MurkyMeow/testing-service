@@ -6,5 +6,6 @@ dist
 *~
 system-testing.sqlite
 .next
+.nuxt
 db.sqlite
 test.sqlite
