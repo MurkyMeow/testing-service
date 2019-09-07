@@ -50,8 +50,8 @@ describe('user resolvers', () => {
     password: 'world',
   };
   it('creates an account', async () => {
-    const { data } = await req(signupMutation, user);
-    expect(data.signup).toEqual(true);
+    const res = await req(signupMutation, user);
+    expect(res.signup).toEqual(true);
 
     const dbuser = await User.findOne();
     expect(dbuser).toBeTruthy();
@@ -61,13 +61,13 @@ describe('user resolvers', () => {
   });
   it('signs in', async () => {
     await User.create({ ...user, role: Role.user }).save();
-    const { data } = await req(signinQuery, {
+    const { signin } = await req(signinQuery, {
       email: user.email,
       password: user.password,
     });
-    expect(data.signin).toBeTruthy();
-    expect(data.signin.name).toEqual(user.name);
-    expect(data.signin.email).toEqual(user.email);
+    expect(signin).toBeTruthy();
+    expect(signin.name).toEqual(user.name);
+    expect(signin.email).toEqual(user.email);
   });
   it('rejects invalid password', async () => {
     await User.create({ ...user, role: Role.user }).save();
@@ -80,23 +80,20 @@ describe('category resolvers', () => {
   it('adds a category', async () => {
     const user = await getUser();
     const res = await req(addCategoryMutation, { name: 'test' }, user);
-    expect(res.data).toBeTruthy();
-    expect(res.data.addCategory.name).toEqual('test');
+    expect(res.addCategory.name).toEqual('test');
   });
   it('edits a category', async () => {
     const user = await getUser();
     await Category.create({ name: '_', creatorId: user.id }).save();
     const res = await req(editCategoryMutation, { id: 1, name: 'test' }, user);
-    expect(res.data).toBeTruthy();
-    expect(res.data.editCategory.name).toEqual('test');
+    expect(res.editCategory.name).toEqual('test');
   });
   it('gets the list of categories', async () => {
     await Category.create({ name: 'a' }).save();
     await Category.create({ name: 'b' }).save();
     await Category.create({ name: 'c' }).save();
     const res = await req(getCategoriesQuery);
-    expect(res.data).toBeTruthy();
-    expect(res.data.getCategories).toHaveLength(3);
+    expect(res.getCategories).toHaveLength(3);
   });
 });
 
@@ -162,7 +159,7 @@ describe('test resolvers', () => {
     await Category.insert(category);
     const res = await req(addTestMutation, test, user);
     const { creatorId, categoryId, ...rest } = test;
-    expect(res.data.addTest).toMatchObject(rest);
+    expect(res.addTest).toMatchObject(rest);
     const dbtest = await Test.findOne({
       relations: ['questions', 'questions.answers'],
     });
@@ -183,7 +180,7 @@ describe('test resolvers', () => {
       ],
     };
     const res = await req(editTestMutation, patch, user);
-    expect(res.data.editTest).toMatchObject(patch);
+    expect(res.editTest).toMatchObject(patch);
     const dbtest = await Test.findOne({
       relations: ['questions', 'questions.answers'],
     });
@@ -194,7 +191,7 @@ describe('test resolvers', () => {
     await Category.create(category).save();
     await Test.create(test).save();
     const res = await req(deleteTestMutation, { id: 1 }, user);
-    expect(res.data.deleteTest).toBe(true);
+    expect(res.deleteTest).toBe(true);
     const tests = await Test.find();
     expect(tests).toHaveLength(0);
   });

@@ -41,5 +41,5 @@ export const req = (query: string, variables?: any, user?: User) =>
     },
   }).then(res => {
     if (res.errors) throw res.errors;
-    return res;
+    return res.data;
   });
