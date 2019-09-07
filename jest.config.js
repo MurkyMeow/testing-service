@@ -1,5 +1,4 @@
 module.exports = {
-  testEnvironment: 'node',
   cache: true,
   globals: {
     'ts-jest': {
