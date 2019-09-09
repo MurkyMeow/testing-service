@@ -15,7 +15,7 @@ export class UserResolver {
   @Query(() => Boolean)
   signout(@Ctx() { session, assert }: Context): Boolean {
     assert(Boolean(session.user), 401);
-    session.user = null;
+    delete session.user;
     return true;
   }
 
@@ -48,7 +48,7 @@ export class UserResolver {
     });
     const match = user && user.comparePassword(password);
     assert(match, 403, 'Invalid login');
-    session.user = user;
+    session.user = <User>user;
     return user;
   }
 }

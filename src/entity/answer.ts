@@ -7,19 +7,19 @@ import { Question } from './question';
 export class Answer extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  id!: number;
 
   @Column()
   @Field()
-  text: string;
+  text!: string;
 
   @Column()
   @Field()
-  correct: boolean;
+  correct!: boolean;
 
   @ManyToOne(() => Question, question => question.answers, { onDelete: 'CASCADE' })
-  question: Question;
+  question: Question | undefined;
 
   @Column({ nullable: true })
-  questionId: number;
+  questionId!: number;
 }

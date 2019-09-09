@@ -4,11 +4,11 @@ import { User } from './user';
 @Entity()
 export class Result extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  score: number;
+  score!: number;
 
   @ManyToOne(() => User, user => user.results)
-  user: User;
+  user: User | undefined;
 }

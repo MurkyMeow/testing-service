@@ -5,17 +5,23 @@ import { Category } from '../entity/category';
 @Resolver(Category)
 export class CategoryResolver {
   @Query(() => [Category])
-  getCategories() {
+  getCategories(): Promise<Category[]> {
     return Category.find();
   }
 
   @Query(() => Category)
-  getCategory(@Arg('id') id: number) {
-    return Category.findOne(id);
+  async getCategory(
+    @Arg('id') id: number,
+    @Ctx() { assert }: Context
+  ): Promise<Category> {
+    return assert(await Category.findOne(id), 404);
   }
 
   @Mutation(() => Category)
-  addCategory(@Arg('name') name: string, @Ctx() { session }: Context) {
+  addCategory(
+    @Arg('name') name: string,
+    @Ctx() { session }: Context,
+  ): Promise<Category> {
     return Category.create({ name, creator: session.user }).save();
   }
 
@@ -23,12 +29,10 @@ export class CategoryResolver {
   async editCategory(
     @Arg('id') id: number,
     @Arg('name') name: string,
-    @Ctx() { session, assert }: Context
-  ) {
-    const category = await Category.findOne(id, {
-      relations: ['creator'],
-    });
-    const isCreator = session.user.id === category.creator.id;
+    @Ctx() { session, assert }: Context,
+  ): Promise<Category> {
+    const category = assert(await Category.findOne(id), 404);
+    const isCreator = session.user.id === category.creatorId;
     assert(isCreator, 403);
     category.name = name;
     return category.save();
@@ -37,12 +41,10 @@ export class CategoryResolver {
   @Mutation(() => Boolean)
   async deleteCategory(
     @Arg('id') id: number,
-    @Ctx() { session, assert }: Context
-  ) {
-    const category = await Category.findOne(id, {
-      relations: ['creator'],
-    });
-    assert(session.user.id === category.creator.id, 403);
+    @Ctx() { session, assert }: Context,
+  ): Promise<boolean> {
+    const category = assert(await Category.findOne(id), 404);
+    assert(session.user.id === category.creatorId, 403);
     await category.remove();
     return true;
   }

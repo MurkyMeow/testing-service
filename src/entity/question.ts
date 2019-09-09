@@ -8,20 +8,20 @@ import { Answer } from './answer';
 export class Question extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  id!: number;
 
   @Column()
   @Field()
-  text: string;
+  text!: string;
 
   @ManyToOne(() => Test, test => test.questions, { onDelete: 'CASCADE' })
   @Field(() => Test)
-  test: Test;
+  test: Test | undefined;
 
   @Column({ nullable: true })
-  testId: number;
+  testId!: number;
 
   @OneToMany(() => Answer, answer => answer.question, { cascade: true })
   @Field(() => [Answer])
-  answers: Answer[];
+  answers: Answer[] | undefined;
 }

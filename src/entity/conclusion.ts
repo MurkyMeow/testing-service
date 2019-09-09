@@ -7,17 +7,17 @@ import { Test } from './test';
 export class Conclusion extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  id!: number;
 
   @Column()
   @Field()
-  text: string;
+  text!: string;
 
   @Column()
   @Field()
-  minScore: number;
+  minScore!: number;
 
   @ManyToOne(() => Test, test => test.conclusions)
   @Field(() => Test)
-  test: Test;
+  test: Test | undefined;
 }

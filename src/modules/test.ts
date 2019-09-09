@@ -11,10 +11,10 @@ class AnswerInput {
   id?: number;
 
   @Field()
-  text: string;
+  text!: string;
 
   @Field()
-  correct: boolean;
+  correct!: boolean;
 }
 
 @InputType()
@@ -23,27 +23,30 @@ class QuestionInput {
   id?: number;
 
   @Field()
-  text: string;
+  text!: string;
 
   @Field(() => [AnswerInput])
-  answers: AnswerInput[];
+  answers!: AnswerInput[];
 }
 
 @Resolver(Test)
 export class TestResolver {
   @Query(() => Test)
-  getTest(@Arg('id', () => Int) id: number): Promise<Test> {
-    return Test.findOne(id);
+  async getTest(
+    @Arg('id', () => Int) id: number,
+    @Ctx() { assert }: Context,
+  ): Promise<Test> {
+    return assert(await Test.findOne(id), 404);
   }
 
   @FieldResolver()
-  creator(@Root() test: Test): Promise<User> {
-    return User.findOne(test.creatorId);
+  async creator(@Root() test: Test, @Ctx() { assert }: Context): Promise<User> {
+    return assert(await User.findOne(test.creatorId), 404);
   }
 
   @FieldResolver()
-  category(@Root() test: Test): Promise<Category> {
-    return Category.findOne(test.categoryId);
+  async category(@Root() test: Test, @Ctx() { assert }: Context): Promise<Category> {
+    return assert(await Category.findOne(test.categoryId), 404);
   }
 
   @FieldResolver()
@@ -75,8 +78,7 @@ export class TestResolver {
     @Arg('name') name: string,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
   ): Promise<Test> {
-    const test = await Test.findOne(id);
-    assert(test != null, 404);
+    const test = assert(await Test.findOne(id), 404);
     assert(test.creatorId === session.user.id, 403);
     test.name = name;
     test.questions = questions.map(q => Question.create(q));
@@ -88,8 +90,7 @@ export class TestResolver {
     @Arg('id', () => Int) id: number,
     @Ctx() { session, assert }: Context,
   ): Promise<boolean> {
-    const test = await Test.findOne(id);
-    assert(test != null, 404);
+    const test = assert(await Test.findOne(id), 404);
     assert(test.creatorId === session.user.id, 403);
     await test.remove();
     return true;

@@ -2,15 +2,16 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "lib": ["es6"],
+    "lib": ["es6", "dom"],
     "noEmit": true,
+    "strict": true,
     "baseUrl": ".",
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true
   },
-  "exclude": ["node_modules", "frontend-js"],
+  "exclude": ["node_modules", "frontend-js", "src/test", "src/test-frontend"],
   "include": ["src/**/*.ts"],
   "files": ["ts-shim.d.ts"]
 }

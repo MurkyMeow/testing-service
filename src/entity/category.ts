@@ -8,18 +8,18 @@ import { Test } from './test';
 export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  id!: number;
 
   @Column()
   @Field()
-  name: string;
+  name!: string;
 
   @ManyToOne(() => User)
-  creator: User;
+  creator: User | undefined;
 
   @Column({ nullable: true })
-  creatorId: number;
+  creatorId!: number;
 
   @OneToMany(() => Test, test => test.category)
-  tests: Test[];
+  tests: Test[] | undefined;
 }

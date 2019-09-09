@@ -11,32 +11,32 @@ import { MinLength } from 'class-validator';
 export class Test extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  id!: number;
 
   @Column()
   @Field()
-  name: string;
+  name!: string;
 
   @ManyToOne(() => User, user => user.tests)
   @Field(() => User)
-  creator: User;
+  creator: User | undefined;
 
   @Column({ nullable: true })
-  creatorId: number;
+  creatorId!: number;
 
   @ManyToOne(() => Category, category => category.tests)
   @Field(() => Category)
-  category: Category;
+  category: Category | undefined;
 
   @Column({ nullable: true })
-  categoryId: number;
+  categoryId!: number;
 
   @OneToMany(() => Question, question => question.test, { cascade: true })
   @Field(() => [Question])
   @MinLength(1)
-  questions: Question[];
+  questions: Question[] | undefined;
 
   @OneToMany(() => Conclusion, conclusion => conclusion.test)
   @Field(() => [Conclusion])
-  conclusions: Conclusion[];
+  conclusions: Conclusion[] | undefined;
 }

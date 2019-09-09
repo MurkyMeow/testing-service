@@ -24,31 +24,31 @@ const getHash = (str: string): string =>
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  id!: number;
 
   @Column()
   @Field()
-  name: string;
+  name!: string;
 
   @Column({ unique: true })
   @Field()
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column()
   @Field(() => Role)
-  role: Role;
+  role!: Role;
 
   @OneToMany(() => Test, test => test.creator)
-  tests: Test[];
+  tests: Test[] | undefined;
 
   @OneToMany(() => Category, category => category.creator)
-  categories: Category[];
+  categories: Category[] | undefined;
 
   @OneToMany(() => Result, result => result.user)
-  results: Result[];
+  results: Result[] | undefined;
 
   @BeforeInsert()
   hashPassword() {
