@@ -11,7 +11,7 @@ async function start() {
   const schema = await getSchema();
   await runServer(port, schema);
   console.log(NODE_ENV === 'development'
-    ? `ready on ${env.localhost}:${port}`
+    ? `ready on http://${env.localhost}:${port}`
     : 'running'
   );
 }

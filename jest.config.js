@@ -6,9 +6,7 @@ module.exports = {
       transpileOnly: true,
     },
   },
-  moduleFileExtensions: ['js', 'ts', 'vue', 'json'],
   transform: {
     '^.+\\.ts?$': 'ts-jest',
-    '^.+\\.vue$': 'vue-jest',
   },
 };

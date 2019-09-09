@@ -1,4 +1,4 @@
-import { Nuxt, Builder } from 'nuxt';
+import Next from 'next';
 import { ApolloServer, ApolloError } from 'apollo-server-koa';
 import { GraphQLSchema } from 'graphql';
 import Koa from 'koa';
@@ -9,7 +9,6 @@ import session from 'koa-session';
 import bodyParser from 'koa-bodyparser';
 import kstatic from 'koa-static';
 import env from './env';
-import config from '../nuxt.config';
 import { User } from './entity/user';
 
 export type Context = {
@@ -60,15 +59,12 @@ export async function runServer(port = 4000, schema: GraphQLSchema): Promise<htt
   server.applyMiddleware({ app });
 
   if (process.argv.includes('--frontend')) {
-    const nuxt = new Nuxt(config);
-    const builder = new Builder(nuxt);
-    await builder.build();
-
-    app.use(async ctx => {
-      ctx.status = 200;
-      ctx.respond = false;
-      nuxt.render(ctx.req, ctx.res);
+    const next = Next({
+      dev: true,
+      dir: 'frontend-js',
     });
+    const handle = next.getRequestHandler();
+    app.use(ctx => handle(ctx.req, ctx.res));
   }
 
   return http
