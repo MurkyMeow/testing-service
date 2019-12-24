@@ -15,7 +15,3 @@ npx knex migrate:latest
 npx knex seed:run
 npm start
 ```
-
-## Authors:
-- fronted-developer: https://vk.com/meow_laika
-- backend-developer: https://vk.com/dj_federation
