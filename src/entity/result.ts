@@ -10,5 +10,5 @@ export class Result extends BaseEntity {
   score!: number;
 
   @ManyToOne(() => User, user => user.results)
-  user: User | undefined;
+  user!: User;
 }

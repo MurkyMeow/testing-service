@@ -16,12 +16,12 @@ export class Question extends BaseEntity {
 
   @ManyToOne(() => Test, test => test.questions, { onDelete: 'CASCADE' })
   @Field(() => Test)
-  test: Test | undefined;
+  test!: Test;
 
   @Column({ nullable: true })
   testId!: number;
 
   @OneToMany(() => Answer, answer => answer.question, { cascade: true })
   @Field(() => [Answer])
-  answers: Answer[] | undefined;
+  answers!: Answer[];
 }

@@ -1,11 +1,16 @@
-import { User, Role } from '../entity/user';
+import { Role } from '../entity/user';
 import { Category } from '../entity/category';
 import { req, authenticate } from './setup';
 import { Test } from '../entity/test';
 
 const signupMutation = `
   mutation($email: String!, $name: String!, $password: String!) {
-    signup(email: $email, name: $name, password: $password)
+    signup(email: $email, name: $name, password: $password) {
+      id
+      email
+      name
+      role
+    }
   }
 `;
 const signinQuery = `
@@ -27,7 +32,7 @@ const addCategoryMutation = `
   }
 `;
 const editCategoryMutation = `
-  mutation($id: Float!, $name: String!) {
+  mutation($id: Int!, $name: String!) {
     editCategory(id: $id, name: $name) {
       id
       name
@@ -49,28 +54,21 @@ describe('user resolvers', () => {
     name: 'hello',
     password: 'world',
   };
-  it('creates an account', async () => {
-    const res = await req(signupMutation, user);
-    expect(res.signup).toEqual(true);
+  it('creates an account and signs in', async () => {
+    const { signup } = await req(signupMutation, user);
+    expect(signup.name).toEqual(user.name);
+    expect(signup.email).toEqual(user.email);
+    expect(signup.role).toEqual(Role.user);
 
-    const dbuser = await User.findOne();
-    expect(dbuser).toBeTruthy();
-    expect(dbuser.name).toEqual(user.name);
-    expect(dbuser.email).toEqual(user.email);
-    expect(dbuser.role).toEqual(Role.user);
-  });
-  it('signs in', async () => {
-    await User.create({ ...user, role: Role.user }).save();
     const { signin } = await req(signinQuery, {
       email: user.email,
-      password: user.password,
+      password: user.password
     });
     expect(signin).toBeTruthy();
     expect(signin.name).toEqual(user.name);
     expect(signin.email).toEqual(user.email);
   });
   it('rejects invalid password', async () => {
-    await User.create({ ...user, role: Role.user }).save();
     const login = req(signinQuery, { email: user.email, password: '____' });
     await expect(login).rejects.toBeDefined();
   });

@@ -18,7 +18,8 @@ export class Answer extends BaseEntity {
   correct!: boolean;
 
   @ManyToOne(() => Question, question => question.answers, { onDelete: 'CASCADE' })
-  question: Question | undefined;
+  @Field(() => Question)
+  question!: Question;
 
   @Column({ nullable: true })
   questionId!: number;

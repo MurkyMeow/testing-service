@@ -1,5 +1,5 @@
-import { Resolver, Query, Arg, Ctx, Mutation } from 'type-graphql';
-import { Context } from '../server';
+import { Resolver, Query, Arg, Ctx, Mutation, Int } from 'type-graphql';
+import { Context, assert } from '../server';
 import { Category } from '../entity/category';
 
 @Resolver(Category)
@@ -11,8 +11,7 @@ export class CategoryResolver {
 
   @Query(() => Category)
   async getCategory(
-    @Arg('id') id: number,
-    @Ctx() { assert }: Context
+    @Arg('id', () => Int) id: number,
   ): Promise<Category> {
     return assert(await Category.findOne(id), 404);
   }
@@ -22,29 +21,31 @@ export class CategoryResolver {
     @Arg('name') name: string,
     @Ctx() { session }: Context,
   ): Promise<Category> {
-    return Category.create({ name, creator: session.user }).save();
+    const creator = assert(session.user, 401);
+    return Category.create({ name, creator }).save();
   }
 
   @Mutation(() => Category)
   async editCategory(
-    @Arg('id') id: number,
+    @Arg('id', () => Int) id: number,
     @Arg('name') name: string,
-    @Ctx() { session, assert }: Context,
+    @Ctx() { session }: Context,
   ): Promise<Category> {
+    const user = assert(session.user, 401);
     const category = assert(await Category.findOne(id), 404);
-    const isCreator = session.user.id === category.creatorId;
-    assert(isCreator, 403);
+    assert(user.id === category.creatorId, 403);
     category.name = name;
     return category.save();
   }
 
   @Mutation(() => Boolean)
   async deleteCategory(
-    @Arg('id') id: number,
-    @Ctx() { session, assert }: Context,
+    @Arg('id', () => Int) id: number,
+    @Ctx() { session }: Context,
   ): Promise<boolean> {
+    const user = assert(session.user, 401);
     const category = assert(await Category.findOne(id), 404);
-    assert(session.user.id === category.creatorId, 403);
+    assert(user.id === category.creatorId, 403);
     await category.remove();
     return true;
   }

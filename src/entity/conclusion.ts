@@ -19,5 +19,5 @@ export class Conclusion extends BaseEntity {
 
   @ManyToOne(() => Test, test => test.conclusions)
   @Field(() => Test)
-  test: Test | undefined;
+  test!: Test;
 }

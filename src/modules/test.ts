@@ -1,9 +1,7 @@
-import { Resolver, Query, Arg, Ctx, Mutation, Int, Field, InputType, FieldResolver, Root } from 'type-graphql';
-import { Context } from '../server';
+import { Resolver, Query, Arg, Ctx, Mutation, Int, Field, InputType } from 'type-graphql';
+import { Context, assert } from '../server';
 import { Test } from '../entity/test';
-import { Category } from '../entity/category';
 import { Question } from '../entity/question';
-import { User } from '../entity/user';
 
 @InputType()
 class AnswerInput {
@@ -34,25 +32,8 @@ export class TestResolver {
   @Query(() => Test)
   async getTest(
     @Arg('id', () => Int) id: number,
-    @Ctx() { assert }: Context,
   ): Promise<Test> {
     return assert(await Test.findOne(id), 404);
-  }
-
-  @FieldResolver()
-  async creator(@Root() test: Test, @Ctx() { assert }: Context): Promise<User> {
-    return assert(await User.findOne(test.creatorId), 404);
-  }
-
-  @FieldResolver()
-  async category(@Root() test: Test, @Ctx() { assert }: Context): Promise<Category> {
-    return assert(await Category.findOne(test.categoryId), 404);
-  }
-
-  @FieldResolver()
-  async questions(@Root() test: Test): Promise<Question[]> {
-    const where = { testId: test.id };
-    return test.questions || Question.find({ where });
   }
 
   @Mutation(() => Test)
@@ -62,24 +43,22 @@ export class TestResolver {
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
     @Ctx() { session }: Context,
   ): Promise<Test> {
-    const test = Test.create({
-      name,
-      questions,
-      categoryId,
-      creator: session.user,
-    });
-    return test.save();
+    const creator = assert(session.user, 401);
+    assert(questions.length > 0, 400);
+    return Test.create({ name, questions, categoryId, creator }).save();
   }
 
   @Mutation(() => Test)
   async editTest(
-    @Ctx() { session, assert }: Context,
+    @Ctx() { session }: Context,
     @Arg('id', () => Int) id: number,
     @Arg('name') name: string,
     @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
   ): Promise<Test> {
+    const user = assert(session.user, 401);
     const test = assert(await Test.findOne(id), 404);
-    assert(test.creatorId === session.user.id, 403);
+    assert(test.creatorId === user.id, 403);
+    assert(questions.length > 0, 400);
     test.name = name;
     test.questions = questions.map(q => Question.create(q));
     return test.save();
@@ -88,10 +67,11 @@ export class TestResolver {
   @Mutation(() => Boolean)
   async deleteTest(
     @Arg('id', () => Int) id: number,
-    @Ctx() { session, assert }: Context,
+    @Ctx() { session }: Context,
   ): Promise<boolean> {
+    const user = assert(session.user, 401);
     const test = assert(await Test.findOne(id), 404);
-    assert(test.creatorId === session.user.id, 403);
+    assert(test.creatorId === user.id, 403);
     await test.remove();
     return true;
   }

@@ -15,11 +15,12 @@ export class Category extends BaseEntity {
   name!: string;
 
   @ManyToOne(() => User)
-  creator: User | undefined;
+  creator!: User;
 
   @Column({ nullable: true })
   creatorId!: number;
 
   @OneToMany(() => Test, test => test.category)
-  tests: Test[] | undefined;
+  @Field(() => [Test])
+  tests!: Test[];
 }

@@ -4,7 +4,6 @@ import { Category } from './category';
 import { User } from './user';
 import { Question } from './question';
 import { Conclusion } from './conclusion';
-import { MinLength } from 'class-validator';
 
 @Entity()
 @ObjectType()
@@ -33,10 +32,9 @@ export class Test extends BaseEntity {
 
   @OneToMany(() => Question, question => question.test, { cascade: true })
   @Field(() => [Question])
-  @MinLength(1)
-  questions: Question[] | undefined;
+  questions!: Question[];
 
   @OneToMany(() => Conclusion, conclusion => conclusion.test)
   @Field(() => [Conclusion])
-  conclusions: Conclusion[] | undefined;
+  conclusions!: Conclusion[];
 }

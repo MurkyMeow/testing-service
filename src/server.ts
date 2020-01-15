@@ -7,15 +7,13 @@ import http from 'http';
 import cors from '@koa/cors';
 import session from 'koa-session';
 import bodyParser from 'koa-bodyparser';
-import kstatic from 'koa-static';
 import env from './env';
 import { User } from './entity/user';
 
 export type Context = {
   session: {
-    user: User;
+    user?: User;
   };
-  assert<T>(cond: T | undefined, code: string | number, msg?: string): T;
 };
 
 export function openDatabase(test: boolean) {
@@ -31,12 +29,8 @@ export function openDatabase(test: boolean) {
   });
 }
 
-export function assert(
-  val: any,
-  code: string | number,
-  msg?: string
-) {
-  if (!val) throw new ApolloError(msg || '', code.toString());
+export function assert<T>(val: T | undefined, code: string | number, msg?: string): T {
+  if (!val) throw new ApolloError(msg || '', String(code));
   return val;
 }
 
@@ -47,22 +41,17 @@ export async function runServer(port = 4000, schema: GraphQLSchema): Promise<htt
   app.use(cors({ credentials: true }));
   app.use(bodyParser());
   app.use(session({ maxAge: 86400000 }, app));
-  app.use(kstatic(`${__dirname}/assets`));
 
   const server = new ApolloServer({
     schema,
     context: ({ ctx }) : Context => ({
       session: ctx.session,
-      assert,
     }),
   });
   server.applyMiddleware({ app });
 
   if (process.argv.includes('--frontend')) {
-    const next = Next({
-      dev: true,
-      dir: 'frontend-js',
-    });
+    const next = Next({ dev: true, dir: 'frontend' });
     const handle = next.getRequestHandler();
     app.use(ctx => handle(ctx.req, ctx.res));
   }
