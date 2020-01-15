@@ -53,6 +53,7 @@ export async function runServer(port = 4000, schema: GraphQLSchema): Promise<htt
   if (process.argv.includes('--frontend')) {
     const next = Next({ dev: true, dir: 'frontend' });
     const handle = next.getRequestHandler();
+    await next.prepare();
     app.use(ctx => handle(ctx.req, ctx.res));
   }
 
