@@ -1,21 +1,17 @@
+import css from './index.css'
+
 const Index = () => (
-  <div className="page-index">
-    <div className="page-index__heading">
+  <div className={css.pageIndex}>
+    <div className={css.heading}>
       <h1>Интернет платформа</h1>
       <h2>Тестирования студентов</h2>
-      <img className="page-index__logo" src="/logo.svg"/>
+      <img className={css.logo} src="/logo.svg"/>
     </div>
-    <div className="page-index__features-heading">Возможности</div>
-    <div className="page-index__features">
-      <div className="page-index__feature --f1">
-        Простая развёртка в локальных сетях
-      </div>
-      <div className="page-index__feature --f2">
-        Создание и редактирование тестов
-      </div>
-      <div className="page-index__feature --f3">
-        Обобщение результатов испытуемых
-      </div>
+    <div className={css.featuresHeading}>Возможности</div>
+    <div className={css.features}>
+      <div className={css.feature}>Простая развёртка в локальных сетях</div>
+      <div className={css.feature}>Создание и редактирование тестов</div>
+      <div className={css.feature}>Обобщение результатов испытуемых</div>
     </div>
   </div>
 );

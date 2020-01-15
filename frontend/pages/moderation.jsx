@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notify } from '../index';
 import { useRequest, get, post } from '../api';
 import Button from '../components/button';
+import css from './moderation.css';
 
 export default () => {
   const [, teachers = [], setTeachers] = useRequest((() =>
@@ -43,17 +44,17 @@ export default () => {
     }
   };
   return (
-    <div className="page-moderation">
+    <div className={css.pageModeration}>
       <h2>Список преподавателей:</h2>
       {teachers.map(t => (
-        <div className="page-moderation__teacher" key={t.id}>
+        <div className={css.teacher} key={t.id}>
           <Link href={`/profile?id=${t.id}`}>
             <a href="#">{t.name || 'Пользователь'} (id{t.id})</a>
           </Link>
           <Button onClick={() => unassign(t.id)}>Разжаловать</Button>
         </div>
       ))}
-      <form className="page-moderation__form" onSubmit={submit}>
+      <form className={css.form} onSubmit={submit}>
         <input placeholder="id"/>
         <Button>Добавить</Button>
       </form>

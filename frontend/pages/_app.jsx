@@ -5,7 +5,7 @@ import { useModal } from '../components/modal';
 import { useGlobalState, notify } from '../index';
 import { get, post, useRequest } from '../api';
 import Button from '../components/button';
-import '../style.css';
+import css from './app.css';
 
 const AuthForm = ({ type, onSuccess }) => {
   const signup = type === 'signup';
@@ -31,17 +31,17 @@ const AuthForm = ({ type, onSuccess }) => {
     target.setCustomValidity(validity);
   };
   return (
-    <form className="app-auth" onSubmit={submit}>
-      <div className="app-auth-header">Заполните поля</div>
-      <input className="app-auth-field" name="email" type="email" placeholder="Email" required/>
-      <input className="app-auth-field" name="password" type="password" placeholder="Пароль" required/>
+    <form className={css.auth} onSubmit={submit}>
+      <div className={css.auth__header}>Заполните поля</div>
+      <input className={css.auth__field} name="email" type="email" placeholder="Email" required/>
+      <input className={css.auth__field} name="password" type="password" placeholder="Пароль" required/>
       {signup && (
-        <input className="app-auth-field" name="passwordAgain" type="password" required
+        <input className={css.auth__field} name="passwordAgain" type="password" required
           placeholder="Повторите пароль"
           onChange={onConfirmChange}
         />
       )}
-      <Button className="app-auth-btn">Войти</Button>
+      <Button className={css.auth__btn}>Войти</Button>
     </form>
   );
 };
@@ -73,24 +73,24 @@ const Header = ({ router }) => {
     }
   };
   return (
-    <header className="app-header">
+    <header className={css.header}>
       <Modal>
         <AuthForm type={authType} onSuccess={onSuccess}/>
       </Modal>
-      <a className="app-header-logo" href="/">Nice header there</a>
+      <a className={css.header__logo} href="/">Nice header there</a>
       {user ? <>
-        <Button className="app-header-nav-btn" link="/categories">Категории</Button>
+        <Button className={css.header__navBtn} link="/categories">Категории</Button>
         {user.role === 'admin' && (
-          <Button className="app-header-nav-btn" link="/moderation">Модерация</Button>
+          <Button className={css.header__navBtn} link="/moderation">Модерация</Button>
         )}
-        <nav className="app-header-auth">
-          <Button className="app-header-nav-btn" link="/profile">{user.name ? user.name : 'Профиль'}</Button>
-          <Button className="app-header-nav-btn" onClick={signout}>Выйти</Button>
+        <nav className={css.header__auth}>
+          <Button className={css.header__navBtn} link="/profile">{user.name ? user.name : 'Профиль'}</Button>
+          <Button className={css.header__navBtn} onClick={signout}>Выйти</Button>
         </nav>
       </> : (
-        <nav className="app-header-auth">
-          <Button className="app-header-nav-btn" onClick={showForm('signup')}>Создать аккаунт</Button>
-          <Button className="app-header-nav-btn" onClick={showForm('signin')}>Войти</Button>
+        <nav className={css.header__auth}>
+          <Button className={css.header__navBtn} onClick={showForm('signup')}>Создать аккаунт</Button>
+          <Button className={css.header__navBtn} onClick={showForm('signin')}>Войти</Button>
         </nav>
       )}
     </header>
@@ -100,9 +100,9 @@ const Header = ({ router }) => {
 const Notification = () => {
   const [{ type = 'hidden', timeout = 0, text }] = useGlobalState('notification', {});
   return (
-    <div className={`notification --${type}`}
+    <div className={css.notification} data-type={type}
       style={{ '--duration': `${timeout || 0}ms` }}>
-      <div className="notification__content">{text}</div>
+      <div className={css.notification__content}>{text}</div>
     </div>
   );
 };

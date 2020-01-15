@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import css from './test-result.css';
 
 function getHref(result) {
   if (result.test) return `/test?id=${result.test.id}`;
@@ -8,7 +9,7 @@ function getHref(result) {
 
 export const TestResult = ({ result }) => (
   <Link href={getHref(result)}>
-    <div className="test-result">
+    <div className={css.testResult}>
       {result.test
         ? result.test.name
         : result.user.name || `Пользователь №${result.user.id}`
@@ -18,7 +19,7 @@ export const TestResult = ({ result }) => (
         : ` — ${result.score}`
       }
       {result.conclusion && <>
-        <div className="test-result__conclusion">{result.conclusion}</div>
+        <div className={css.conclusion}>{result.conclusion}</div>
         <i>info</i>
       </>}
     </div>

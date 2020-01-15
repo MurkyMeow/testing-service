@@ -1,0 +1,22 @@
+.button {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  display: inline-block;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #f66200;
+  &[data-variant="secondary"] {
+    background: linear-gradient(#d3cce3, #e9e4f0);
+  }
+  &[data-variant="disabled"] {
+    background: linear-gradient(90deg, #898989, #c0c0c0);
+  }
+  &:not([data-variant="disabled"]):active {
+    transform: scale(0.96);
+  }
+}

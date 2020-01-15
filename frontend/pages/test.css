@@ -1,0 +1,107 @@
+.pageTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0 30px;
+}
+.pageTest {
+  overflow: hidden;
+}
+.frame {
+  position: relative;
+  display: flex;
+  --slide-index: 0;
+}
+.navBtn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  cursor: pointer;
+  background: #7802cc;
+  border-radius: 0 50% 50% 0;
+  z-index: 1;
+
+  &:last-child {
+    border-radius: 50% 0 0 50%;
+  }
+  &[data-right="true"] {
+    left: calc(100% - 30px);
+  }
+  &[data-disabled="true"] {
+    pointer-events: none;
+    background: #343a40;
+  }
+  &[data-warning="true"] {
+    background: #ff934a;
+  }
+}
+.question {
+  --slide-width: 500px;
+  --spacing: calc((100vw - var(--slide-width)) / 4);
+  --step: calc(var(--slide-width) + 2 * var(--spacing));
+  width: var(--slide-width);
+  margin: 0 var(--spacing);
+  flex-shrink: 0;
+  background: #6900b2;
+  transform: translateX(calc(-1 * var(--slide-index) * var(--step)));
+  transition: transform .35s;
+  &:nth-child(2) {
+    margin-left: var(--spacing * 2);
+  }
+}
+.question__title {
+  font-size: 20px;
+  text-align: center;
+  padding: 5px 0;
+  margin-bottom: 10px;
+}
+.question__answers {
+  counter-reset: index;
+}
+.question__answer {
+  display: flex;
+  margin-bottom: 10px;
+  & div {
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    &:hover {
+      background: #570095;
+    }
+    &::before {
+      counter-increment: index;
+      content: counter(index) ')';
+      margin-right: 10px;
+    }
+  }
+  & input {
+    display: none;
+  }
+  & input:checked ~ div {
+    background: #9e1b92;
+  }
+}
+.navigation {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 50px;
+  & > div {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #8e8a99;
+    &[data-active="true"] {
+      background: #fff;
+    }
+  }
+}
+.finishBtn {
+  display: block;
+  margin: 0 auto;
+}

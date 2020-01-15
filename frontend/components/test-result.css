@@ -1,0 +1,29 @@
+.test-result {
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 20px;
+
+  &:not(:hover) .conclusion {
+    display: none;
+  }
+  & i {
+    font-size: .9em;
+    vertical-align: super;
+    margin-left: 5px;
+  }
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+.conclusion {
+  font-style: italic;
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  padding: 5px 10px;
+  background: #2d0153;
+  animation: appear .25s forwards;
+}

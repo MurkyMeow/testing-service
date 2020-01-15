@@ -3,13 +3,14 @@ import produce from 'immer';
 import { withRouter } from 'next/router';
 import { useRequest, get, post } from '../api';
 import Button from '../components/button';
+import css from './test.css';
 
 const Question = ({ data, checked, onToggle }) => (
-  <div className="test-page__question">
-    <div className="test-page__question__title">{data.text}</div>
-    <div className="test-page__question__answers">
+  <div className={css.question}>
+    <div className={css.question__title}>{data.text}</div>
+    <div className={css.question__answers}>
       {data.answers.map(answer => (
-        <label className="test-page__question__answers__item" key={answer.id}>
+        <label className={css.question__answer} key={answer.id}>
           <input type="checkbox"
             checked={checked.includes(answer.id)}
             onChange={() => onToggle(answer.id)}
@@ -45,34 +46,29 @@ const Test = ({ router }) => {
       else answer.splice(index, 1);
     }));
   };
-  if (!test) return <div className="page-title">Загрузка...</div>;
+  if (!test) return <div className={css.pageTitle}>Загрузка...</div>;
   return (
-    <div className="test-page">
-      <div className="page-title">{test.name}</div>
-      <div className="test-page__frame" style={{ '--slide-index': slide }}>
-        <div className={`test-page__nav-btn ${slide <= 0 ? '--disabled' : ''}`}
-          onClick={go(slide - 1)}>
-            ←
-        </div>
+    <div className={css.pageTest}>
+      <div className={css.pageTitle}>{test.name}</div>
+      <div className={css.frame} style={{ '--slide-index': slide }}>
+        <div className={css.navBtn} data-disabled={slide <= 0} onClick={go(slide - 1)}>←</div>
         {test.questions.map(question => (
           <Question data={question} key={question.id}
             checked={answers[question.id] || []}
             onToggle={answerId => checkAnswer(question.id, answerId)}
           />
         ))}
-        <div className={`test-page__nav-btn --right ${slide >= test.questions.length - 1 ? '--warning' : ''}`}
+        <div className={css.navBtn} data-right="true" data-warning={slide >= test.questions.length - 1}
           onClick={go(slide + 1)}>
           →
         </div>
       </div>
-      <div className="test-page__navigation">
+      <div className={css.navigation}>
         {[...Array(test.questions.length).keys()].map(index => (
-          <div key={index}
-            className={index === slide ? '--active' : ''}
-            onClick={go(index)}/>
+          <div data-active={index === slide} key={index} onClick={go(index)}/>
         ))}
       </div>
-      <Button className="test-page__finish-btn" onClick={finish}>Завершить</Button>
+      <Button className={css.finishBtn} onClick={finish}>Завершить</Button>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { get, patch } from '../api';
 import { getKey, withKey, notify } from '../index';
 import { Editable } from '../components/editable';
 import Button from '../components/button';
+import css from './test_edit.css';
 
 const showError = err => {
   const message = err.status === 400
@@ -87,9 +88,9 @@ const ConclusionForm = ({ testId, initial, max }) => {
   };
   return <>
     <h2>Результаты:</h2>
-    <div className="test-add-page__conclusion-form">
+    <div className={css.conclusionForm}>
       {conclusions.map((res, i) => (
-        <div className="test-add-page__conclusion" key={getKey(res)}>
+        <div className={css.conclusion} key={getKey(res)}>
           <select value={res.min_score} onChange={e => setScore(i, e.target.value)}>
             <option disabled>Кол-во баллов</option>
             {getOptions().map(val => (
@@ -101,17 +102,14 @@ const ConclusionForm = ({ testId, initial, max }) => {
           <textarea placeholder="Описание" value={res.text}
             onChange={e => setText(i, e.target.value)}
           />
-          <i className="test-add-page__conclusion-close"
-            onClick={() => close(i)}>
-              close
-          </i>
+          <i className={css.conclusion-Close} onClick={() => close(i)}>close</i>
         </div>
       ))}
     </div>
     {conclusions.length <= max && (
-      <div className="test-add-page__conclusion-add" onClick={add}>+</div>
+      <div className={css.conclusionAdd} onClick={add}>+</div>
     )}
-    {saveButton({ className: 'test-add-page__send-btn', onClick: save })}
+    {saveButton({ className: css.sendBtn, onClick: save })}
   </>;
 };
 
@@ -190,21 +188,22 @@ const TestEdit = ({ router }) => {
     }
   };
   return (
-    <form className="test-add-page" onSubmit={e => e.preventDefault()} ref={form}>
-      <Editable className="page-title --name" required
+    <form className={css.pageAddTest} onSubmit={e => e.preventDefault()} ref={form}>
+      <Editable className={`page-title ${css.field}`} data-type="name"
+      required
         placeholder="Название теста"
         value={name}
         onChange={e => setName(e.target.value)}
       />
       {questions.map((question, questionIndex) => (
-        <div className="test-add-page__question" key={getKey(question)}>
+        <div className={css.question} key={getKey(question)}>
           {questions.length > 1 && (
-            <i className="test-add-page__remove-btn"
+            <i className={css.removeBtn}
               onClick={() => dispatch({ type: 'remove-question', index: questionIndex })}>
               close
             </i>
           )}
-          <Editable className="--question" placeholder="Вопрос" required
+          <Editable className={css.field} data-type="question" placeholder="Вопрос" required
             value={question.text}
             onChange={e => dispatch({
               type: 'set-question-text',
@@ -213,7 +212,7 @@ const TestEdit = ({ router }) => {
             })}
           />
           {question.answers.map((answer, answerIndex) => (
-            <div className="test-add-page__question__answer" key={getKey(answer)}>
+            <div className={css.question__answer} key={getKey(answer)}>
               <input type="checkbox" checked={answer.correct}
                 onChange={e => dispatch({
                   type: 'check-answer',
@@ -222,7 +221,7 @@ const TestEdit = ({ router }) => {
                   checked: e.target.checked,
                 })}
               />
-              <Editable className="--answer" placeholder="Ответ" required
+              <Editable className={css.field} data-type="answer" placeholder="Ответ" required
                 value={answer.text}
                 onChange={e => dispatch({
                   type: 'set-answer-text',
@@ -232,24 +231,24 @@ const TestEdit = ({ router }) => {
                 })}
               />
               {question.answers.length > 2 && (
-                <i className="test-add-page__remove-btn"
+                <i className={css.removeBtn}
                   onClick={() => dispatch({ type: 'remove-answer', questionIndex, answerIndex })}>
                   close
                 </i>
               )}
             </div>
           ))}
-          <Button className="test-add-page__question__add-btn"
+          <Button className={css.question__addBtn}
             onClick={() => dispatch({ type: 'add-answer', questionIndex })}>
             Добавить ответ
           </Button>
         </div>
       ))}
-      <Button className="test-add-page__add-btn"
+      <Button className={css.addBtn}
         onClick={() => dispatch({ type: 'add-question' })}>
         Добавить вопрос
       </Button>
-      {saveButton({ className: 'test-add-page__send-btn', onClick: submit })}
+      {saveButton({ className: css.sendBtn, onClick: submit })}
       {id && (
         <ConclusionForm
           testId={id}

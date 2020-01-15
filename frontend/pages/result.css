@@ -1,0 +1,17 @@
+.pageTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0 30px;
+}
+.pageResult {
+  text-align: center;
+}
+.score {
+  font-size: 30px;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.conclusion {
+  font-size: 18px;
+}

@@ -8,7 +8,7 @@ export const Editable = ({ className = '', initial, onAlter, ...props }) => {
     setValue(e.target.value);
   };
   return (
-    <input className={`editable ${className}`} {...props}
+    <input className={`${css.editable} ${className}`} {...props}
       onBlur={onBlur}
       defaultValue={value}/>
   );

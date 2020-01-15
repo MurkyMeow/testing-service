@@ -1,0 +1,26 @@
+.pageTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0 30px;
+}
+.testList {
+  display: grid;
+  grid-template-columns: repeat(3, 300px);
+  justify-content: center;
+
+  & .test-card {
+    margin: 20px;
+  }
+}
+.addBtn {
+  font-size: 28px;
+  display: block;
+  align-self: center;
+  justify-self: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+  padding: 0;
+  border-radius: 50%;
+}

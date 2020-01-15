@@ -1,8 +1,9 @@
 import Link from 'next/link';
+import css from './button.css';
 
 const Button = ({ className = '', link, onClick, variant, children }) => {
   const button = (
-    <button className={`button ${className}`} onClick={onClick} variant={variant}>
+    <button className={`${css.button} ${className}`} data-variant={variant} onClick={onClick}>
       {children}
     </button>
   );

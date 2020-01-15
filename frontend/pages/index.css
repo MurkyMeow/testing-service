@@ -1,0 +1,46 @@
+.pageIndex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.heading {
+  text-align: center;
+  position: relative;
+  margin-bottom: 80px;
+}
+.logo {
+  position: absolute;
+  right: -200px; top: 10px;
+  width: 200px;
+}
+.featuresHeading {
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+.features {
+  display: grid;
+  column-gap: 50px;
+  grid-template-columns: repeat(3, 220px);
+}
+.feature {
+  cursor: pointer;
+  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+  transition: filter .25s;
+  &:hover {
+    filter: brightness(1.1);
+  }
+  &:nth-child(1) {
+    background: linear-gradient(-30deg, #69cc34, #33c27a)
+  }
+  &:nth-child(2) {
+    background: linear-gradient(-30deg, #9f046c, #da3963)
+  }
+  &:nth-child(3) {
+    background: linear-gradient(-30deg, #26afe0, #3cbcd6)
+  }
+}

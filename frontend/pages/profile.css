@@ -1,0 +1,42 @@
+.pageTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0 30px;
+}
+.pageProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.name {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  width: 500px;
+  margin: 20px auto 10px;
+  border-bottom: 1px solid gray;
+}
+.tests {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 800px;
+}
+.testsTitle {
+  margin-bottom: 0;
+}
+.test {
+  width: 300px;
+  text-align: center;
+  margin: 20px;
+}
+/* FIXME these are unneded? */
+.test__name {
+  padding: 10px;
+  background: #9e1b92;
+}
+.test__info {
+  padding: 10px;
+  background: #570095;
+}
