@@ -4,9 +4,7 @@ import { GraphQLSchema } from 'graphql';
 import Koa from 'koa';
 import { createConnection } from 'typeorm';
 import http from 'http';
-import cors from '@koa/cors';
 import session from 'koa-session';
-import bodyParser from 'koa-bodyparser';
 import env from './env';
 import { User } from './entity/user';
 
@@ -38,8 +36,6 @@ export async function runServer(port = 4000, schema: GraphQLSchema): Promise<htt
   const app = new Koa();
 
   app.keys = [env.secret];
-  app.use(cors({ credentials: true }));
-  app.use(bodyParser());
   app.use(session({ maxAge: 86400000 }, app));
 
   const server = new ApolloServer({
