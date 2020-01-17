@@ -1,10 +1,48 @@
-import { useRef } from 'react';
 import Link from 'next/link';
-import { useDocument, canEdit, notify, canCreate } from '../index';
-import { useRequest, get, post } from '../api';
+import gql from 'graphql-tag';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { canEdit, notify, canCreate } from '../index';
 import { Editable } from '../components/editable';
 import Button from '../components/button';
 import css from './categories.css';
+
+const GET_CATEGORIES = gql`
+  query GetCategories {
+    getCategories {
+      id
+      name
+      tests {
+        id
+        name
+        creator {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+const ADD_CATEGORY = gql`
+  mutation AddCategory($name: String!) {
+    addCategory(name: $name) {
+      id
+      name
+    }
+  }
+`;
+const EDIT_CATEGORY = gql`
+  mutation EditCategory($id: Int!, $name: String!) {
+    editCategory(id: $id, name: $name) {
+      id
+      name
+    }
+  }
+`;
+const DELETE_CATEGORY = gql`
+  mutation DeleteCategory($id: Int!) {
+    deleteCategory(id: $id)
+  }
+`;
 
 const Test = ({ test, finished }) => (
   <div className={css.test} data-finished={finished}>
@@ -13,18 +51,14 @@ const Test = ({ test, finished }) => (
   </div>
 );
 
-const Category = ({ category, stats, onRemove }) => {
-  const changeName = name => {
-    post('/test/categories', { id: category.id, name })
-      .catch(() => notify('error', 'Не удалось поменять название'));
-  };
+const Category = ({ category, onEdit, onRemove }) => {
   return (
     <div className={css.category}>
       <header className={css.category__header}>
         <Editable className={css.category__name}
           initial={category.name}
           disabled={!canEdit(category)}
-          onAlter={changeName}
+          onAlter={onEdit}
         />
         {canEdit(category) && (
           <i className={css.category__deleteBtn} onClick={onRemove}>close</i>
@@ -33,7 +67,7 @@ const Category = ({ category, stats, onRemove }) => {
       <div className={css.category__testList}>
         {category.tests.map(test => (
           <Test test={test} key={test.id}
-            finished={stats.find(x => x.test && x.test.id === test.id)}
+            finished={false}
           />
         ))}
         {canCreate() && (
@@ -59,31 +93,54 @@ const Category = ({ category, stats, onRemove }) => {
 };
 
 export default function Categories() {
-  const input = useRef();
-  const { items, addItem, removeItem } = useDocument('/test/categories', {
-    samples: '30',
-    include: 'name,tests(name),creator(name)',
-  });
-  const [, stats = []] = useRequest(() => get('/stats/tests'));
-  const add = async () => {
-    if (!input.current.reportValidity()) return;
-    await addItem({ name: input.current.value });
-    input.current.value = '';
+  const categories = useQuery(GET_CATEGORIES);
+
+  const [add] = useMutation(ADD_CATEGORY);
+  const [edit] = useMutation(EDIT_CATEGORY);
+  const [del] = useMutation(DELETE_CATEGORY);
+
+  const handleAdd = async e => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    try {
+      await add({
+        variables: { name: String(data.get('name')) },
+      });
+    } catch (err) {
+      notify({ type: 'error', text: 'Не удалось создать категорию' });
+    }
   };
+
+  const handleEdit = async variables => {
+    try {
+      await edit({ variables });
+    } catch (err) {
+      notify({ type: 'error', text: 'Не удалось отредактировать категорию' });
+    }
+  };
+
+  const handleRemove = async variables => {
+    try {
+      await del({ variables })
+    } catch (err) {
+      notify({ type: 'error', text: 'Не удалось удалить категорию' });
+    }
+  }
+
   return (
     <div className={css.pageCategories}>
       <div className={css.pageTitle}>Категории</div>
       {canCreate() && (
-        <div className={css.add}>
-          <input className={css.add__input} ref={input} placeholder="Название категории" required/>
-          <Button className={css.add__btn} onClick={add}>+</Button>
-        </div>
+        <form className={css.add} onSubmit={handleAdd}>
+          <input className={css.add__input} placeholder="Название категории" required/>
+          <Button className={css.add__btn}>+</Button>
+        </form>
       )}
       <div className={css.categoryList}>
-        {items.map(category => (
-          <Category category={category} stats={stats}
-            key={category.id}
-            onRemove={() => removeItem(category.id)}
+        {categories.data && categories.data.getCategories.map(x => (
+          <Category category={category} key={category.id}
+            onRemove={() => handleRemove({ id: category.id })}
+            onEdit={name => handleEdit({ id: category.id, name })}
           />
         ))}
       </div>

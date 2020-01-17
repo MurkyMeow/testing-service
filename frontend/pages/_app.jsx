@@ -1,5 +1,9 @@
 import App, { Container } from 'next/app';
 import { withRouter } from 'next/router';
+import ApolloClient from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { createUploadLink } from 'apollo-upload-client';
 import { useState, useEffect } from 'react';
 import { useModal } from '../components/modal';
 import { useGlobalState, notify } from '../index';
@@ -107,6 +111,16 @@ const Notification = () => {
   );
 };
 
+const uri = process.env.production
+  ? '/graphql'
+  // in dev mode the frontend is served not on the same port as the server
+  : 'http://localhost:4000/graphql'
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: createUploadLink({ uri, credentials: 'include' }),
+})
+
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     return Component.getInitialProps ? Component.getInitialProps(ctx) : {};
@@ -116,10 +130,12 @@ class MyApp extends App {
     const { Component, pageProps, router } = this.props;
     return (
       <Container>
-        <Notification/>
-        <Header router={router}/>
-        <Component {...pageProps}/>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+        <ApolloProvider client={client}>
+          <Notification/>
+          <Header router={router}/>
+          <Component {...pageProps}/>
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+        </ApolloProvider>
       </Container>
     );
   }
