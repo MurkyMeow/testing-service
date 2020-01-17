@@ -15,37 +15,6 @@
   margin-right: 20px;
 }
 
-.auth {
-  display: flex;
-  flex-direction: column;
-  width: 400px;
-  padding: 10px 20px;
-  margin-bottom: 0;
-  background: var(--black);
-  box-shadow: var(--shadow);
-}
-.auth__header {
-  text-align: center;
-}
-.auth__field {
-  display: block;
-  color: inherit;
-  border: none;
-  margin: 8px 0;
-  padding: 5px 10px;
-  border-radius: 5px;
-  background: var(--black-lighter);
-}
-.auth__btn {
-  margin: 0 auto;
-}
-@keyframes appear {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-
 .notification {
   position: fixed;
   top: 100px;

@@ -11,45 +11,6 @@ import { get, post, useRequest } from '../api';
 import Button from '../components/button';
 import css from './app.css';
 
-const AuthForm = ({ type, onSuccess }) => {
-  const signup = type === 'signup';
-  const submit = async e => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    try {
-      const endpoint = signup ? '/auth/signup' : '/auth/signin';
-      const user = await post(endpoint, {
-        email: data.get('email'),
-        password: data.get('password'),
-      });
-      onSuccess(user);
-    } catch (err) {
-      if (err.status === 400) notify('error', 'Неправильный логин или пароль');
-      else notify('error', 'Не удаётся войти. Попробуйте перезагрузить страницу.');
-    }
-  };
-  const onConfirmChange = ({ target }) => {
-    const validity = target.value !== target.previousSibling.value
-      ? 'Пароли не совпадают'
-      : '';
-    target.setCustomValidity(validity);
-  };
-  return (
-    <form className={css.auth} onSubmit={submit}>
-      <div className={css.auth__header}>Заполните поля</div>
-      <input className={css.auth__field} name="email" type="email" placeholder="Email" required/>
-      <input className={css.auth__field} name="password" type="password" placeholder="Пароль" required/>
-      {signup && (
-        <input className={css.auth__field} name="passwordAgain" type="password" required
-          placeholder="Повторите пароль"
-          onChange={onConfirmChange}
-        />
-      )}
-      <Button className={css.auth__btn}>Войти</Button>
-    </form>
-  );
-};
-
 const Header = ({ router }) => {
   const [user, setUser] = useGlobalState('user');
   const [authType, setAuthType] = useState('signup');
