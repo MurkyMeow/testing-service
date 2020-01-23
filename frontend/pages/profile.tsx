@@ -1,28 +1,39 @@
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useGlobalState } from '../index';
 import { get, useRequest, post } from '../api';
 import { TestCard } from '../components/test-card';
-import { Editable } from '../components/editable';
+import { Input } from '../components/input';
 import { TestResult } from '../components/test-result';
 import css from './profile.css';
 
-const Profile = ({ router }) => {
+export default function Profile() {
+  const router = useRouter();
+
   const [user, setUser] = useGlobalState('user');
   const [status, profile, setProfile] = useRequest(() =>
     get(`/stats/profile?id=${router.query.id || ''}`)
   );
 
-  const changeName = async name => {
+  const changeName = async (name: string) => {
     await post('/stats/name/', { name });
     setUser({ ...user, name });
   };
-  const onTestDelete = id => {
+
+  const handleTestDelete = (id: number) => {
     const tests = profile.tests.filter(x => x.id !== id);
     setProfile({ ...profile, tests });
   };
-  if (status.error === 404) return <div className={css.pageTitle}>Этот профиль не существует =(</div>;
-  if (status.error) return <div className={css.pageTitle}>Не удалось загрузить профиль.</div>;
-  if (!profile) return <div className={css.pageTitle}>Загрузка...</div>;
+
+  if (status.error === 404) {
+    return <div className={css.pageTitle}>Этот профиль не существует =(</div>;
+  }
+  if (status.error) {
+    return <div className={css.pageTitle}>Не удалось загрузить профиль.</div>;
+  }
+  if (!profile) {
+    return <div className={css.pageTitle}>Загрузка...</div>;
+  }
+
   const ours = user && user.id === profile.id;
   return (
     <div className={css.pageProfile}>
@@ -31,7 +42,7 @@ const Profile = ({ router }) => {
         {profile.role === 'admin' && 'Администратор'}
         {!profile.role && 'Студент'}
       </h2>
-      <Editable className={css.name} placeholder="Сменить имя"
+      <Input className={css.name} placeholder="Сменить имя"
         disabled={!ours}
         initial={profile.name || (ours ? '' : `Пользователь №${profile.id}`)}
         onAlter={changeName}
@@ -49,13 +60,11 @@ const Profile = ({ router }) => {
             <TestCard className={css.test} key={test.id}
               test={test}
               editable={profile.id === user.id}
-              onDelete={() => onTestDelete(test.id)}
+              onDelete={() => handleTestDelete(test.id)}
             />
           ))}
         </div>
       </>}
     </div>
   );
-};
-
-export default withRouter(Profile);
+}

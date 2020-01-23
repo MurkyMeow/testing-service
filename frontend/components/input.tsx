@@ -5,6 +5,7 @@ export const Input = (props: {
   className?: string;
   initial?: string;
   disabled?: boolean;
+  placeholder?: string;
   onAlter?: (value: string) => void;
 }) => {
   const [value, setValue] = useState(props.initial || '');
@@ -17,6 +18,7 @@ export const Input = (props: {
 
   return (
     <input className={`${css.input} ${props.className || ''}`}
+      placeholder={props.placeholder}
       disabled={props.disabled}
       onBlur={handleBlur}
       defaultValue={value}
