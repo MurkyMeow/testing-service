@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "next build frontend-js && NODE_ENV=production node .",
+    "codegen": "graphql-codegen",
     "dev": "ts-node-dev --no-notify src/index.ts",
     "frontend": "next frontend",
     "test": "jest --maxWorkers=1 src/test/",
@@ -50,7 +51,12 @@
     "postcss-preset-env": "^6.7.0",
     "sqlite3": "^4.0.9",
     "ts-jest": "^24.0.2",
-    "ts-node-dev": "^1.0.0-pre.42",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.5.3"
+  },
+  "optionalDependencies": {
+    "@graphql-codegen/cli": "^1.11.2",
+    "@graphql-codegen/typescript-operations": "^1.11.2",
+    "@graphql-codegen/typescript-react-apollo": "^1.11.2"
   }
 }
