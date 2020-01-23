@@ -1,39 +1,51 @@
 import Link from 'next/link';
+import { FormEvent } from 'react';
 import { canEdit, notify, canCreate } from '../index';
-import { Editable } from '../components/editable';
-import Button from '../components/button';
+import { Input } from '../components/input';
+import { Button } from '../components/button';
 import css from './categories.css';
 
 import {
+  Test, GetCategoriesQuery,
   useAddCategoryMutation, useDeleteCategoryMutation,
   useEditCategoryMutation, useGetCategoriesQuery,
 } from '../graphql-types';
 
-const Test = ({ test, finished }) => (
-  <div className={css.test} data-finished={finished}>
-    <span className={css.test__name}>{test.name}</span>
-    <span> {finished ? '(Пройден)' : ''}</span>
-  </div>
-);
+function Test(props: {
+  test: GetCategoriesQuery['getCategories'][0]['tests'][0];
+  finished: boolean;
+}) {
+  return (
+    <div className={css.test} data-finished={props.finished}>
+      <span className={css.test__name}>{props.test.name}</span>
+      <span> {props.finished ? '(Пройден)' : ''}</span>
+    </div>
+  );
+}
 
-const Category = ({ category, onEdit, onRemove }) => {
+function Category(props: {
+  category: GetCategoriesQuery['getCategories'][0];
+  onEdit?: (name: string) => void;
+  onRemove?: () => void;
+}) {
+  const { category } = props;
   return (
     <div className={css.category}>
       <header className={css.category__header}>
-        <Editable className={css.category__name}
+        <Input className={css.category__name}
           initial={category.name}
           disabled={!canEdit(category)}
-          onAlter={onEdit}
+          onAlter={props.onEdit}
         />
         {canEdit(category) && (
-          <i className={css.category__deleteBtn} onClick={onRemove}>close</i>
+          <button className={css.category__deleteBtn} onClick={props.onRemove}>
+            <i>close</i>
+          </button>
         )}
       </header>
       <div className={css.category__testList}>
         {category.tests.map(test => (
-          <Test test={test} key={test.id}
-            finished={false}
-          />
+          <Test test={test} key={test.id} finished={false}/>
         ))}
         {canCreate() && (
           <Link href={`/test_edit?category_id=${category.id}`}>
@@ -47,7 +59,7 @@ const Category = ({ category, onEdit, onRemove }) => {
         {category.creator && (
           <Link href={`/profile?id=${category.creator.id}`}>
             <div className={css.categoryCreator}>
-              Создатель: {category.creator && category.creator.name}
+              Создатель: {category.creator.name}
             </div>
           </Link>
         )}
@@ -55,41 +67,38 @@ const Category = ({ category, onEdit, onRemove }) => {
       </div>
     </div>
   );
-};
+}
 
 export default function Categories() {
   const categories = useGetCategoriesQuery();
-
   const [add] = useAddCategoryMutation();
   const [edit] = useEditCategoryMutation();
   const [del] = useDeleteCategoryMutation();
 
-  const handleAdd = async e => {
+  const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    try {
-      await add({
-        variables: { name: String(data.get('name')) },
-      });
-    } catch (err) {
+    await add({
+      variables: { name: String(data.get('name')) },
+    }).catch(() => {
       notify({ type: 'error', text: 'Не удалось создать категорию' });
-    }
+    });
   };
 
-  const handleEdit = async variables => {
-    try {
-      await edit({ variables });
-    } catch (err) {
+  const handleEdit = async (id: number, name: string) => {
+    await edit({
+      variables: { id, name },
+    }).catch(() => {
       notify({ type: 'error', text: 'Не удалось отредактировать категорию' });
-    }
+    });
   };
 
-  const handleRemove = async variables => {
-    try {
-      await del({ variables });
-    } catch (err) {
+  const handleDelete = async (id: number) => {
+    await del({
+      variables: { id },
+    }).catch(() => {
       notify({ type: 'error', text: 'Не удалось удалить категорию' });
-    }
+    });
   };
 
   return (
@@ -103,9 +112,9 @@ export default function Categories() {
       )}
       <div className={css.categoryList}>
         {categories.data && categories.data.getCategories.map(x => (
-          <Category category={category} key={category.id}
-            onRemove={() => handleRemove({ id: category.id })}
-            onEdit={name => handleEdit({ id: category.id, name })}
+          <Category category={x} key={x.id}
+            onRemove={() => handleDelete(x.id)}
+            onEdit={name => handleEdit(x.id, name)}
           />
         ))}
       </div>

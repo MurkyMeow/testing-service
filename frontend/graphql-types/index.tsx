@@ -29,6 +29,7 @@ export type Category = {
    __typename?: 'Category',
   id: Scalars['Int'],
   name: Scalars['String'],
+  creator: User,
   tests: Array<Test>,
 };
 
@@ -165,7 +166,10 @@ export type GetCategoriesQuery = (
   & { getCategories: Array<(
     { __typename?: 'Category' }
     & Pick<Category, 'id' | 'name'>
-    & { tests: Array<(
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    ), tests: Array<(
       { __typename?: 'Test' }
       & Pick<Test, 'id' | 'name'>
       & { creator: (
@@ -219,6 +223,10 @@ export const GetCategoriesDocument = gql`
   getCategories {
     id
     name
+    creator {
+      id
+      name
+    }
     tests {
       id
       name
