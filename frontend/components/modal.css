@@ -7,10 +7,13 @@
   bottom: 0;
   background: #202020cc;
   z-index: 1;
-  &[data-hidden="true"] {
-    display: none;
-  }
 }
-.modal__content {
+.content {
   margin: auto;
+}
+.header {
+  display: flex;
+}
+.closeBtn {
+  margin-left: auto;
 }
