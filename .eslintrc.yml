@@ -14,4 +14,5 @@ rules:
   'react/react-in-jsx-scope': 'off'
   'react-hooks/rules-of-hooks': 'error'
   'react-hooks/exhaustive-deps': 'warn'
+  'jsx-a11y/anchor-is-valid': 'off' # it's impossible to satisfy this rule using next/link
   'semi': 'error'

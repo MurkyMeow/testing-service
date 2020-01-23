@@ -1,0 +1,10 @@
+query GetTeachers {
+  getTeachers {
+    id
+    name
+  }
+}
+
+mutation ChangeUserRole($id: Int!, $role: Role!) {
+  changeUserRole(id: $id, role: $role)
+}
