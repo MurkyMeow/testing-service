@@ -19,6 +19,15 @@ export class UserResolver {
     return User.findOne(id);
   }
 
+  async getProfilesByRole(
+    @Ctx() { session }: Context,
+    @Arg('role', () => Role) role: Role,
+  ): Promise<User[]> {
+    const user = assert(session.user, 401);
+    assert(user.role === Role.admin, 403);
+    return User.find({ where: { role } });
+  }
+
   @Mutation(() => User)
   async changeUserRole(
     @Ctx() { session }: Context,
