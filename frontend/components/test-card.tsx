@@ -1,24 +1,25 @@
 import Link from 'next/link';
-import Button from './button';
-import { remove } from '../api';
-import { canEdit, notify } from '../index';
+import { Button } from './button';
+import { canEdit } from '../index';
 import { TestResult } from './test-result';
 import css from './test-card.css';
 
-export function TestCard({ className, test, editable, onDelete }) {
-  const removeItem = async () => {
-    remove(`/test/tests?id=${test.id}`)
-      .then(onDelete)
-      .catch(() => notify('error', 'При удалении возникла ошибка'));
-  };
+export function TestCard(props: {
+  className?: string;
+  test: unknown;
+  editable?: boolean;
+  onDelete?: () => void;
+}) {
   return (
-    <div className={`${css.testCard} ${className}`}>
+    <div className={`${css.testCard} ${props.className || ''}`}>
       <div className={css.summary}>
-        {(editable || canEdit(test)) && <>
+        {(props.editable || canEdit(test)) && <>
           <Link href={`/test_edit?id=${test.id}`}>
             <i className={css.editBtn}>edit</i>
           </Link>
-          <i className={css.deleteBtn} onClick={removeItem}>close</i>
+          <button className={css.deleteBtn} onClick={props.onDelete}>
+            <i>close</i>
+          </button>
         </>}
         <div className={css.name}>{test.name}</div>
         {test.results && test.results.length > 0 && <>
