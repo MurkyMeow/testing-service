@@ -1,0 +1,18 @@
+query GetCategory($id: Int!) {
+  getCategory(id: $id) {
+    id
+    name
+    tests {
+      id
+      name
+      creator {
+        id
+        name
+      }
+    }
+  }
+}
+
+mutation DeleteTest($id: Int!) {
+  deleteTest(id: $id)
+}

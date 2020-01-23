@@ -217,6 +217,37 @@ export type DeleteCategoryMutation = (
   & Pick<Mutation, 'deleteCategory'>
 );
 
+export type GetCategoryQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type GetCategoryQuery = (
+  { __typename?: 'Query' }
+  & { getCategory: (
+    { __typename?: 'Category' }
+    & Pick<Category, 'id' | 'name'>
+    & { tests: Array<(
+      { __typename?: 'Test' }
+      & Pick<Test, 'id' | 'name'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name'>
+      ) }
+    )> }
+  ) }
+);
+
+export type DeleteTestMutationVariables = {
+  id: Scalars['Int']
+};
+
+
+export type DeleteTestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteTest'>
+);
+
 
 export const GetCategoriesDocument = gql`
     query GetCategories {
@@ -360,3 +391,75 @@ export function useDeleteCategoryMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type DeleteCategoryMutationHookResult = ReturnType<typeof useDeleteCategoryMutation>;
 export type DeleteCategoryMutationResult = ApolloReactCommon.MutationResult<DeleteCategoryMutation>;
 export type DeleteCategoryMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteCategoryMutation, DeleteCategoryMutationVariables>;
+export const GetCategoryDocument = gql`
+    query GetCategory($id: Int!) {
+  getCategory(id: $id) {
+    id
+    name
+    tests {
+      id
+      name
+      creator {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCategoryQuery__
+ *
+ * To run a query within a React component, call `useGetCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCategoryQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetCategoryQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetCategoryQuery, GetCategoryQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetCategoryQuery, GetCategoryQueryVariables>(GetCategoryDocument, baseOptions);
+      }
+export function useGetCategoryLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetCategoryQuery, GetCategoryQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetCategoryQuery, GetCategoryQueryVariables>(GetCategoryDocument, baseOptions);
+        }
+export type GetCategoryQueryHookResult = ReturnType<typeof useGetCategoryQuery>;
+export type GetCategoryLazyQueryHookResult = ReturnType<typeof useGetCategoryLazyQuery>;
+export type GetCategoryQueryResult = ApolloReactCommon.QueryResult<GetCategoryQuery, GetCategoryQueryVariables>;
+export const DeleteTestDocument = gql`
+    mutation DeleteTest($id: Int!) {
+  deleteTest(id: $id)
+}
+    `;
+export type DeleteTestMutationFn = ApolloReactCommon.MutationFunction<DeleteTestMutation, DeleteTestMutationVariables>;
+
+/**
+ * __useDeleteTestMutation__
+ *
+ * To run a mutation, you first call `useDeleteTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTestMutation, { data, loading, error }] = useDeleteTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteTestMutation, DeleteTestMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteTestMutation, DeleteTestMutationVariables>(DeleteTestDocument, baseOptions);
+      }
+export type DeleteTestMutationHookResult = ReturnType<typeof useDeleteTestMutation>;
+export type DeleteTestMutationResult = ApolloReactCommon.MutationResult<DeleteTestMutation>;
+export type DeleteTestMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteTestMutation, DeleteTestMutationVariables>;
