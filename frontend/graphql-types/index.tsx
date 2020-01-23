@@ -43,6 +43,7 @@ export type Conclusion = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  changeUserRole: User,
   signup: User,
   addCategory: Category,
   editCategory: Category,
@@ -50,6 +51,12 @@ export type Mutation = {
   addTest: Test,
   editTest: Test,
   deleteTest: Scalars['Boolean'],
+};
+
+
+export type MutationChangeUserRoleArgs = {
+  role: Role,
+  id: Scalars['Int']
 };
 
 
@@ -97,11 +104,23 @@ export type MutationDeleteTestArgs = {
 export type Query = {
    __typename?: 'Query',
   self: User,
+  getProfile?: Maybe<User>,
+  getProfilesByRole: Array<User>,
   signout: Scalars['Boolean'],
   signin: User,
   getCategories: Array<Category>,
   getCategory: Category,
   getTest: Test,
+};
+
+
+export type QueryGetProfileArgs = {
+  id: Scalars['Int']
+};
+
+
+export type QueryGetProfilesByRoleArgs = {
+  role: Role
 };
 
 
@@ -246,6 +265,31 @@ export type DeleteTestMutationVariables = {
 export type DeleteTestMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteTest'>
+);
+
+export type GetTeachersQueryVariables = {};
+
+
+export type GetTeachersQuery = (
+  { __typename?: 'Query' }
+  & { getProfilesByRole: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name'>
+  )> }
+);
+
+export type ChangeUserRoleMutationVariables = {
+  id: Scalars['Int'],
+  role: Role
+};
+
+
+export type ChangeUserRoleMutation = (
+  { __typename?: 'Mutation' }
+  & { changeUserRole: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  ) }
 );
 
 
@@ -463,3 +507,69 @@ export function useDeleteTestMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type DeleteTestMutationHookResult = ReturnType<typeof useDeleteTestMutation>;
 export type DeleteTestMutationResult = ApolloReactCommon.MutationResult<DeleteTestMutation>;
 export type DeleteTestMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteTestMutation, DeleteTestMutationVariables>;
+export const GetTeachersDocument = gql`
+    query GetTeachers {
+  getProfilesByRole(role: teacher) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetTeachersQuery__
+ *
+ * To run a query within a React component, call `useGetTeachersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTeachersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTeachersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTeachersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetTeachersQuery, GetTeachersQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetTeachersQuery, GetTeachersQueryVariables>(GetTeachersDocument, baseOptions);
+      }
+export function useGetTeachersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetTeachersQuery, GetTeachersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetTeachersQuery, GetTeachersQueryVariables>(GetTeachersDocument, baseOptions);
+        }
+export type GetTeachersQueryHookResult = ReturnType<typeof useGetTeachersQuery>;
+export type GetTeachersLazyQueryHookResult = ReturnType<typeof useGetTeachersLazyQuery>;
+export type GetTeachersQueryResult = ApolloReactCommon.QueryResult<GetTeachersQuery, GetTeachersQueryVariables>;
+export const ChangeUserRoleDocument = gql`
+    mutation ChangeUserRole($id: Int!, $role: Role!) {
+  changeUserRole(id: $id, role: $role) {
+    id
+  }
+}
+    `;
+export type ChangeUserRoleMutationFn = ApolloReactCommon.MutationFunction<ChangeUserRoleMutation, ChangeUserRoleMutationVariables>;
+
+/**
+ * __useChangeUserRoleMutation__
+ *
+ * To run a mutation, you first call `useChangeUserRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeUserRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeUserRoleMutation, { data, loading, error }] = useChangeUserRoleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      role: // value for 'role'
+ *   },
+ * });
+ */
+export function useChangeUserRoleMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ChangeUserRoleMutation, ChangeUserRoleMutationVariables>) {
+        return ApolloReactHooks.useMutation<ChangeUserRoleMutation, ChangeUserRoleMutationVariables>(ChangeUserRoleDocument, baseOptions);
+      }
+export type ChangeUserRoleMutationHookResult = ReturnType<typeof useChangeUserRoleMutation>;
+export type ChangeUserRoleMutationResult = ApolloReactCommon.MutationResult<ChangeUserRoleMutation>;
+export type ChangeUserRoleMutationOptions = ApolloReactCommon.BaseMutationOptions<ChangeUserRoleMutation, ChangeUserRoleMutationVariables>;

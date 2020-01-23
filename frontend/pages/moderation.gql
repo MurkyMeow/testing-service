@@ -1,10 +1,12 @@
 query GetTeachers {
-  getTeachers {
+  getProfilesByRole(role: teacher) {
     id
     name
   }
 }
 
 mutation ChangeUserRole($id: Int!, $role: Role!) {
-  changeUserRole(id: $id, role: $role)
+  changeUserRole(id: $id, role: $role) {
+    id
+  }
 }

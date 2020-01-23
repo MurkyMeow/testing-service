@@ -1,14 +1,28 @@
 import Link from 'next/link';
 import { FormEvent } from 'react';
 import { notify } from '../index';
-import { useRequest, get, post } from '../api';
 import { Button } from '../components/button';
 import css from './moderation.css';
 
+import {
+  Role,
+  useGetTeachersQuery,
+  useChangeUserRoleMutation,
+} from 'frontend/graphql-types';
+
 export default function Moderation() {
-  const [, teachers = [], setTeachers] = useRequest((() =>
-    get('/stats/profiles?role=teacher')
-  ));
+  const teachersQuery = useGetTeachersQuery();
+  const [changeRole] = useChangeUserRoleMutation();
+
+  if (teachersQuery.loading) {
+    return <div>Загрузка...</div>;
+  }
+
+  if (!teachersQuery.data) {
+    return <div>Не удалось загрузить список учителей</div>;
+  }
+
+  const teachers = teachersQuery.data.getProfilesByRole;
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,8 +32,11 @@ export default function Moderation() {
       return notify('error', 'Данный пользователь уже присутствует в списке');
     }
     try {
-      const teacher = await post('/stats/assign', { id, role: 'teacher' });
-      setTeachers([...teachers, teacher]);
+      await changeRole({
+        variables: { id, role: Role.Teacher },
+      });
+      e.currentTarget.reset();
+      teachersQuery.refetch();
     } catch (err) {
       switch (err.status) {
         case 404: return notify('error', 'Указанный пользователь не найден');
@@ -32,8 +49,10 @@ export default function Moderation() {
 
   const unassign = async (id: number) => {
     try {
-      await post('/stats/assign', { id, role: '' });
-      setTeachers(teachers.filter(x => x.id !== id));
+      await changeRole({
+        variables: { id, role: Role.User },
+      });
+      teachersQuery.refetch();
     } catch (err) {
       notify('error', 'Не удалось разжаловать пользователя');
     }
