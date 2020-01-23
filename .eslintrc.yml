@@ -5,7 +5,10 @@ plugins:
 extends:
   - 'eslint:recommended'
   - 'plugin:@typescript-eslint/eslint-recommended'
+  - 'plugin:react/recommended'
+  - 'plugin:jsx-a11y/recommended'
   - 'plugin:@typescript-eslint/recommended'
 rules:
   '@typescript-eslint/explicit-function-return-type': 'off'
+  'react/react-in-jsx-scope': 'off'
   'semi': 'error'
