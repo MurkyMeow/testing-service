@@ -13,10 +13,11 @@
   &[data-variant="secondary"] {
     background: linear-gradient(#d3cce3, #e9e4f0);
   }
-  &[data-variant="disabled"] {
+  &[data-disabled="true"] {
+    pointer-events: none;
     background: linear-gradient(90deg, #898989, #c0c0c0);
   }
-  &:not([data-variant="disabled"]):active {
+  &:active {
     transform: scale(0.96);
   }
 }
