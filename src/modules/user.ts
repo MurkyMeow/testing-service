@@ -19,6 +19,7 @@ export class UserResolver {
     return User.findOne(id);
   }
 
+  @Query(() => [User])
   async getProfilesByRole(
     @Ctx() { session }: Context,
     @Arg('role', () => Role) role: Role,
