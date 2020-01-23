@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt'
-import { Resolver, Query, Arg, Ctx, Mutation, registerEnumType } from 'type-graphql';
+import bcrypt from 'bcrypt';
+import { Resolver, Query, Arg, Ctx, Mutation, registerEnumType, Int } from 'type-graphql';
 import { Context, assert } from '../server';
 import { User, Role } from '../entity/user';
 
@@ -10,6 +10,27 @@ export class UserResolver {
   @Query(() => User)
   self(@Ctx() { session }: Context) {
     return assert(session.user, 401);
+  }
+
+  @Query(() => User, { nullable: true })
+  async getProfile(
+    @Arg('id', () => Int) id: number,
+  ): Promise<User | undefined> {
+    return User.findOne(id);
+  }
+
+  @Mutation(() => User)
+  async changeUserRole(
+    @Ctx() { session }: Context,
+    @Arg('id', () => Int) id: number,
+    @Arg('role', () => Role) role: Role,
+  ): Promise<User> {
+    const user = assert(session.user, 401);
+    assert(user.role === Role.admin, 403);
+
+    const target = assert(await User.findOne(id), 404);
+    target.role = role;
+    return target.save();
   }
 
   @Query(() => Boolean)
@@ -27,7 +48,7 @@ export class UserResolver {
   ): Promise<User> {
     const user = await User.findOne({ where: { email } });
     assert(!user, 409, 'That email is busy');
-    const hash = await bcrypt.hash(password, 12)
+    const hash = await bcrypt.hash(password, 12);
     return User
       .create({ role: Role.user, name, email, password: hash })
       .save();
