@@ -1,3 +1,6 @@
 declare module 'koa-session';
-declare module 'koa-static';
-declare module 'nuxt';
+
+declare module '*.css' {
+  const styles: { [x: string]: string };
+  export default styles;
+}

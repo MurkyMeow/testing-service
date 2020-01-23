@@ -5,13 +5,18 @@
     "lib": ["es6", "dom"],
     "noEmit": true,
     "strict": true,
+    "allowJs": true,
+    "jsx": "preserve",
     "baseUrl": ".",
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true
   },
-  "exclude": ["node_modules", "frontend-js", "src/test", "src/test-frontend"],
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "frontend/**/*.ts",
+    "frontend/**/*.tsx"
+  ],
   "files": ["ts-shim.d.ts"]
 }
