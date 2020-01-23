@@ -11,7 +11,7 @@ export const Button = (props: {
   children?: ReactNode | ReactNode[];
 }) => {
   const button = (
-    <button className={`${css.button} ${props.className}`}
+    <button className={`${css.button} ${props.className || ''}`}
       data-variant={props.variant}
       data-disabled={props.disabled}
       onClick={props.onClick}
