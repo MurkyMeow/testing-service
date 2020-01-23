@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { FormEvent, useCallback } from 'react';
+import { FormEvent } from 'react';
 import { notify } from '../index';
 import { Button } from './button';
 import css from './form-auth.css';
@@ -32,7 +32,7 @@ export const AuthForm = (props: {
   const [signin] = useMutation(SIGNIN);
   const [signup] = useMutation(SIGNUP);
 
-  const handleSignin = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+  const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     try {
@@ -41,15 +41,15 @@ export const AuthForm = (props: {
       if (err.status !== 400) throw err;
       notify('error', 'Неправильный логин или пароль');
     }
-  }, [signin]);
+  };
 
-  const handleSignup = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     await signup({ variables: data });
-  }, [signup]);
+  };
 
-  const submit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (props.type === 'signup') {
@@ -60,7 +60,7 @@ export const AuthForm = (props: {
     } catch (err) {
       notify('error', 'Не удаётся войти. Попробуйте перезагрузить страницу.');
     }
-  }, [handleSignin, handleSignup, props.type]);
+  };
 
   return (
     <form className={css.auth} onSubmit={submit}>
