@@ -1,48 +1,13 @@
 import Link from 'next/link';
-import gql from 'graphql-tag';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import { canEdit, notify, canCreate } from '../index';
 import { Editable } from '../components/editable';
 import Button from '../components/button';
 import css from './categories.css';
 
-const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-      tests {
-        id
-        name
-        creator {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-const ADD_CATEGORY = gql`
-  mutation AddCategory($name: String!) {
-    addCategory(name: $name) {
-      id
-      name
-    }
-  }
-`;
-const EDIT_CATEGORY = gql`
-  mutation EditCategory($id: Int!, $name: String!) {
-    editCategory(id: $id, name: $name) {
-      id
-      name
-    }
-  }
-`;
-const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($id: Int!) {
-    deleteCategory(id: $id)
-  }
-`;
+import {
+  useAddCategoryMutation, useDeleteCategoryMutation,
+  useEditCategoryMutation, useGetCategoriesQuery,
+} from '../graphql-types';
 
 const Test = ({ test, finished }) => (
   <div className={css.test} data-finished={finished}>
@@ -93,11 +58,11 @@ const Category = ({ category, onEdit, onRemove }) => {
 };
 
 export default function Categories() {
-  const categories = useQuery(GET_CATEGORIES);
+  const categories = useGetCategoriesQuery();
 
-  const [add] = useMutation(ADD_CATEGORY);
-  const [edit] = useMutation(EDIT_CATEGORY);
-  const [del] = useMutation(DELETE_CATEGORY);
+  const [add] = useAddCategoryMutation();
+  const [edit] = useEditCategoryMutation();
+  const [del] = useDeleteCategoryMutation();
 
   const handleAdd = async e => {
     e.preventDefault();
@@ -121,11 +86,11 @@ export default function Categories() {
 
   const handleRemove = async variables => {
     try {
-      await del({ variables })
+      await del({ variables });
     } catch (err) {
       notify({ type: 'error', text: 'Не удалось удалить категорию' });
     }
-  }
+  };
 
   return (
     <div className={css.pageCategories}>

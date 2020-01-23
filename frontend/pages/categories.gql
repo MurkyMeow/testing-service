@@ -1,0 +1,32 @@
+query GetCategories {
+  getCategories {
+    id
+    name
+    tests {
+      id
+      name
+      creator {
+        id
+        name
+      }
+    }
+  }
+}
+
+mutation AddCategory($name: String!) {
+  addCategory(name: $name) {
+    id
+    name
+  }
+}
+
+mutation EditCategory($id: Int!, $name: String!) {
+  editCategory(id: $id, name: $name) {
+    id
+    name
+  }
+}
+
+mutation DeleteCategory($id: Int!) {
+  deleteCategory(id: $id)
+}
