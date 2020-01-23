@@ -7,10 +7,10 @@
   background: var(--black);
   box-shadow: var(--shadow);
 }
-.auth__header {
+.header {
   text-align: center;
 }
-.auth__field {
+.field {
   display: block;
   color: inherit;
   border: none;
@@ -19,7 +19,7 @@
   border-radius: 5px;
   background: var(--black-lighter);
 }
-.auth__btn {
+.submitBtn {
   margin: 0 auto;
 }
 @keyframes appear {
