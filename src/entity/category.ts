@@ -15,6 +15,7 @@ export class Category extends BaseEntity {
   name!: string;
 
   @ManyToOne(() => User)
+  @Field(() => User)
   creator!: User;
 
   @Column({ nullable: true })
