@@ -4,6 +4,7 @@ import { Category } from './category';
 import { User } from './user';
 import { Question } from './question';
 import { Conclusion } from './conclusion';
+import { Result } from './result';
 
 @Entity()
 @ObjectType()
@@ -37,4 +38,7 @@ export class Test extends BaseEntity {
   @OneToMany(() => Conclusion, conclusion => conclusion.test)
   @Field(() => [Conclusion])
   conclusions!: Conclusion[];
+
+  @OneToMany(() => Result, result => result.test)
+  results!: Result;
 }
