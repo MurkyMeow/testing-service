@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useGlobalState, notify } from '../index';
 import { Modal } from './modal';
 import { AuthForm } from './form-auth';
 import { Button } from './button';
+import { useSelector, useDispatch } from '../store';
+import { useNotification } from './notification';
 import { User, useSelfQuery, useSignoutMutation } from '../graphql-types';
 
 import './header.css';
@@ -13,27 +14,33 @@ type AuthType = 'signup' | 'signin'
 export function Header() {
   const router = useRouter();
 
-  const [user, setUser] = useGlobalState('user');
   const [formType, setFormType] = useState<AuthType>();
+
+  const user = useSelector(s => s.user);
+  const dispatch = useDispatch();
+
+  const { notify } = useNotification();
 
   const [signout] = useSignoutMutation();
   const selfQuery = useSelfQuery();
 
-  useEffect(() => setUser(selfQuery.data?.self), [setUser, selfQuery.data]);
+  useEffect(() => {
+    dispatch({ type: 'set-user', payload: selfQuery.data?.self });
+  }, [dispatch, selfQuery.data]);
 
   const onSuccess = (newUser: User) => {
-    setUser(newUser);
+    dispatch({ type: 'set-user', payload: newUser });
     setFormType(undefined);
   };
 
   const handleSignout = async () => {
     try {
       await signout();
-      setUser(null);
+      dispatch({ type: 'set-user', payload: undefined });
       router.push('/');
     } catch (err) {
       console.error(err);
-      notify('error', 'Не удаётся выйти. Попробуйте перезагрузить страницу');
+      notify({ type: 'error', text: 'Не удаётся выйти. Попробуйте перезагрузить страницу' });
     }
   };
 

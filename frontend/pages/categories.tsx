@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { FormEvent } from 'react';
-import { canEdit, notify, canCreate } from '../index';
+import { canEdit, canCreate } from '../index';
 import { Input } from '../components/input';
 import { Button } from '../components/button';
+import { useNotification } from '../components/notification';
 import css from './categories.css';
 
 import {
@@ -74,6 +75,8 @@ export default function Categories() {
   const [add] = useAddCategoryMutation();
   const [edit] = useEditCategoryMutation();
   const [del] = useDeleteCategoryMutation();
+
+  const { notify } = useNotification();
 
   const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

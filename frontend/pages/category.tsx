@@ -1,6 +1,7 @@
 import { TestCard } from '../components/test-card';
-import { canCreate, notify } from '../index';
+import { canCreate } from '../index';
 import { Button } from '../components/button';
+import { useNotification } from '../components/notification';
 import css from './category.css';
 
 import {
@@ -11,6 +12,8 @@ import {
 export default function Category() {
   const categoryQuery = useGetCategoryQuery();
   const [deleteTest] = useDeleteTestMutation();
+  
+  const { notify } = useNotification();
 
   const handleDelete = async (id: number) => {
     await deleteTest({

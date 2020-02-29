@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FormEvent } from 'react';
-import { notify } from '../index';
+import { useNotification } from '../components/notification';
 import { Button } from '../components/button';
 import css from './moderation.css';
 
@@ -13,6 +13,8 @@ import {
 export default function Moderation() {
   const teachersQuery = useGetTeachersQuery();
   const [changeRole] = useChangeUserRoleMutation();
+
+  const { notify } = useNotification();
 
   if (teachersQuery.loading) {
     return <div>Загрузка...</div>;
@@ -29,7 +31,7 @@ export default function Moderation() {
     const data = new FormData(e.currentTarget);
     const id = Number(data.get('id'));
     if (teachers.some(x => x.id === id)) {
-      return notify('error', 'Данный пользователь уже присутствует в списке');
+      return notify({ type: 'error', text: 'Данный пользователь уже присутствует в списке' });
     }
     try {
       await changeRole({
@@ -39,9 +41,9 @@ export default function Moderation() {
       teachersQuery.refetch();
     } catch (err) {
       switch (err.status) {
-        case 404: return notify('error', 'Указанный пользователь не найден');
-        case 400: return notify('error', 'Нельзя поменять собственную роль');
-        default: return notify('error', 'Не удалось назначить пользователя');
+        case 404: return notify({ type: 'error', text: 'Указанный пользователь не найден' });
+        case 400: return notify({ type: 'error', text: 'Нельзя поменять собственную роль' });
+        default: return notify({ type: 'error', text: 'Не удалось назначить пользователя' });
       }
     }
     e.currentTarget.reset();
@@ -54,7 +56,7 @@ export default function Moderation() {
       });
       teachersQuery.refetch();
     } catch (err) {
-      notify('error', 'Не удалось разжаловать пользователя');
+      notify({ type: 'error', text: 'Не удалось разжаловать пользователя' });
     }
   };
 
