@@ -8,12 +8,12 @@
   background: #202020cc;
   z-index: 1;
 }
-.content {
+.modal__content {
   margin: auto;
 }
-.header {
+.modal__header {
   display: flex;
 }
-.closeBtn {
+.modal__closeBtn {
   margin-left: auto;
 }

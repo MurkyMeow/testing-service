@@ -1,37 +1,25 @@
-import { useState, ReactNodeArray, useEffect, useCallback } from 'react';
-import css from './modal.css';
+import { useEffect, ReactNode } from 'react';
+import './modal.css';
 
-export const useModal = (args: { isOpen: boolean }) => {
-  const [isOpen, setIsOpen] = useState(args.isOpen);
-
-  const showModal = () => setIsOpen(true);
-  const hideModal = () => setIsOpen(false);
-
-  const handleKeyUp = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') hideModal();
-  }, []);
-
+export function Modal(props: { children?: ReactNode; onClose: () => void }) {
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keyup', handleKeyUp);
-    } else {
-      document.removeEventListener('keyup', handleKeyUp);
-    }
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && props.onClose) props.onClose();
+    };
+    document.addEventListener('keyup', handleKeyUp);
     return () => {
       document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isOpen, handleKeyUp]);
+  }, [props]);
 
-  const Modal = (props: { children: ReactNodeArray }) => (
-    <div className={css.modal} hidden={!isOpen} role="dialog" aria-modal="true">
-      <div className={css.content}>
-        <header className={css.header}>
-          <button className={css.closeBtn} onClick={hideModal}>X</button>
+  return (
+    <div className="modal" role="dialog" aria-modal="true">
+      <div className="modal__content">
+        <header className="modal__header">
+          <button className="modal__closeBtn" onClick={props.onClose}>X</button>
         </header>
         {props.children}
       </div>
     </div>
   );
-
-  return [Modal, showModal, hideModal];
-};
+}
