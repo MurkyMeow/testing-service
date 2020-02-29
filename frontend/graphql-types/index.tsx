@@ -53,6 +53,7 @@ export type Mutation = {
   addTest: Test,
   editTest: Test,
   deleteTest: Scalars['Boolean'],
+  answer: Scalars['Boolean'],
 };
 
 
@@ -109,6 +110,12 @@ export type MutationDeleteTestArgs = {
   id: Scalars['Int']
 };
 
+
+export type MutationAnswerArgs = {
+  answers: Array<QuestionAnswerInput>,
+  testId: Scalars['Int']
+};
+
 export type Query = {
    __typename?: 'Query',
   self: User,
@@ -145,6 +152,11 @@ export type Question = {
   text: Scalars['String'],
   test: Test,
   answers: Array<Answer>,
+};
+
+export type QuestionAnswerInput = {
+  questionId: Scalars['Int'],
+  answerId: Scalars['Int'],
 };
 
 export type QuestionInput = {
@@ -338,6 +350,44 @@ export type ChangeUserRoleMutation = (
     { __typename?: 'User' }
     & Pick<User, 'id'>
   ) }
+);
+
+export type GetTestQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type GetTestQuery = (
+  { __typename?: 'Query' }
+  & { getTest: (
+    { __typename?: 'Test' }
+    & Pick<Test, 'id' | 'name'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id'>
+    ), category: (
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'name'>
+    ), questions: Array<(
+      { __typename?: 'Question' }
+      & Pick<Question, 'id' | 'text'>
+      & { answers: Array<(
+        { __typename?: 'Answer' }
+        & Pick<Answer, 'id' | 'text'>
+      )> }
+    )> }
+  ) }
+);
+
+export type AnswerMutationVariables = {
+  testId: Scalars['Int'],
+  answers: Array<QuestionAnswerInput>
+};
+
+
+export type AnswerMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'answer'>
 );
 
 
@@ -758,3 +808,83 @@ export function useChangeUserRoleMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type ChangeUserRoleMutationHookResult = ReturnType<typeof useChangeUserRoleMutation>;
 export type ChangeUserRoleMutationResult = ApolloReactCommon.MutationResult<ChangeUserRoleMutation>;
 export type ChangeUserRoleMutationOptions = ApolloReactCommon.BaseMutationOptions<ChangeUserRoleMutation, ChangeUserRoleMutationVariables>;
+export const GetTestDocument = gql`
+    query GetTest($id: Int!) {
+  getTest(id: $id) {
+    id
+    name
+    creator {
+      id
+    }
+    category {
+      id
+      name
+    }
+    questions {
+      id
+      text
+      answers {
+        id
+        text
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTestQuery__
+ *
+ * To run a query within a React component, call `useGetTestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTestQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTestQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTestQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetTestQuery, GetTestQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetTestQuery, GetTestQueryVariables>(GetTestDocument, baseOptions);
+      }
+export function useGetTestLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetTestQuery, GetTestQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetTestQuery, GetTestQueryVariables>(GetTestDocument, baseOptions);
+        }
+export type GetTestQueryHookResult = ReturnType<typeof useGetTestQuery>;
+export type GetTestLazyQueryHookResult = ReturnType<typeof useGetTestLazyQuery>;
+export type GetTestQueryResult = ApolloReactCommon.QueryResult<GetTestQuery, GetTestQueryVariables>;
+export const AnswerDocument = gql`
+    mutation Answer($testId: Int!, $answers: [QuestionAnswerInput!]!) {
+  answer(testId: $testId, answers: $answers)
+}
+    `;
+export type AnswerMutationFn = ApolloReactCommon.MutationFunction<AnswerMutation, AnswerMutationVariables>;
+
+/**
+ * __useAnswerMutation__
+ *
+ * To run a mutation, you first call `useAnswerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAnswerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [answerMutation, { data, loading, error }] = useAnswerMutation({
+ *   variables: {
+ *      testId: // value for 'testId'
+ *      answers: // value for 'answers'
+ *   },
+ * });
+ */
+export function useAnswerMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AnswerMutation, AnswerMutationVariables>) {
+        return ApolloReactHooks.useMutation<AnswerMutation, AnswerMutationVariables>(AnswerDocument, baseOptions);
+      }
+export type AnswerMutationHookResult = ReturnType<typeof useAnswerMutation>;
+export type AnswerMutationResult = ApolloReactCommon.MutationResult<AnswerMutation>;
+export type AnswerMutationOptions = ApolloReactCommon.BaseMutationOptions<AnswerMutation, AnswerMutationVariables>;

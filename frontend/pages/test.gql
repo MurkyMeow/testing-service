@@ -1,0 +1,25 @@
+query GetTest($id: Int!) {
+  getTest(id: $id) {
+    id
+    name
+    creator {
+      id
+    }
+    category {
+      id
+      name
+    }
+    questions {
+      id
+      text
+      answers {
+        id
+        text
+      }
+    }
+  }
+}
+
+mutation Answer($testId: Int!, $answers: [QuestionAnswerInput!]!) {
+  answer(testId: $testId, answers: $answers)
+}

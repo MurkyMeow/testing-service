@@ -1,0 +1,35 @@
+.question {
+  background: #6900b2;
+}
+.question__title {
+  font-size: 20px;
+  text-align: center;
+  padding: 5px 0;
+  margin-bottom: 10px;
+}
+.question__answers {
+  counter-reset: index;
+}
+.question__answer {
+  display: flex;
+  margin-bottom: 10px;
+}
+.question__answer-toggle {
+  display: none;
+  &:checked ~ .question__answer-text {
+    background: #9e1b92;
+  }
+}
+.question__answer-text {
+  cursor: pointer;
+  width: 100%;
+  padding: 10px;
+  &:hover {
+    background: #570095;
+  }
+  &::before {
+    counter-increment: index;
+    content: counter(index) ')';
+    margin-right: 10px;
+  }
+}
