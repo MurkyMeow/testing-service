@@ -1,4 +1,4 @@
-.summary {
+.test-card__summary {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -6,36 +6,37 @@
   text-align: center;
   background: cadetblue;
 }
-.name {
+.test-card__name {
   margin-bottom: 10px;
 }
-.resultsHeader {
+.test-card__results-header {
   margin: 10px 0;
   text-decoration: underline;
 }
-.results {
-  & .testResult {
+.test-card__results {
+  & .test-card__testResult {
     margin-bottom: 5px;
   }
 }
-.editBtn, .deleteBtn {
+.test-card__edit-btn,
+.test-card__delete-btn {
   font-size: 20px;
   cursor: pointer;
   position: absolute;
   top: 5px;
 }
-.editBtn {
+.test-card__edit-btn {
   right: 5px;
 }
-.deleteBtn {
+.test-card__delete-btn {
   left: 5px;
 }
-.link {
+.test-card__link {
   font-size: 12px;
   margin-left: auto;
   padding: 3px 8px;
 }
-.stats {
+.test-card__stats {
   display: flex;
   align-items: center;
   padding: 5px 10px;
@@ -50,7 +51,7 @@
     margin-right: 5px;
   }
 }
-.creator {
+.test-card__creator {
   font-size: 12px;
   cursor: pointer;
   color: lightgray;

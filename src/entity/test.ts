@@ -40,5 +40,11 @@ export class Test extends BaseEntity {
   conclusions!: Conclusion[];
 
   @OneToMany(() => Result, result => result.test)
+  @Field(() => [Result])
   results!: Result;
+
+  @Field(() => Int)
+  get maxScore(): number {
+    return this.questions.reduce((acc, q) => acc + q.answers.reduce((acc, a) => acc + Number(a.correct), 0), 0);
+  }
 }

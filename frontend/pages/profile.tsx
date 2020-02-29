@@ -1,6 +1,5 @@
 import { TestCard } from '../components/test-card';
 import { Input } from '../components/input';
-import { TestResult } from '../components/test-result';
 import { useSelector, useDispatch } from '../store';
 import { useGetProfileQuery, useEditProfileMutation, useDeleteTestMutation } from '../graphql-types';
 import './profile.css';
@@ -27,11 +26,12 @@ export default function Profile() {
   const ours = user && user.id === profile.id;
 
   const handleEdit = async (input: { name: string }) => {
+    if (!user) return;
     const { data } = await editProfile({
       variables: { input },
     });
     if (data) {
-      dispatch({ type: 'set-user', payload: data.editProfile });
+      dispatch({ type: 'set-user', payload: { ...user, ...data.editProfile } });
     }
   };
 
@@ -61,7 +61,11 @@ export default function Profile() {
       />
       {profile.results.length > 0 && <>
         <h3>Пройденные тесты:</h3>
-        {profile.results.map(result => <TestResult result={result} key={result.id} />)}
+        {profile.results.map(result => (
+          <div className="profile__result" key={result.id}>
+            {result.test.name} ({result.score} из {result.test.maxScore})
+          </div>
+        ))}
       </>}
       {profile.tests.length > 0 && <>
         <h3 className="profile__tests-title">Опубликованные тесты:</h3>

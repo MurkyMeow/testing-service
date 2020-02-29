@@ -196,6 +196,8 @@ export type Test = {
   category: Category,
   questions: Array<Question>,
   conclusions: Array<Conclusion>,
+  results: Array<Result>,
+  maxScore: Scalars['Int'],
 };
 
 export type User = {
@@ -390,7 +392,7 @@ export type GetProfileQuery = (
       & Pick<Result, 'id' | 'score'>
       & { test: (
         { __typename?: 'Test' }
-        & Pick<Test, 'id' | 'name'>
+        & Pick<Test, 'id' | 'name' | 'maxScore'>
       ) }
     )> }
   ) }
@@ -409,9 +411,6 @@ export type EditProfileMutation = (
     & { tests: Array<(
       { __typename?: 'Test' }
       & Pick<Test, 'id' | 'name'>
-    )>, results: Array<(
-      { __typename?: 'Result' }
-      & Pick<Result, 'id' | 'score'>
     )> }
   ) }
 );
@@ -889,6 +888,7 @@ export const GetProfileDocument = gql`
       test {
         id
         name
+        maxScore
       }
     }
   }
@@ -930,10 +930,6 @@ export const EditProfileDocument = gql`
     tests {
       id
       name
-    }
-    results {
-      id
-      score
     }
   }
 }

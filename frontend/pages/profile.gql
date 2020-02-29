@@ -14,6 +14,7 @@ query GetProfile($id: Int!) {
       test {
         id
         name
+        maxScore
       }
     }
   }
@@ -28,10 +29,6 @@ mutation EditProfile($input: EditProfileInput!) {
     tests {
       id
       name
-    }
-    results {
-      id
-      score
     }
   }
 }
