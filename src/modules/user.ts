@@ -43,7 +43,7 @@ export class UserResolver {
     return target.save();
   }
 
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   signout(@Ctx() { session }: Context): boolean {
     assert(session.user, 401);
     delete session.user;
@@ -64,7 +64,7 @@ export class UserResolver {
       .save();
   }
 
-  @Query(() => User)
+  @Mutation(() => User)
   async signin(
     @Arg('email') email: string,
     @Arg('password') password: string,
