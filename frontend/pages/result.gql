@@ -1,0 +1,11 @@
+query GetResult($testId: Int!) {
+  getResult(testId: $testId) {
+    id
+    score
+    conclusion
+    test {
+      id
+      maxScore
+    }
+  }
+}

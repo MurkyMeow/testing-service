@@ -134,6 +134,7 @@ export type Query = {
   getCategories: Array<Category>,
   getCategory: Category,
   getTest: Test,
+  getResult: Result,
 };
 
 
@@ -154,6 +155,11 @@ export type QueryGetCategoryArgs = {
 
 export type QueryGetTestArgs = {
   id: Scalars['Int']
+};
+
+
+export type QueryGetResultArgs = {
+  testId: Scalars['Int']
 };
 
 export type Question = {
@@ -179,6 +185,7 @@ export type Result = {
    __typename?: 'Result',
   id: Scalars['Int'],
   score: Scalars['Float'],
+  conclusion?: Maybe<Scalars['String']>,
   test: Test,
 };
 
@@ -412,6 +419,23 @@ export type EditProfileMutation = (
       { __typename?: 'Test' }
       & Pick<Test, 'id' | 'name'>
     )> }
+  ) }
+);
+
+export type GetResultQueryVariables = {
+  testId: Scalars['Int']
+};
+
+
+export type GetResultQuery = (
+  { __typename?: 'Query' }
+  & { getResult: (
+    { __typename?: 'Result' }
+    & Pick<Result, 'id' | 'score' | 'conclusion'>
+    & { test: (
+      { __typename?: 'Test' }
+      & Pick<Test, 'id' | 'maxScore'>
+    ) }
   ) }
 );
 
@@ -959,6 +983,45 @@ export function useEditProfileMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type EditProfileMutationHookResult = ReturnType<typeof useEditProfileMutation>;
 export type EditProfileMutationResult = ApolloReactCommon.MutationResult<EditProfileMutation>;
 export type EditProfileMutationOptions = ApolloReactCommon.BaseMutationOptions<EditProfileMutation, EditProfileMutationVariables>;
+export const GetResultDocument = gql`
+    query GetResult($testId: Int!) {
+  getResult(testId: $testId) {
+    id
+    score
+    conclusion
+    test {
+      id
+      maxScore
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetResultQuery__
+ *
+ * To run a query within a React component, call `useGetResultQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetResultQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetResultQuery({
+ *   variables: {
+ *      testId: // value for 'testId'
+ *   },
+ * });
+ */
+export function useGetResultQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetResultQuery, GetResultQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetResultQuery, GetResultQueryVariables>(GetResultDocument, baseOptions);
+      }
+export function useGetResultLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetResultQuery, GetResultQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetResultQuery, GetResultQueryVariables>(GetResultDocument, baseOptions);
+        }
+export type GetResultQueryHookResult = ReturnType<typeof useGetResultQuery>;
+export type GetResultLazyQueryHookResult = ReturnType<typeof useGetResultLazyQuery>;
+export type GetResultQueryResult = ApolloReactCommon.QueryResult<GetResultQuery, GetResultQueryVariables>;
 export const GetTestDocument = gql`
     query GetTest($id: Int!) {
   getTest(id: $id) {

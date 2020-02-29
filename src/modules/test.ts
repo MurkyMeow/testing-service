@@ -46,6 +46,18 @@ export class TestResolver {
     return assert(await Test.findOne(id), 404);
   }
 
+  @Query(() => Result)
+  async getResult(
+    @Arg('testId', () => Int) testId: number,
+    @Ctx() { session }: Context,
+  ): Promise<Result> {
+    const user = assert(session.user, 401);
+    const result = await Result.findOne({
+      where: { testId, userId: user.id },
+    });
+    return assert(result, 404);
+  }
+
   @Mutation(() => Test)
   async addTest(
     @Arg('name') name: string,

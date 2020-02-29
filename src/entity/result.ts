@@ -14,6 +14,10 @@ export class Result extends BaseEntity {
   @Field()
   score!: number;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  conclusion?: string;
+
   @ManyToOne(() => User, user => user.results)
   user!: User;
 
