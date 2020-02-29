@@ -1,10 +1,12 @@
 import App, { Container } from 'next/app';
 import ApolloClient from 'apollo-client';
+import { Provider as ReduxProvider } from 'react-redux';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { createUploadLink } from 'apollo-upload-client';
 import { Notification } from '../components/notification';
-import { Header } from '../components/Header';
+import { Header } from '../components/header';
+import { store } from '../store';
 
 const uri = process.env.production
   ? '/graphql'
@@ -21,12 +23,14 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <Container>
-        <ApolloProvider client={client}>
-          <Notification />
-          <Header />
-          <Component {...pageProps} />
-          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        </ApolloProvider>
+        <ReduxProvider store={store}>
+          <ApolloProvider client={client}>
+            <Notification />
+            <Header />
+            <Component {...pageProps} />
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+          </ApolloProvider>
+        </ReduxProvider>
       </Container>
     );
   }

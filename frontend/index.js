@@ -1,36 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { remove, put, get } from './api';
-
-const state = {};
-const listeners = {};
-
-const setGlobalState = (key, value) => {
-  if (!(key in state)) throw new Error(`setting unknown key: ${key}`);
-  state[key] = value;
-  listeners[key].forEach(handler => handler(value));
-};
-
-const useGlobalState = (key, initial) => {
-  if (!(key in state)) {
-    state[key] = initial;
-    listeners[key] = [];
-  }
-  const listener = listeners[key];
-  const [value, setValue] = useState(state[key]);
-  useEffect(() => {
-    listener.push(setValue);
-    return () => listener.splice(listener.indexOf(setValue), 1);
-  });
-  const update = newValue => setGlobalState(key, newValue);
-  return [value, update];
-};
-
-const notify = (type, text, timeout = 2500) => {
-  setGlobalState('notification', {
-    type, text, timeout,
-  });
-  setTimeout(() => setGlobalState('notification', {}), timeout);
-};
 
 const useDocument = (endpoint, options = {}) => {
   const [items, setItems] = useGlobalState(endpoint, []);
@@ -90,13 +59,9 @@ const canCreate = () =>
     (state.user.role === 'admin' || state.user.role === 'teacher');
 
 export {
-  state,
-  useGlobalState,
-  setGlobalState,
   useDocument,
   withKey,
   getKey,
   canEdit,
   canCreate,
-  notify,
 };
