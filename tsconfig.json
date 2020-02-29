@@ -7,7 +7,6 @@
     "strict": true,
     "allowJs": true,
     "jsx": "preserve",
-    "baseUrl": ".",
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

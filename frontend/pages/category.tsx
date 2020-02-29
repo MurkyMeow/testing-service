@@ -34,18 +34,21 @@ export default function Category() {
   const { getCategory } = categoryQuery.data;
 
   return (
-    <div className={css.categoryPage}>
-      <div className={css.pageTitle}>{getCategory.name}</div>
+    <div className="category-page">
+      <div className="page-title">{getCategory.name}</div>
       {!getCategory.tests.length && canCreate() && (
-        <div className={css.pageTitle}>Добавить первый тест в этой категории..?</div>
+        <div className="page-title">Добавить первый тест в этой категории..?</div>
       )}
-      <div className={css.testList}>
+      <div className="category-page__tests">
         {getCategory.tests.map(test => (
-          <TestCard test={test} key={test.id} onDelete={() => handleDelete(test.id)}/>
+          <TestCard className="category-page__test" key={test.id}
+            test={test}
+            onDelete={() => handleDelete(test.id)}
+          />
         ))}
       </div>
       {canCreate() && (
-        <Button className={css.addBtn} link={`/test_edit?category_id=${getCategory.id}`}>
+        <Button className="category-page__add-btn" link={`/test_edit?category_id=${getCategory.id}`}>
           +
         </Button>
       )}

@@ -1,28 +1,28 @@
-.pageIndex {
+.index {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.heading {
+.index__heading {
   text-align: center;
   position: relative;
   margin-bottom: 80px;
 }
-.logo {
+.index__logo {
   position: absolute;
   right: -200px; top: 10px;
   width: 200px;
 }
-.featuresHeading {
+.index__features-heading {
   font-size: 25px;
   margin-bottom: 20px;
 }
-.features {
+.index__features {
   display: grid;
   column-gap: 50px;
   grid-template-columns: repeat(3, 220px);
 }
-.feature {
+.index__feature {
   cursor: pointer;
   line-height: 1.25;
   display: flex;

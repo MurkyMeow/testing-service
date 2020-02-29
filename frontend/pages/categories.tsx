@@ -1,74 +1,14 @@
-import Link from 'next/link';
 import { FormEvent } from 'react';
-import { canEdit, canCreate } from '../index';
-import { Input } from '../components/input';
+import { canCreate } from '../index';
 import { Button } from '../components/button';
+import { Category }  from '../components/category';
 import { useNotification } from '../components/notification';
-import css from './categories.css';
+import './categories.css';
 
 import {
-  Test, GetCategoriesQuery,
   useAddCategoryMutation, useDeleteCategoryMutation,
   useEditCategoryMutation, useGetCategoriesQuery,
 } from '../graphql-types';
-
-function Test(props: {
-  test: GetCategoriesQuery['getCategories'][0]['tests'][0];
-  finished: boolean;
-}) {
-  return (
-    <div className={css.test} data-finished={props.finished}>
-      <span className={css.test__name}>{props.test.name}</span>
-      <span> {props.finished ? '(Пройден)' : ''}</span>
-    </div>
-  );
-}
-
-function Category(props: {
-  category: GetCategoriesQuery['getCategories'][0];
-  onEdit?: (name: string) => void;
-  onRemove?: () => void;
-}) {
-  const { category } = props;
-  return (
-    <div className={css.category}>
-      <header className={css.category__header}>
-        <Input className={css.category__name}
-          initial={category.name}
-          disabled={!canEdit(category)}
-          onAlter={props.onEdit}
-        />
-        {canEdit(category) && (
-          <button className={css.category__deleteBtn} onClick={props.onRemove}>
-            <i>close</i>
-          </button>
-        )}
-      </header>
-      <div className={css.category__testList}>
-        {category.tests.map(test => (
-          <Test test={test} key={test.id} finished={false}/>
-        ))}
-        {canCreate() && (
-          <Link href={`/test_edit?category_id=${category.id}`}>
-            <div className={css.test__addBtn}>Добавить тест</div>
-          </Link>
-        )}
-      </div>
-      <div className={css.category__summary}>
-        <div><i>info</i>6</div>
-        <div><i>query_builder</i>60</div>
-        {category.creator && (
-          <Link href={`/profile?id=${category.creator.id}`}>
-            <div className={css.categoryCreator}>
-              Создатель: {category.creator.name}
-            </div>
-          </Link>
-        )}
-        <Button link={`/category?id=${category.id}`}>Перейти</Button>
-      </div>
-    </div>
-  );
-}
 
 export default function Categories() {
   const categories = useGetCategoriesQuery();
@@ -105,17 +45,18 @@ export default function Categories() {
   };
 
   return (
-    <div className={css.pageCategories}>
-      <div className={css.pageTitle}>Категории</div>
+    <div className="categories">
+      <div className="page-title">Категории</div>
       {canCreate() && (
-        <form className={css.add} onSubmit={handleAdd}>
-          <input className={css.add__input} placeholder="Название категории" required/>
-          <Button className={css.add__btn}>+</Button>
+        <form className="categories__form" onSubmit={handleAdd}>
+          <input className="categories__input" placeholder="Название категории" required/>
+          <Button className="categories__btn">+</Button>
         </form>
       )}
-      <div className={css.categoryList}>
+      <div className="categories__list">
         {categories.data && categories.data.getCategories.map(x => (
-          <Category category={x} key={x.id}
+          <Category className="categories__category" key={x.id}
+            category={x}
             onRemove={() => handleDelete(x.id)}
             onEdit={name => handleEdit(x.id, name)}
           />

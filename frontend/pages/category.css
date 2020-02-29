@@ -1,19 +1,12 @@
-.pageTitle {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin: 10px 0 30px;
-}
-.testList {
+.category-page__tests {
   display: grid;
   grid-template-columns: repeat(3, 300px);
   justify-content: center;
-
-  & .test-card {
-    margin: 20px;
-  }
 }
-.addBtn {
+.category-page__test {
+  margin: 20px;
+}
+.category-page__add-btn {
   font-size: 28px;
   display: block;
   align-self: center;

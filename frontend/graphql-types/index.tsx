@@ -41,9 +41,14 @@ export type Conclusion = {
   test: Test,
 };
 
+export type EditProfileInput = {
+  name: Scalars['String'],
+};
+
 export type Mutation = {
    __typename?: 'Mutation',
   changeUserRole: User,
+  editProfile: User,
   signout: Scalars['Boolean'],
   signup: User,
   signin: User,
@@ -60,6 +65,11 @@ export type Mutation = {
 export type MutationChangeUserRoleArgs = {
   role: Role,
   id: Scalars['Int']
+};
+
+
+export type MutationEditProfileArgs = {
+  input: EditProfileInput
 };
 
 
@@ -119,7 +129,7 @@ export type MutationAnswerArgs = {
 export type Query = {
    __typename?: 'Query',
   self: User,
-  getProfile?: Maybe<User>,
+  getProfile: User,
   getProfilesByRole: Array<User>,
   getCategories: Array<Category>,
   getCategory: Category,
@@ -165,6 +175,13 @@ export type QuestionInput = {
   answers: Array<AnswerInput>,
 };
 
+export type Result = {
+   __typename?: 'Result',
+  id: Scalars['Int'],
+  score: Scalars['Float'],
+  test: Test,
+};
+
 export enum Role {
   User = 'user',
   Teacher = 'teacher',
@@ -187,6 +204,9 @@ export type User = {
   name: Scalars['String'],
   email: Scalars['String'],
   role: Role,
+  tests: Array<Test>,
+  categories: Array<Category>,
+  results: Array<Result>,
 };
 
 export type SignupMutationVariables = {
@@ -349,6 +369,50 @@ export type ChangeUserRoleMutation = (
   & { changeUserRole: (
     { __typename?: 'User' }
     & Pick<User, 'id'>
+  ) }
+);
+
+export type GetProfileQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type GetProfileQuery = (
+  { __typename?: 'Query' }
+  & { getProfile: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'email' | 'role'>
+    & { tests: Array<(
+      { __typename?: 'Test' }
+      & Pick<Test, 'id' | 'name'>
+    )>, results: Array<(
+      { __typename?: 'Result' }
+      & Pick<Result, 'id' | 'score'>
+      & { test: (
+        { __typename?: 'Test' }
+        & Pick<Test, 'id' | 'name'>
+      ) }
+    )> }
+  ) }
+);
+
+export type EditProfileMutationVariables = {
+  input: EditProfileInput
+};
+
+
+export type EditProfileMutation = (
+  { __typename?: 'Mutation' }
+  & { editProfile: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'email' | 'role'>
+    & { tests: Array<(
+      { __typename?: 'Test' }
+      & Pick<Test, 'id' | 'name'>
+    )>, results: Array<(
+      { __typename?: 'Result' }
+      & Pick<Result, 'id' | 'score'>
+    )> }
   ) }
 );
 
@@ -808,6 +872,97 @@ export function useChangeUserRoleMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type ChangeUserRoleMutationHookResult = ReturnType<typeof useChangeUserRoleMutation>;
 export type ChangeUserRoleMutationResult = ApolloReactCommon.MutationResult<ChangeUserRoleMutation>;
 export type ChangeUserRoleMutationOptions = ApolloReactCommon.BaseMutationOptions<ChangeUserRoleMutation, ChangeUserRoleMutationVariables>;
+export const GetProfileDocument = gql`
+    query GetProfile($id: Int!) {
+  getProfile(id: $id) {
+    id
+    name
+    email
+    role
+    tests {
+      id
+      name
+    }
+    results {
+      id
+      score
+      test {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetProfileQuery__
+ *
+ * To run a query within a React component, call `useGetProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProfileQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetProfileQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetProfileQuery, GetProfileQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetProfileQuery, GetProfileQueryVariables>(GetProfileDocument, baseOptions);
+      }
+export function useGetProfileLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetProfileQuery, GetProfileQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetProfileQuery, GetProfileQueryVariables>(GetProfileDocument, baseOptions);
+        }
+export type GetProfileQueryHookResult = ReturnType<typeof useGetProfileQuery>;
+export type GetProfileLazyQueryHookResult = ReturnType<typeof useGetProfileLazyQuery>;
+export type GetProfileQueryResult = ApolloReactCommon.QueryResult<GetProfileQuery, GetProfileQueryVariables>;
+export const EditProfileDocument = gql`
+    mutation EditProfile($input: EditProfileInput!) {
+  editProfile(input: $input) {
+    id
+    name
+    email
+    role
+    tests {
+      id
+      name
+    }
+    results {
+      id
+      score
+    }
+  }
+}
+    `;
+export type EditProfileMutationFn = ApolloReactCommon.MutationFunction<EditProfileMutation, EditProfileMutationVariables>;
+
+/**
+ * __useEditProfileMutation__
+ *
+ * To run a mutation, you first call `useEditProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editProfileMutation, { data, loading, error }] = useEditProfileMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditProfileMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditProfileMutation, EditProfileMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditProfileMutation, EditProfileMutationVariables>(EditProfileDocument, baseOptions);
+      }
+export type EditProfileMutationHookResult = ReturnType<typeof useEditProfileMutation>;
+export type EditProfileMutationResult = ApolloReactCommon.MutationResult<EditProfileMutation>;
+export type EditProfileMutationOptions = ApolloReactCommon.BaseMutationOptions<EditProfileMutation, EditProfileMutationVariables>;
 export const GetTestDocument = gql`
     query GetTest($id: Int!) {
   getTest(id: $id) {

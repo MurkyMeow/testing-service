@@ -35,11 +35,14 @@ export class User extends BaseEntity {
   role!: Role;
 
   @OneToMany(() => Test, test => test.creator)
+  @Field(() => [Test])
   tests!: Test[];
 
   @OneToMany(() => Category, category => category.creator)
+  @Field(() => [Category])
   categories!: Category[];
 
   @OneToMany(() => Result, result => result.user)
+  @Field(() => [Result])
   results!: Result[];
 }

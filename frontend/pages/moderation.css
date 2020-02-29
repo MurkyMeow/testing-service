@@ -1,19 +1,19 @@
-.pageModeration {
+.moderation {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.teacher {
+.moderation__teacher {
   margin-bottom: 15px;
-  & .button {
-    font-size: 12px;
-    margin-left: 10px;
-  }
 }
-.form {
+.moderation__fire-btn {
+  font-size: 12px;
+  margin-left: 10px;
+}
+.moderation__form {
   margin-top: 30px;
-  & input {
-    font: inherit;
-    margin-right: 10px;
-  }
+}
+.moderation__input {
+  font: inherit;
+  margin-right: 10px;
 }

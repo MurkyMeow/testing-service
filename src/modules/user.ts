@@ -1,9 +1,15 @@
 import bcrypt from 'bcrypt';
-import { Resolver, Query, Arg, Ctx, Mutation, registerEnumType, Int } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, Mutation, registerEnumType, Int, InputType, Field } from 'type-graphql';
 import { Context, assert } from '../server';
 import { User, Role } from '../entity/user';
 
 registerEnumType(Role, { name: 'Role' });
+
+@InputType()
+class EditProfileInput {
+  @Field()
+  name!: string;
+}
 
 @Resolver(User)
 export class UserResolver {
@@ -12,11 +18,11 @@ export class UserResolver {
     return assert(session.user, 401);
   }
 
-  @Query(() => User, { nullable: true })
+  @Query(() => User)
   async getProfile(
     @Arg('id', () => Int) id: number,
-  ): Promise<User | undefined> {
-    return User.findOne(id);
+  ): Promise<User> {
+    return assert(await User.findOne(id), 404);
   }
 
   @Query(() => [User])
@@ -41,6 +47,16 @@ export class UserResolver {
     const target = assert(await User.findOne(id), 404);
     target.role = role;
     return target.save();
+  }
+
+  @Mutation(() => User)
+  async editProfile(
+    @Ctx() { session }: Context,
+    @Arg('input', () => EditProfileInput) input: EditProfileInput,
+  ): Promise<User> {
+    const user = assert(session.user, 401);
+    user.name = input.name;
+    return user.save();
   }
 
   @Mutation(() => Boolean)

@@ -2,13 +2,9 @@ import Link from 'next/link';
 import { FormEvent } from 'react';
 import { useNotification } from '../components/notification';
 import { Button } from '../components/button';
-import css from './moderation.css';
+import { Role, useGetTeachersQuery, useChangeUserRoleMutation } from '../graphql-types';
+import './moderation.css';
 
-import {
-  Role,
-  useGetTeachersQuery,
-  useChangeUserRoleMutation,
-} from 'frontend/graphql-types';
 
 export default function Moderation() {
   const teachersQuery = useGetTeachersQuery();
@@ -61,18 +57,20 @@ export default function Moderation() {
   };
 
   return (
-    <div className={css.pageModeration}>
+    <div className="moderation">
       <h2>Список преподавателей:</h2>
       {teachers.map(t => (
-        <div className={css.teacher} key={t.id}>
+        <div className="moderation__teacher" key={t.id}>
           <Link href={`/profile?id=${t.id}`}>
             <a>{t.name || 'Пользователь'} (id{t.id})</a>
           </Link>
-          <Button onClick={() => unassign(t.id)}>Разжаловать</Button>
+          <Button className="moderation__fire-btn" onClick={() => unassign(t.id)}>
+            Разжаловать
+          </Button>
         </div>
       ))}
-      <form className={css.form} onSubmit={submit}>
-        <input placeholder="id"/>
+      <form className="moderation__form" onSubmit={submit}>
+        <input className="moderation__input" placeholder="id"/>
         <Button>Добавить</Button>
       </form>
     </div>
