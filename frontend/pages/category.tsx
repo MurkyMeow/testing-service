@@ -2,16 +2,15 @@ import { TestCard } from '../components/test-card';
 import { canCreate } from '../index';
 import { Button } from '../components/button';
 import { useNotification } from '../components/notification';
-import css from './category.css';
-
-import {
-  useGetCategoryQuery,
-  useDeleteTestMutation,
-} from '../graphql-types';
+import { useGetCategoryQuery, useDeleteTestMutation } from '../graphql-types';
+import { useSelector } from '../store';
+import './category.css';
 
 export default function Category() {
   const categoryQuery = useGetCategoryQuery();
   const [deleteTest] = useDeleteTestMutation();
+
+  const user = useSelector(s => s.user);
   
   const { notify } = useNotification();
 
@@ -24,11 +23,11 @@ export default function Category() {
   };
 
   if (categoryQuery.loading) {
-    return <div className={css.pageTitle}>Загрузка...</div>;
+    return <div className="page-title">Загрузка...</div>;
   }
 
   if (!categoryQuery.data) {
-    return <div className={css.pageTitle}>Не удалось загрузить категорию</div>;
+    return <div className="page-title">Не удалось загрузить категорию</div>;
   }
 
   const { getCategory } = categoryQuery.data;
@@ -41,8 +40,14 @@ export default function Category() {
       )}
       <div className="category-page__tests">
         {getCategory.tests.map(test => (
-          <TestCard className="category-page__test" key={test.id}
-            test={test}
+          <TestCard className="category-page__test"
+            id={test.id}
+            key={test.id}
+            name={test.name}
+            maxScore={test.maxScore}
+            creator={test.creator}
+            editable={test.creator.id === user?.id}
+            questionsCount={test.questions.length}
             onDelete={() => handleDelete(test.id)}
           />
         ))}

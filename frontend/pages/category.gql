@@ -5,9 +5,17 @@ query GetCategory($id: Int!) {
     tests {
       id
       name
+      maxScore
       creator {
         id
         name
+      }
+      questions {
+        id
+      }
+      results {
+        id
+        score
       }
     }
   }

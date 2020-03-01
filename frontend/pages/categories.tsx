@@ -3,6 +3,7 @@ import { canCreate } from '../index';
 import { Button } from '../components/button';
 import { Category }  from '../components/category';
 import { useNotification } from '../components/notification';
+import { useSelector } from '../store';
 import './categories.css';
 
 import {
@@ -15,6 +16,8 @@ export default function Categories() {
   const [add] = useAddCategoryMutation();
   const [edit] = useEditCategoryMutation();
   const [del] = useDeleteCategoryMutation();
+
+  const user = useSelector(s => s.user);
 
   const { notify } = useNotification();
 
@@ -54,11 +57,14 @@ export default function Categories() {
         </form>
       )}
       <div className="categories__list">
-        {categories.data && categories.data.getCategories.map(x => (
-          <Category className="categories__category" key={x.id}
-            category={x}
-            onRemove={() => handleDelete(x.id)}
-            onEdit={name => handleEdit(x.id, name)}
+        {categories.data && categories.data.getCategories.map(category => (
+          <Category className="categories__category"
+            key={category.id}
+            {...category}
+            // TODO optimize
+            finished={category.tests.every(test => user?.results.some(result => test.id === result.test.id))}
+            onRemove={() => handleDelete(category.id)}
+            onEdit={name => handleEdit(category.id, name)}
           />
         ))}
       </div>

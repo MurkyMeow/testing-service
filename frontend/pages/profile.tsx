@@ -56,8 +56,8 @@ export default function Profile() {
       </h2>
       <Input className="profile__name" placeholder="Сменить имя"
         disabled={!ours}
-        initial={profile.name || (ours ? '' : `Пользователь №${profile.id}`)}
-        onAlter={name => handleEdit({ name })}
+        defaultValue={profile.name || (ours ? '' : `Пользователь №${profile.id}`)}
+        onChange={e => handleEdit({ name: e.currentTarget.value })}
       />
       {profile.results.length > 0 && <>
         <h3>Пройденные тесты:</h3>
@@ -72,8 +72,12 @@ export default function Profile() {
         <div className="profile__tests">
           {profile.tests.map(test => (
             <TestCard className="profile__test" key={test.id}
-              test={test}
+              id={test.id}
+              name={test.name}
+              results={test.results}
+              maxScore={test.maxScore}
               editable={profile.id === profile.id}
+              questionsCount={test.questions.length}
               onDelete={() => handleTestDelete(test.id)}
             />
           ))}

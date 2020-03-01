@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '../components/button';
-import { Question } from 'frontend/components/question';
+import { Question } from '../components/question';
 import { useGetTestQuery, useAnswerMutation } from '../graphql-types';
 import './test.css';
 
@@ -45,16 +45,16 @@ export default function Test() {
   return (
     <div className="page-test">
       <div className="page-title">{test.name}</div>
-      <div className="page-test__frame" style={{ '--slide-index': slide }}>
+      <div className="page-test__frame" style={{ ['--slide-index' as any]: slide }}>
         <button className="page-test__nav-btn"
           data-disabled={slide <= 0}
           onClick={() => go(slide - 1)}>
           ←
         </button>
         {test.questions.map(question => (
-          <Question className="page-test__question" key={question.id}
-            text={question.text}
-            answers={question.answers}
+          <Question className="page-test__question"
+            key={question.id}
+            question={question}
             checked={answers.filter(x => x.questionId === question.id).map(x => x.answerId)}
             onAnswerToggle={answerId => checkAnswer(question.id, answerId)}
           />

@@ -356,11 +356,17 @@ export type GetCategoryQuery = (
     & Pick<Category, 'id' | 'name'>
     & { tests: Array<(
       { __typename?: 'Test' }
-      & Pick<Test, 'id' | 'name'>
+      & Pick<Test, 'id' | 'name' | 'maxScore'>
       & { creator: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name'>
-      ) }
+      ), questions: Array<(
+        { __typename?: 'Question' }
+        & Pick<Question, 'id'>
+      )>, results: Array<(
+        { __typename?: 'Result' }
+        & Pick<Result, 'id' | 'score'>
+      )> }
     )> }
   ) }
 );
@@ -412,7 +418,14 @@ export type GetProfileQuery = (
     & Pick<User, 'id' | 'name' | 'email' | 'role'>
     & { tests: Array<(
       { __typename?: 'Test' }
-      & Pick<Test, 'id' | 'name'>
+      & Pick<Test, 'id' | 'name' | 'maxScore'>
+      & { questions: Array<(
+        { __typename?: 'Question' }
+        & Pick<Question, 'id'>
+      )>, results: Array<(
+        { __typename?: 'Result' }
+        & Pick<Result, 'id' | 'score'>
+      )> }
     )>, results: Array<(
       { __typename?: 'Result' }
       & Pick<Result, 'id' | 'score'>
@@ -798,9 +811,17 @@ export const GetCategoryDocument = gql`
     tests {
       id
       name
+      maxScore
       creator {
         id
         name
+      }
+      questions {
+        id
+      }
+      results {
+        id
+        score
       }
     }
   }
@@ -938,6 +959,14 @@ export const GetProfileDocument = gql`
     tests {
       id
       name
+      maxScore
+      questions {
+        id
+      }
+      results {
+        id
+        score
+      }
     }
     results {
       id

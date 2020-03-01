@@ -7,6 +7,14 @@ query GetProfile($id: Int!) {
     tests {
       id
       name
+      maxScore
+      questions {
+        id
+      }
+      results {
+        id
+        score
+      }
     }
     results {
       id

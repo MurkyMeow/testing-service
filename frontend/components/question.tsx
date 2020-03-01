@@ -1,10 +1,10 @@
 import cx from 'classnames';
-import { Question } from '../graphql-types';
+import { GetTestQuery } from '../graphql-types';
 import './question.css';
 
 export function Question(props: {
   className?: string;
-  question: Question;
+  question: GetTestQuery['getTest']['questions'][0];
   checked: number[];
   onAnswerToggle: (answerId: number) => void;
 }) {
