@@ -1,0 +1,22 @@
+fragment UserFields on User {
+  id
+  name
+  email
+  role
+  tests {
+    id
+    name
+  }
+  results {
+    id
+    score
+    test {
+      id
+      name
+    }
+  }
+  categories {
+    id
+    name
+  }
+}

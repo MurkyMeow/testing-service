@@ -1,17 +1,19 @@
+import cx from 'classnames';
+import { Question } from '../graphql-types';
 import './question.css';
 
 export function Question(props: {
   className?: string;
-  text: string;
+  question: Question;
   checked: number[];
-  answers: { id: number; text: string }[];
   onAnswerToggle: (answerId: number) => void;
 }) {
+  const { question } = props;
   return (
-    <div className={`question ${props.className || ''}`}>
-      <div className="question__title">{props.text}</div>
+    <div className={cx('question', props.className)}>
+      <div className="question__title">{question.text}</div>
       <div className="question__answers">
-        {props.answers.map(answer => (
+        {question.answers.map(answer => (
           <label className="question__answer" key={answer.id}>
             <input className="question__answer-toggle"
               type="checkbox"

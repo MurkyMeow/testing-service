@@ -1,9 +1,6 @@
 query Self {
   self {
-    id
-    name
-    email
-    role
+    ...UserFields
   }
 }
 

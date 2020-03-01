@@ -1,6 +1,8 @@
+import cx from 'classnames';
 import { ReactNode } from 'react';
 import Link from 'next/link';
-import css from './button.css';
+
+import './button.css';
 
 export const Button = (props: {
   className?: string;
@@ -11,9 +13,13 @@ export const Button = (props: {
   children?: ReactNode | ReactNode[];
 }) => {
   const button = (
-    <button className={`${css.button} ${props.className || ''}`}
-      data-variant={props.variant}
-      data-disabled={props.disabled}
+    <button
+      className={cx(
+        props.className,
+        'button',
+        `button_${props.variant}`,
+        props.disabled && 'button_disabled',
+      )}
       onClick={props.onClick}
     >
       {props.children}

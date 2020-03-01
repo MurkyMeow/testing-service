@@ -3,7 +3,7 @@ import {
   useDispatch as _useDispatch,
   useSelector as _useSelector,
 } from 'react-redux';
-import { User } from '../graphql-types';
+import { SelfQuery } from '../graphql-types';
 
 export interface Notification {
   type: 'success' | 'warning' | 'error';
@@ -11,12 +11,12 @@ export interface Notification {
 }
 
 export interface State {
-  user?: User;
+  user?: SelfQuery['self'];
   notification?: Notification;
 }
 
 export type Action =
-  | { type: 'set-user'; payload: User | undefined }
+  | { type: 'set-user'; payload: SelfQuery['self'] | undefined }
   | { type: 'set-notification'; payload: Notification | undefined }
 
 const initialState: State = {

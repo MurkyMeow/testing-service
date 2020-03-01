@@ -1,13 +1,13 @@
 import { FormEvent } from 'react';
 import { Button } from './button';
-import { User, useSigninMutation, useSignupMutation } from 'frontend/graphql-types';
+import { SelfQuery, useSigninMutation, useSignupMutation } from '../graphql-types';
 import { useDispatch } from '../store';
 
 import './form-auth.css';
 
 export function AuthForm(props: {
   type: 'signup' | 'signin';
-  onSuccess: (arg: User) => void;
+  onSuccess: (arg: SelfQuery['self']) => void;
 }) {
   const [signin] = useSigninMutation();
   const [signup] = useSignupMutation();

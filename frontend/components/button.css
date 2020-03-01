@@ -10,14 +10,14 @@
   border: none;
   border-radius: 8px;
   background: #f66200;
-  &[data-variant="secondary"] {
-    background: linear-gradient(#d3cce3, #e9e4f0);
-  }
-  &[data-disabled="true"] {
-    pointer-events: none;
-    background: linear-gradient(90deg, #898989, #c0c0c0);
-  }
   &:active {
     transform: scale(0.96);
   }
+}
+.button_secondary {
+  background: linear-gradient(#d3cce3, #e9e4f0);
+}
+.button_disabled {
+  pointer-events: none;
+  background: linear-gradient(90deg, #898989, #c0c0c0);
 }

@@ -229,7 +229,7 @@ export type SignupMutation = (
   { __typename?: 'Mutation' }
   & { signup: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'role'>
+    & UserFieldsFragment
   ) }
 );
 
@@ -243,7 +243,7 @@ export type SigninMutation = (
   { __typename?: 'Mutation' }
   & { signin: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'role'>
+    & UserFieldsFragment
   ) }
 );
 
@@ -254,7 +254,7 @@ export type SelfQuery = (
   { __typename?: 'Query' }
   & { self: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'role'>
+    & UserFieldsFragment
   ) }
 );
 
@@ -264,6 +264,25 @@ export type SignoutMutationVariables = {};
 export type SignoutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'signout'>
+);
+
+export type UserFieldsFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'name' | 'email' | 'role'>
+  & { tests: Array<(
+    { __typename?: 'Test' }
+    & Pick<Test, 'id' | 'name'>
+  )>, results: Array<(
+    { __typename?: 'Result' }
+    & Pick<Result, 'id' | 'score'>
+    & { test: (
+      { __typename?: 'Test' }
+      & Pick<Test, 'id' | 'name'>
+    ) }
+  )>, categories: Array<(
+    { __typename?: 'Category' }
+    & Pick<Category, 'id' | 'name'>
+  )> }
 );
 
 export type GetCategoriesQueryVariables = {};
@@ -477,17 +496,37 @@ export type AnswerMutation = (
   & Pick<Mutation, 'answer'>
 );
 
-
-export const SignupDocument = gql`
-    mutation Signup($email: String!, $name: String!, $password: String!) {
-  signup(email: $email, name: $name, password: $password) {
+export const UserFieldsFragmentDoc = gql`
+    fragment UserFields on User {
+  id
+  name
+  email
+  role
+  tests {
     id
     name
-    email
-    role
+  }
+  results {
+    id
+    score
+    test {
+      id
+      name
+    }
+  }
+  categories {
+    id
+    name
   }
 }
     `;
+export const SignupDocument = gql`
+    mutation Signup($email: String!, $name: String!, $password: String!) {
+  signup(email: $email, name: $name, password: $password) {
+    ...UserFields
+  }
+}
+    ${UserFieldsFragmentDoc}`;
 export type SignupMutationFn = ApolloReactCommon.MutationFunction<SignupMutation, SignupMutationVariables>;
 
 /**
@@ -518,13 +557,10 @@ export type SignupMutationOptions = ApolloReactCommon.BaseMutationOptions<Signup
 export const SigninDocument = gql`
     mutation Signin($email: String!, $password: String!) {
   signin(email: $email, password: $password) {
-    id
-    name
-    email
-    role
+    ...UserFields
   }
 }
-    `;
+    ${UserFieldsFragmentDoc}`;
 export type SigninMutationFn = ApolloReactCommon.MutationFunction<SigninMutation, SigninMutationVariables>;
 
 /**
@@ -554,13 +590,10 @@ export type SigninMutationOptions = ApolloReactCommon.BaseMutationOptions<Signin
 export const SelfDocument = gql`
     query Self {
   self {
-    id
-    name
-    email
-    role
+    ...UserFields
   }
 }
-    `;
+    ${UserFieldsFragmentDoc}`;
 
 /**
  * __useSelfQuery__

@@ -1,24 +1,28 @@
 import Link from 'next/link';
 import cx from 'classnames';
 import { canEdit, canCreate } from '../index';
+import { useSelector } from '../store';
 import { Input } from './input';
 import { Button } from './button';
-import { GetCategoriesQuery } from '../graphql-types';
+import { Category } from '../graphql-types';
 
 export function Category(props: {
   className?: string;
-  category: GetCategoriesQuery['getCategories'][0];
+  category: Category;
+  finished: boolean;
   onEdit?: (name: string) => void;
   onRemove?: () => void;
 }) {
+  const user = useSelector(s => s.user);
+
   const { category } = props;
   return (
     <div className={cx('category', props.className)}>
       <header className="category__header">
         <Input className="category__name"
-          initial={category.name}
+          defaultValue={category.name}
           disabled={!canEdit(category)}
-          onAlter={props.onEdit}
+          onChange={e => props.onEdit && props.onEdit(e.currentTarget.value)}
         />
         {canEdit(category) && (
           <button className="category__deleteBtn" onClick={props.onRemove}>
@@ -27,12 +31,15 @@ export function Category(props: {
         )}
       </header>
       <div className="category__tests">
-        {category.tests.map(test => (
-          <div className="test" data-finished={test.finished} key={test.id}>
-            <span className="test__name">{test.name}</span>
-            <span> {test.finished ? '(Пройден)' : ''}</span>
-          </div>
-        ))}
+        {category.tests.map(test => {
+          const finished = user?.results.some(res => res.test.id === test.id);
+          return (
+            <div className={cx('test', finished && 'test_finished')} key={test.id}>
+              <span className="test__name">{test.name}</span>
+              <span> {finished ? '(Пройден)' : ''}</span>
+            </div>
+          );
+        })}
         {canCreate() && (
           <Link href={`/test_edit?category_id=${category.id}`}>
             <div className="test__addBtn">Добавить тест</div>

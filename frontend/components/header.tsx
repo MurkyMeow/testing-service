@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Modal } from './modal';
 import { AuthForm } from './form-auth';
 import { Button } from './button';
 import { useSelector, useDispatch } from '../store';
 import { useNotification } from './notification';
-import { User, useSelfQuery, useSignoutMutation } from '../graphql-types';
+import { SelfQuery, useSelfQuery, useSignoutMutation } from '../graphql-types';
 
 import './header.css';
 
@@ -28,10 +28,10 @@ export function Header() {
     dispatch({ type: 'set-user', payload: selfQuery.data?.self });
   }, [dispatch, selfQuery.data]);
 
-  const onSuccess = (newUser: User) => {
+  const onSuccess = useCallback((newUser: SelfQuery['self']) => {
     dispatch({ type: 'set-user', payload: newUser });
     setFormType(undefined);
-  };
+  }, [dispatch, setFormType]);
 
   const handleSignout = async () => {
     try {
@@ -48,29 +48,29 @@ export function Header() {
     <header className="header">
       {formType && (
         <Modal onClose={() => setFormType(undefined)}>
-          <AuthForm type={formType} onSuccess={onSuccess}/>
+          <AuthForm type={formType} onSuccess={onSuccess} />
         </Modal>
       )}
       <a className="header__logo" href="/">Nice header there</a>
       {user ? <>
-        <Button className="header__navBtn" link="/categories">Категории</Button>
+        <Button className="header__nav-btn" link="/categories">Категории</Button>
         {user.role === 'admin' && (
-          <Button className="header__navBtn" link="/moderation">Модерация</Button>
+          <Button className="header__nav-btn" link="/moderation">Модерация</Button>
         )}
         <nav className="header__auth">
-          <Button className="header__navBtn" link="/profile">
+          <Button className="header__nav-btn" link="/profile">
             {user.name ? user.name : 'Профиль'}
           </Button>
-          <Button className="header__navBtn" onClick={handleSignout}>
+          <Button className="header__nav-btn" onClick={handleSignout}>
             Выйти
           </Button>
         </nav>
       </> : (
         <nav className="header__auth">
-          <Button className="header__navBtn" onClick={() => setFormType('signup')}>
+          <Button className="header__nav-btn" onClick={() => setFormType('signup')}>
             Создать аккаунт
           </Button>
-          <Button className="header__navBtn" onClick={() => setFormType('signin')}>
+          <Button className="header__nav-btn" onClick={() => setFormType('signin')}>
             Войти
           </Button>
         </nav>
