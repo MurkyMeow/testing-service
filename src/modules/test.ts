@@ -3,6 +3,19 @@ import { Context, assert } from '../server';
 import { Test } from '../entity/test';
 import { Question } from '../entity/question';
 import { Result } from '../entity/result';
+import { Conclusion } from '../entity/conclusion';
+
+@InputType()
+class ConclusionInput {
+  @Field({ nullable: true })
+  id?: number;
+
+  @Field()
+  text!: string;
+
+  @Field()
+  minScore!: number;
+}
 
 @InputType()
 class AnswerInput {
@@ -83,6 +96,37 @@ export class TestResolver {
     assert(questions.length > 0, 400);
     test.name = name;
     test.questions = questions.map(q => Question.create(q));
+    return test.save();
+  }
+
+  @Mutation(() => Test)
+  async createTest(
+    @Ctx() { session }: Context,
+    @Arg('name') name: string,
+    @Arg('categoryId', () => Int) categoryId: number,
+    @Arg('questions', () => [QuestionInput]) questions: QuestionInput[],
+  ): Promise<Test> {
+    const user = assert(session.user, 401);
+    assert(questions.length > 0, 400);
+    const test = Test.create({
+      name,
+      categoryId,
+      creator: user,
+      questions: questions.map(q => Question.create(q)),
+    });
+    return test.save();
+  }
+
+  @Mutation(() => Test)
+  async setTestConclusions(
+    @Ctx() { session }: Context,
+    @Arg('testId', () => Int) testId: number,
+    @Arg('conclusions', () => [ConclusionInput]) conclusions: ConclusionInput[],
+  ): Promise<Test> {
+    const user = assert(session.user, 401);
+    const test = assert(await Test.findOne(testId), 404);
+    assert(test.creatorId === user.id, 403);
+    test.conclusions = conclusions.map(x => Conclusion.create(x));
     return test.save();
   }
 
