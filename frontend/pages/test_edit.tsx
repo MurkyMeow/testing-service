@@ -1,18 +1,11 @@
-import { useState, useLayoutEffect, useRef, useReducer, useEffect } from 'react';
-import { withRouter } from 'next/router';
+import { useState, useReducer, useEffect, FormEvent } from 'react';
+import { useRouter } from 'next/router';
 import produce from 'immer';
-import { get, patch } from '../api';
-import { getKey, withKey, notify } from '../index';
-import { Editable } from '../components/editable';
-import Button from '../components/button';
-import css from './test_edit.css';
-
-const showError = err => {
-  const message = err.status === 400
-    ? 'Проверьте правильность данных'
-    : 'Ошибка при сохранении';
-  notify('error', message);
-};
+import { getKey, withKey } from '../index';
+import { Input } from '../components/input';
+import { Button } from '../components/button';
+import { useNotification } from '../components/notification';
+import './test_edit.css';
 
 const makeAnswer = () => withKey({
   text: '',
@@ -24,39 +17,16 @@ const makeQuestion = () => withKey({
 });
 const makeConclusion = (min_score = 0) => withKey({ text: '', min_score });
 
-function useSave(isSaved, autoInit, reactTo) {
-  const [saved, setSaved] = useState(isSaved);
-  const [initialized, setInitialized] = useState(false);
-
-  useLayoutEffect(() => {
-    if (autoInit) setInitialized(true);
-  }, []);
-
-  useEffect(() => {
-    if (initialized) setSaved(false);
-  }, reactTo);
-
-  const saveButton = ({ className, onClick }) => (
-    <Button className={className} onClick={saved ? null : onClick}
-      variant={saved ? 'disabled' : ''}>
-      {saved ? 'Сохранено' : 'Сохранить'}
-    </Button>
-  );
-
-  return {
-    saved,
-    setSaved,
-    saveButton,
-    initialize: () => setInitialized(true),
-  };
-}
-
-const ConclusionForm = ({ testId, initial, max }) => {
+function ConclusionForm({ testId, initial, max }) {
   const [conclusions, setConclusions] = useState(initial);
-  const { saveButton, setSaved } = useSave(true, true, [conclusions]);
+  const [saved, setSaved] = useState(true);
+
+  const { notify } = useNotification();
+
   useEffect(() => {
     setConclusions(initial);
   }, [initial]);
+
   const add = () => {
     setConclusions([...conclusions, makeConclusion()]);
   };
@@ -83,35 +53,44 @@ const ConclusionForm = ({ testId, initial, max }) => {
       await patch('/test/result', { test_id: testId, conclusions });
       setSaved(true);
     } catch (err) {
-      showError(err);
+      notify({
+        type: 'error',
+        text: err.status === 400 ? 'Проверьте правильность данных' : 'Ошибка при сохранении',
+      });
     }
   };
-  return <>
-    <h2>Результаты:</h2>
-    <div className={css.conclusionForm}>
+
+  return (
+    <form className="conclusion-form">
+      <h2>Результаты:</h2>
       {conclusions.map((res, i) => (
-        <div className={css.conclusion} key={getKey(res)}>
-          <select value={res.min_score} onChange={e => setScore(i, e.target.value)}>
+        <div className="conclusion-form__item" key={getKey(res)}>
+          <select value={res.min_score} onBlur={e => setScore(i, e.target.value)}>
             <option disabled>Кол-во баллов</option>
             {getOptions().map(val => (
-              <option key={getKey(val)} value={val.min_score}>
-                Не менее  {val.min_score} из {max}
+              <option value={val.min_score} key={getKey(val)}>
+                {`Не менее  ${val.min_score} из ${max}`}
               </option>
             ))}
           </select>
-          <textarea placeholder="Описание" value={res.text}
+          <textarea placeholder="Описание"
+            value={res.text}
             onChange={e => setText(i, e.target.value)}
           />
-          <i className={css.conclusion-Close} onClick={() => close(i)}>close</i>
+          <button className="conclusion-form__close" onClick={() => close(i)}>
+            <i>close</i>
+          </button>
         </div>
       ))}
-    </div>
-    {conclusions.length <= max && (
-      <div className={css.conclusionAdd} onClick={add}>+</div>
-    )}
-    {saveButton({ className: css.sendBtn, onClick: save })}
-  </>;
-};
+      {conclusions.length <= max && (
+        <button className="conclusion-form__add" onClick={add}>+</button>
+      )}
+      <Button className="conclusion-form__save" disabled={saved}>
+        {saved ? 'Сохранено' : 'Сохранить'}
+      </Button>
+    </form>
+  );
+}
 
 function reducer(questions, action) {
   const update = draft => produce(questions, draft);
@@ -149,17 +128,17 @@ function reducer(questions, action) {
   }
 }
 
-const TestEdit = ({ router }) => {
+export default function TestEdit() {
+  const router = useRouter();
+
   const { category_id, id } = router.query;
-  const form = useRef();
   const [name, setName] = useState('');
   const [questions, dispatch] = useReducer(reducer, [makeQuestion()]);
   const [conclusions, setConclusions] = useState([]);
-  const {
-    setSaved,
-    initialize,
-    saveButton,
-  } = useSave(Boolean(id), false, [name, questions]);
+
+  const [saved, setSaved] = useState(Boolean(id));
+
+  const { notify } = useNotification();
 
   useEffect(() => {
     if (!id) return;
@@ -169,12 +148,11 @@ const TestEdit = ({ router }) => {
         setConclusions(res.conclusions);
         if (res.questions.length) dispatch({ type: 'set', value: res.questions });
         initialize();
-      })
-      .catch(console.error);
+      });
   }, []);
 
-  const submit = async () => {
-    if (!form.current.reportValidity()) return;
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       if (category_id && !id) {
         const res = await patch('/test/tests', { category_id, name, questions });
@@ -184,26 +162,33 @@ const TestEdit = ({ router }) => {
       }
       setSaved(true);
     } catch (err) {
-      showError(err);
+      notify({
+        type: 'error',
+        text: err.status === 400 ? 'Проверьте правильность данных' : 'Ошибка при сохранении',
+      });
     }
   };
+
   return (
-    <form className={css.pageAddTest} onSubmit={e => e.preventDefault()} ref={form}>
-      <Editable className={`page-title ${css.field}`} data-type="name"
-      required
+    <form className="test-edit" onSubmit={onSubmit}>
+      <Input className="page-title test-edit__field" data-type="name"
+        required
         placeholder="Название теста"
         value={name}
         onChange={e => setName(e.target.value)}
       />
       {questions.map((question, questionIndex) => (
-        <div className={css.question} key={getKey(question)}>
+        <div className="test-edit__question" key={getKey(question)}>
           {questions.length > 1 && (
-            <i className={css.removeBtn}
+            <button className="test-edit__question-remove"
               onClick={() => dispatch({ type: 'remove-question', index: questionIndex })}>
-              close
-            </i>
+              <i>close</i>
+            </button>
           )}
-          <Editable className={css.field} data-type="question" placeholder="Вопрос" required
+          <Input className="test-edit__field"
+            data-type="question"
+            placeholder="Вопрос"
+            required
             value={question.text}
             onChange={e => dispatch({
               type: 'set-question-text',
@@ -212,7 +197,7 @@ const TestEdit = ({ router }) => {
             })}
           />
           {question.answers.map((answer, answerIndex) => (
-            <div className={css.question__answer} key={getKey(answer)}>
+            <div className="test-edit__question-answer" key={getKey(answer)}>
               <input type="checkbox" checked={answer.correct}
                 onChange={e => dispatch({
                   type: 'check-answer',
@@ -221,7 +206,10 @@ const TestEdit = ({ router }) => {
                   checked: e.target.checked,
                 })}
               />
-              <Editable className={css.field} data-type="answer" placeholder="Ответ" required
+              <Input className="test-edit__field"
+                data-type="answer"
+                placeholder="Ответ"
+                required
                 value={answer.text}
                 onChange={e => dispatch({
                   type: 'set-answer-text',
@@ -231,24 +219,26 @@ const TestEdit = ({ router }) => {
                 })}
               />
               {question.answers.length > 2 && (
-                <i className={css.removeBtn}
+                <button className="test-answer-remove"
                   onClick={() => dispatch({ type: 'remove-answer', questionIndex, answerIndex })}>
-                  close
-                </i>
+                  <i>close</i>
+                </button>
               )}
             </div>
           ))}
-          <Button className={css.question__addBtn}
+          <Button className="test-edit__question-add"
             onClick={() => dispatch({ type: 'add-answer', questionIndex })}>
             Добавить ответ
           </Button>
         </div>
       ))}
-      <Button className={css.addBtn}
+      <Button className="test-edit__add"
         onClick={() => dispatch({ type: 'add-question' })}>
         Добавить вопрос
       </Button>
-      {saveButton({ className: css.sendBtn, onClick: submit })}
+      <Button className="test-edit__save" disabled={saved}>
+        {saved ? 'Сохранено' : 'Сохранить'}
+      </Button>
       {id && (
         <ConclusionForm
           testId={id}
@@ -258,6 +248,4 @@ const TestEdit = ({ router }) => {
       )}
     </form>
   );
-};
-
-export default withRouter(TestEdit);
+}
