@@ -1,11 +1,29 @@
-import { useState, useReducer, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/router';
-import produce from 'immer';
 import { getKey, withKey } from '../index';
 import { Input } from '../components/input';
 import { Button } from '../components/button';
 import { useNotification } from '../components/notification';
+import { useGetFullTestLazyQuery, useEditTestMutation, useCreateTestMutation, useSetTestConclusionsMutation } from '../graphql-types';
 import './test_edit.css';
+
+interface Conclusion {
+  id: number;
+  text: string;
+  minScore: number;
+}
+
+interface Answer {
+  id: number;
+  text: string;
+  correct: boolean;
+}
+
+interface Question {
+  id: number;
+  text: string;
+  answers: Answer[];
+}
 
 const makeAnswer = () => withKey({
   text: '',
@@ -17,15 +35,17 @@ const makeQuestion = () => withKey({
 });
 const makeConclusion = (min_score = 0) => withKey({ text: '', min_score });
 
-function ConclusionForm({ testId, initial, max }) {
-  const [conclusions, setConclusions] = useState(initial);
+function ConclusionForm(props: { testId: number; initial: Conclusion[]; max: number }) {
+  const [conclusions, setConclusions] = useState(props.initial);
   const [saved, setSaved] = useState(true);
 
   const { notify } = useNotification();
 
+  const [setConclusion] = useSetTestConclusionsMutation();
+
   useEffect(() => {
-    setConclusions(initial);
-  }, [initial]);
+    setConclusions(props.initial);
+  }, [props.initial]);
 
   const add = () => {
     setConclusions([...conclusions, makeConclusion()]);
@@ -46,11 +66,14 @@ function ConclusionForm({ testId, initial, max }) {
     setConclusions(conclusions.filter((_, i) => index !== i));
   };
   const getOptions = () =>
-    [...Array(max + 1).keys()].map(makeConclusion);
+    [...Array(props.max + 1).keys()].map(makeConclusion);
 
-  const save = async () => {
-    try {
-      await patch('/test/result', { test_id: testId, conclusions });
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try { 
+      await setConclusion({
+        variables: { testId: props.testId, conclusions },
+      });
       setSaved(true);
     } catch (err) {
       notify({
@@ -61,29 +84,32 @@ function ConclusionForm({ testId, initial, max }) {
   };
 
   return (
-    <form className="conclusion-form">
+    <form className="conclusion-form" onSubmit={onSubmit}>
       <h2>Результаты:</h2>
-      {conclusions.map((res, i) => (
-        <div className="conclusion-form__item" key={getKey(res)}>
-          <select value={res.min_score} onBlur={e => setScore(i, e.target.value)}>
+      {conclusions.map((conclusion, i) => (
+        <div className="conclusion-form__item" key={getKey(conclusion)}>
+          <select value={conclusion.minScore} onBlur={e => setScore(i, e.target.value)}>
             <option disabled>Кол-во баллов</option>
             {getOptions().map(val => (
-              <option value={val.min_score} key={getKey(val)}>
-                {`Не менее  ${val.min_score} из ${max}`}
+              <option value={val.minScore} key={getKey(val)}>
+                {`Не менее  ${val.minScore} из ${props.max}`}
               </option>
             ))}
           </select>
           <textarea placeholder="Описание"
-            value={res.text}
+            value={conclusion.text}
             onChange={e => setText(i, e.target.value)}
           />
-          <button className="conclusion-form__close" onClick={() => close(i)}>
+          <button className="conclusion-form__close" type="button"
+            onClick={() => close(i)}>
             <i>close</i>
           </button>
         </div>
       ))}
-      {conclusions.length <= max && (
-        <button className="conclusion-form__add" onClick={add}>+</button>
+      {conclusions.length <= props.max && (
+        <button className="conclusion-form__add" type="button" onClick={add}>
+          +
+        </button>
       )}
       <Button className="conclusion-form__save" disabled={saved}>
         {saved ? 'Сохранено' : 'Сохранить'}
@@ -92,73 +118,46 @@ function ConclusionForm({ testId, initial, max }) {
   );
 }
 
-function reducer(questions, action) {
-  const update = draft => produce(questions, draft);
-  switch (action.type) {
-    case 'set':
-      return action.value;
-    case 'add-question':
-      return [...questions, makeQuestion()];
-    case 'remove-question':
-      return questions.filter((_, i) => i !== action.index);
-    case 'set-question-text':
-      return update(_questions => {
-        _questions[action.index].text = action.text;
-      });
-    case 'add-answer':
-      return update(_questions => {
-        _questions[action.questionIndex].answers.push(makeAnswer());
-      });
-    case 'remove-answer':
-      return update(_questions => {
-        _questions[action.questionIndex].answers.splice(action.answerIndex, 1);
-      });
-    case 'set-answer-text':
-      return update(_questions => {
-        const question = _questions[action.questionIndex];
-        question.answers[action.answerIndex].text = action.text;
-      });
-    case 'check-answer':
-      return update(_questions => {
-        const question = _questions[action.questionIndex];
-        question.answers[action.answerIndex].correct = action.checked;
-      });
-    default:
-      throw new Error(`Unknown action: ${action && action.type}`);
-  }
-}
-
 export default function TestEdit() {
   const router = useRouter();
 
   const { category_id, id } = router.query;
   const [name, setName] = useState('');
-  const [questions, dispatch] = useReducer(reducer, [makeQuestion()]);
-  const [conclusions, setConclusions] = useState([]);
+  const [questions, setQuestions] = useState<Question[]>([makeQuestion()]);
+  const [conclusions, setConclusions] = useState<Conclusion[]>([]);
 
   const [saved, setSaved] = useState(Boolean(id));
 
   const { notify } = useNotification();
 
+  const [getFullTest, fullTest] = useGetFullTestLazyQuery();
+  const [createTest] = useCreateTestMutation();
+  const [editTest] = useEditTestMutation();
+
   useEffect(() => {
-    if (!id) return;
-    get(`/test/tests?id=${id}&include=name,questions(text,answers(text,correct)),conclusions(min_score,text)`)
-      .then(([res]) => {
-        setName(res.name);
-        setConclusions(res.conclusions);
-        if (res.questions.length) dispatch({ type: 'set', value: res.questions });
-        initialize();
-      });
-  }, []);
+    if (id) getFullTest({ variables: { id: Number(id) } });
+  }, [id, getFullTest]);
+
+  useEffect(() => {
+    if (!fullTest.data) return;
+    const { name, conclusions, questions } = fullTest.data.getTest;
+    setName(name);
+    setConclusions(conclusions);
+    setQuestions(questions);
+  }, [fullTest.data]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (category_id && !id) {
-        const res = await patch('/test/tests', { category_id, name, questions });
-        router.push(`/test_edit?id=${res.id}`);
+        const { data } = await createTest({
+          variables: { categoryId: Number(category_id), name, questions },
+        });
+        if (data) router.push(`/test_edit?id=${data?.createTest.id}`);
       } else {
-        await patch('/test/tests', { id, name, questions });
+        await editTest({
+          variables: { id: Number(id), name, questions },
+        });
       }
       setSaved(true);
     } catch (err) {
@@ -233,16 +232,15 @@ export default function TestEdit() {
         </div>
       ))}
       <Button className="test-edit__add"
-        onClick={() => dispatch({ type: 'add-question' })}>
+        onClick={() => setQuestions([...questions, makeQuestion()])}>
         Добавить вопрос
       </Button>
       <Button className="test-edit__save" disabled={saved}>
         {saved ? 'Сохранено' : 'Сохранить'}
       </Button>
       {id && (
-        <ConclusionForm
-          testId={id}
-          initial={conclusions}
+        <ConclusionForm testId={Number(id)} initial={conclusions}
+          // TODO optimize
           max={questions.reduce((acc, el) => acc + el.answers.filter(ans => ans.correct).length, 0)}
         />
       )}

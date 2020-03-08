@@ -41,6 +41,12 @@ export type Conclusion = {
   test: Test,
 };
 
+export type ConclusionInput = {
+  id?: Maybe<Scalars['Float']>,
+  text: Scalars['String'],
+  minScore: Scalars['Float'],
+};
+
 export type EditProfileInput = {
   name: Scalars['String'],
 };
@@ -57,6 +63,8 @@ export type Mutation = {
   deleteCategory: Scalars['Boolean'],
   addTest: Test,
   editTest: Test,
+  createTest: Test,
+  setTestConclusions: Test,
   deleteTest: Scalars['Boolean'],
   answer: Scalars['Boolean'],
 };
@@ -113,6 +121,19 @@ export type MutationEditTestArgs = {
   questions: Array<QuestionInput>,
   name: Scalars['String'],
   id: Scalars['Int']
+};
+
+
+export type MutationCreateTestArgs = {
+  questions: Array<QuestionInput>,
+  categoryId: Scalars['Int'],
+  name: Scalars['String']
+};
+
+
+export type MutationSetTestConclusionsArgs = {
+  conclusions: Array<ConclusionInput>,
+  testId: Scalars['Int']
 };
 
 
@@ -471,6 +492,79 @@ export type GetResultQuery = (
   ) }
 );
 
+export type FullTestFragment = (
+  { __typename?: 'Test' }
+  & Pick<Test, 'id' | 'name'>
+  & { questions: Array<(
+    { __typename?: 'Question' }
+    & Pick<Question, 'id' | 'text'>
+    & { answers: Array<(
+      { __typename?: 'Answer' }
+      & Pick<Answer, 'id' | 'text' | 'correct'>
+    )> }
+  )>, conclusions: Array<(
+    { __typename?: 'Conclusion' }
+    & Pick<Conclusion, 'id' | 'text' | 'minScore'>
+  )> }
+);
+
+export type GetFullTestQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type GetFullTestQuery = (
+  { __typename?: 'Query' }
+  & { getTest: (
+    { __typename?: 'Test' }
+    & FullTestFragment
+  ) }
+);
+
+export type EditTestMutationVariables = {
+  id: Scalars['Int'],
+  name: Scalars['String'],
+  questions: Array<QuestionInput>
+};
+
+
+export type EditTestMutation = (
+  { __typename?: 'Mutation' }
+  & { editTest: (
+    { __typename?: 'Test' }
+    & FullTestFragment
+  ) }
+);
+
+export type CreateTestMutationVariables = {
+  categoryId: Scalars['Int'],
+  name: Scalars['String'],
+  questions: Array<QuestionInput>
+};
+
+
+export type CreateTestMutation = (
+  { __typename?: 'Mutation' }
+  & { createTest: (
+    { __typename?: 'Test' }
+    & FullTestFragment
+  ) }
+);
+
+export type SetTestConclusionsMutationVariables = {
+  testId: Scalars['Int'],
+  conclusions: Array<ConclusionInput>
+};
+
+
+export type SetTestConclusionsMutation = (
+  { __typename?: 'Mutation' }
+  & { setTestConclusions: (
+    { __typename?: 'Test' }
+    & FullTestFragment
+  ) }
+);
+
 export type GetTestQueryVariables = {
   id: Scalars['Int']
 };
@@ -530,6 +624,26 @@ export const UserFieldsFragmentDoc = gql`
   categories {
     id
     name
+  }
+}
+    `;
+export const FullTestFragmentDoc = gql`
+    fragment FullTest on Test {
+  id
+  name
+  questions {
+    id
+    text
+    answers {
+      id
+      text
+      correct
+    }
+  }
+  conclusions {
+    id
+    text
+    minScore
   }
 }
     `;
@@ -1084,6 +1198,140 @@ export function useGetResultLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHo
 export type GetResultQueryHookResult = ReturnType<typeof useGetResultQuery>;
 export type GetResultLazyQueryHookResult = ReturnType<typeof useGetResultLazyQuery>;
 export type GetResultQueryResult = ApolloReactCommon.QueryResult<GetResultQuery, GetResultQueryVariables>;
+export const GetFullTestDocument = gql`
+    query GetFullTest($id: Int!) {
+  getTest(id: $id) {
+    ...FullTest
+  }
+}
+    ${FullTestFragmentDoc}`;
+
+/**
+ * __useGetFullTestQuery__
+ *
+ * To run a query within a React component, call `useGetFullTestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFullTestQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFullTestQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetFullTestQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetFullTestQuery, GetFullTestQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetFullTestQuery, GetFullTestQueryVariables>(GetFullTestDocument, baseOptions);
+      }
+export function useGetFullTestLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetFullTestQuery, GetFullTestQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetFullTestQuery, GetFullTestQueryVariables>(GetFullTestDocument, baseOptions);
+        }
+export type GetFullTestQueryHookResult = ReturnType<typeof useGetFullTestQuery>;
+export type GetFullTestLazyQueryHookResult = ReturnType<typeof useGetFullTestLazyQuery>;
+export type GetFullTestQueryResult = ApolloReactCommon.QueryResult<GetFullTestQuery, GetFullTestQueryVariables>;
+export const EditTestDocument = gql`
+    mutation EditTest($id: Int!, $name: String!, $questions: [QuestionInput!]!) {
+  editTest(id: $id, name: $name, questions: $questions) {
+    ...FullTest
+  }
+}
+    ${FullTestFragmentDoc}`;
+export type EditTestMutationFn = ApolloReactCommon.MutationFunction<EditTestMutation, EditTestMutationVariables>;
+
+/**
+ * __useEditTestMutation__
+ *
+ * To run a mutation, you first call `useEditTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editTestMutation, { data, loading, error }] = useEditTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      questions: // value for 'questions'
+ *   },
+ * });
+ */
+export function useEditTestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditTestMutation, EditTestMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditTestMutation, EditTestMutationVariables>(EditTestDocument, baseOptions);
+      }
+export type EditTestMutationHookResult = ReturnType<typeof useEditTestMutation>;
+export type EditTestMutationResult = ApolloReactCommon.MutationResult<EditTestMutation>;
+export type EditTestMutationOptions = ApolloReactCommon.BaseMutationOptions<EditTestMutation, EditTestMutationVariables>;
+export const CreateTestDocument = gql`
+    mutation CreateTest($categoryId: Int!, $name: String!, $questions: [QuestionInput!]!) {
+  createTest(categoryId: $categoryId, name: $name, questions: $questions) {
+    ...FullTest
+  }
+}
+    ${FullTestFragmentDoc}`;
+export type CreateTestMutationFn = ApolloReactCommon.MutationFunction<CreateTestMutation, CreateTestMutationVariables>;
+
+/**
+ * __useCreateTestMutation__
+ *
+ * To run a mutation, you first call `useCreateTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTestMutation, { data, loading, error }] = useCreateTestMutation({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *      name: // value for 'name'
+ *      questions: // value for 'questions'
+ *   },
+ * });
+ */
+export function useCreateTestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateTestMutation, CreateTestMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateTestMutation, CreateTestMutationVariables>(CreateTestDocument, baseOptions);
+      }
+export type CreateTestMutationHookResult = ReturnType<typeof useCreateTestMutation>;
+export type CreateTestMutationResult = ApolloReactCommon.MutationResult<CreateTestMutation>;
+export type CreateTestMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateTestMutation, CreateTestMutationVariables>;
+export const SetTestConclusionsDocument = gql`
+    mutation SetTestConclusions($testId: Int!, $conclusions: [ConclusionInput!]!) {
+  setTestConclusions(testId: $testId, conclusions: $conclusions) {
+    ...FullTest
+  }
+}
+    ${FullTestFragmentDoc}`;
+export type SetTestConclusionsMutationFn = ApolloReactCommon.MutationFunction<SetTestConclusionsMutation, SetTestConclusionsMutationVariables>;
+
+/**
+ * __useSetTestConclusionsMutation__
+ *
+ * To run a mutation, you first call `useSetTestConclusionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTestConclusionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTestConclusionsMutation, { data, loading, error }] = useSetTestConclusionsMutation({
+ *   variables: {
+ *      testId: // value for 'testId'
+ *      conclusions: // value for 'conclusions'
+ *   },
+ * });
+ */
+export function useSetTestConclusionsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTestConclusionsMutation, SetTestConclusionsMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTestConclusionsMutation, SetTestConclusionsMutationVariables>(SetTestConclusionsDocument, baseOptions);
+      }
+export type SetTestConclusionsMutationHookResult = ReturnType<typeof useSetTestConclusionsMutation>;
+export type SetTestConclusionsMutationResult = ApolloReactCommon.MutationResult<SetTestConclusionsMutation>;
+export type SetTestConclusionsMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTestConclusionsMutation, SetTestConclusionsMutationVariables>;
 export const GetTestDocument = gql`
     query GetTest($id: Int!) {
   getTest(id: $id) {

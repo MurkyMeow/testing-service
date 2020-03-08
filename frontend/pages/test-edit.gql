@@ -1,0 +1,42 @@
+fragment FullTest on Test {
+  id
+  name
+  questions {
+    id
+    text
+    answers {
+      id
+      text
+      correct
+    }
+  }
+  conclusions {
+    id
+    text
+    minScore
+  }
+}
+
+query GetFullTest($id: Int!) {
+  getTest(id: $id) {
+    ...FullTest
+  }
+}
+
+mutation EditTest($id: Int!, $name: String!, $questions: [QuestionInput!]!) {
+  editTest(id: $id, name: $name, questions: $questions) {
+    ...FullTest
+  }
+}
+
+mutation CreateTest($categoryId: Int!, $name: String!, $questions: [QuestionInput!]!) {
+  createTest(categoryId: $categoryId, name: $name, questions: $questions) {
+    ...FullTest
+  }
+}
+
+mutation SetTestConclusions($testId: Int!, $conclusions: [ConclusionInput!]!) {
+  setTestConclusions(testId: $testId, conclusions: $conclusions) {
+    ...FullTest
+  }
+}
