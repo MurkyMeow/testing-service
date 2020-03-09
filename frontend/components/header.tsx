@@ -4,7 +4,7 @@ import { Modal } from './modal';
 import { AuthForm } from './form-auth';
 import { Button } from './button';
 import { useSelector, useDispatch } from '../store';
-import { useNotification } from './notification';
+import { useToast } from './toast';
 import { SelfQuery, useSelfQuery, useSignoutMutation } from '../graphql-types';
 
 import './header.css';
@@ -19,7 +19,7 @@ export function Header() {
   const user = useSelector(s => s.user);
   const dispatch = useDispatch();
 
-  const { notify } = useNotification();
+  const { notify } = useToast();
 
   const [signout] = useSignoutMutation();
   const selfQuery = useSelfQuery();

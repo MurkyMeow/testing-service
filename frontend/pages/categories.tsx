@@ -2,7 +2,7 @@ import { FormEvent } from 'react';
 import { canCreate } from '../index';
 import { Button } from '../components/button';
 import { Category }  from '../components/category';
-import { useNotification } from '../components/notification';
+import { useToast } from '../components/toast';
 import { useSelector } from '../store';
 import './categories.css';
 
@@ -19,7 +19,7 @@ export default function Categories() {
 
   const user = useSelector(s => s.user);
 
-  const { notify } = useNotification();
+  const { notify } = useToast();
 
   const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

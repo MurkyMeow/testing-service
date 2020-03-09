@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
 import { Button } from './button';
 import { SelfQuery, useSigninMutation, useSignupMutation } from '../graphql-types';
-import { useDispatch } from '../store';
+import { useToast } from '../components/toast';
 
 import './form-auth.css';
 
@@ -12,7 +12,7 @@ export function AuthForm(props: {
   const [signin] = useSigninMutation();
   const [signup] = useSignupMutation();
 
-  const dispatch = useDispatch();
+  const { notify } = useToast();
 
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     const data = new FormData(e.currentTarget);
@@ -26,10 +26,7 @@ export function AuthForm(props: {
       if (res.data) props.onSuccess(res.data.signin);
     } catch (err) {
       if (err.status !== 400) throw err;
-      dispatch({
-        type: 'set-notification',
-        payload: { type: 'error', text: 'Неправильный логин или пароль' },
-      });
+      notify({ type: 'error', text: 'Неправильный логин или пароль' });
     }
   };
 
@@ -54,10 +51,7 @@ export function AuthForm(props: {
         await handleSignin(e);
       }
     } catch (err) {
-      dispatch({
-        type: 'set-notification',
-        payload: { type: 'error', text: 'Не удаётся войти. Попробуйте перезагрузить страницу.' },
-      });
+      notify({ type: 'error', text: 'Не удаётся войти. Попробуйте перезагрузить страницу.' });
     }
   };
 

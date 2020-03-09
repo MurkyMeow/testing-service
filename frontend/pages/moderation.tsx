@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FormEvent } from 'react';
-import { useNotification } from '../components/notification';
+import { useToast } from '../components/toast';
 import { Button } from '../components/button';
 import { Role, useGetTeachersQuery, useChangeUserRoleMutation } from '../graphql-types';
 import './moderation.css';
@@ -10,7 +10,7 @@ export default function Moderation() {
   const teachersQuery = useGetTeachersQuery();
   const [changeRole] = useChangeUserRoleMutation();
 
-  const { notify } = useNotification();
+  const { notify } = useToast();
 
   if (teachersQuery.loading) {
     return <div>Загрузка...</div>;

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { getKey, withKey } from '../index';
 import { Input } from '../components/input';
 import { Button } from '../components/button';
-import { useNotification } from '../components/notification';
+import { useToast } from '../components/notification';
 import { useGetFullTestLazyQuery, useEditTestMutation, useCreateTestMutation, useSetTestConclusionsMutation } from '../graphql-types';
 import './test_edit.css';
 
@@ -40,7 +40,7 @@ function ConclusionForm(props: { testId: number; initial: Conclusion[]; max: num
   const [conclusions, setConclusions] = useState(props.initial);
   const [saved, setSaved] = useState(true);
 
-  const { notify } = useNotification();
+  const { notify } = useToast();
 
   const [setConclusion] = useSetTestConclusionsMutation();
 
@@ -151,7 +151,7 @@ export default function TestEdit() {
 
   const [saved, setSaved] = useState(Boolean(id));
 
-  const { notify } = useNotification();
+  const { notify } = useToast();
 
   const [getFullTest, fullTest] = useGetFullTestLazyQuery();
   const [createTest] = useCreateTestMutation();

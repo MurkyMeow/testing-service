@@ -5,19 +5,19 @@ import {
 } from 'react-redux';
 import { SelfQuery } from '../graphql-types';
 
-export interface Notification {
+export interface ToastData {
   type: 'success' | 'warning' | 'error';
   text: string;
 }
 
 export interface State {
   user?: SelfQuery['self'];
-  notification?: Notification;
+  toast?: ToastData;
 }
 
 export type Action =
   | { type: 'set-user'; payload: SelfQuery['self'] | undefined }
-  | { type: 'set-notification'; payload: Notification | undefined }
+  | { type: 'set-toast'; payload: ToastData | undefined }
 
 const initialState: State = {
 };
@@ -26,8 +26,8 @@ function rootReducer(state = initialState, action: Action): State {
   switch (action.type) {
     case 'set-user':
       return { ...state, user: action.payload };
-    case 'set-notification':
-      return { ...state, notification: action.payload };
+    case 'set-toast':
+      return { ...state, toast: action.payload };
     default:
       return state;
   }

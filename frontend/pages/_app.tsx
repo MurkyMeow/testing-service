@@ -5,7 +5,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { createUploadLink } from 'apollo-upload-client';
-import { Toast } from '../components/notification';
+import { Toast } from '../components/toast';
 import { Header } from '../components/header';
 import { store } from '../store';
 

@@ -1,7 +1,7 @@
 import { TestCard } from '../components/test-card';
 import { canCreate } from '../index';
 import { Button } from '../components/button';
-import { useNotification } from '../components/notification';
+import { useToast } from '../components/notification';
 import { useGetCategoryQuery, useDeleteTestMutation } from '../graphql-types';
 import { useSelector } from '../store';
 import './category.css';
@@ -12,7 +12,7 @@ export default function Category() {
 
   const user = useSelector(s => s.user);
   
-  const { notify } = useNotification();
+  const { notify } = useToast();
 
   const handleDelete = async (id: number) => {
     await deleteTest({
