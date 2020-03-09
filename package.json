@@ -25,6 +25,7 @@
     "apollo-upload-client": "^12.1.0",
     "bcrypt": "^3.0.7",
     "classnames": "^2.2.6",
+    "formik": "^2.1.4",
     "graphql-tag": "^2.10.1",
     "koa": "^2.7.0",
     "koa-session": "^5.11.0",

@@ -1,4 +1,5 @@
 import { useState, useEffect, FormEvent } from 'react';
+import { Formik, Form, Field, FieldArray } from 'formik';
 import { useRouter } from 'next/router';
 import { getKey, withKey } from '../index';
 import { Input } from '../components/input';
@@ -8,19 +9,19 @@ import { useGetFullTestLazyQuery, useEditTestMutation, useCreateTestMutation, us
 import './test_edit.css';
 
 interface Conclusion {
-  id: number;
+  id?: number;
   text: string;
   minScore: number;
 }
 
 interface Answer {
-  id: number;
+  id?: number;
   text: string;
   correct: boolean;
 }
 
 interface Question {
-  id: number;
+  id?: number;
   text: string;
   answers: Answer[];
 }
@@ -47,32 +48,13 @@ function ConclusionForm(props: { testId: number; initial: Conclusion[]; max: num
     setConclusions(props.initial);
   }, [props.initial]);
 
-  const add = () => {
-    setConclusions([...conclusions, makeConclusion()]);
-  };
-  const setScore = (index, min_score) => {
-    setConclusions(conclusions.map((el, i) => i === index
-      ? { ...el, min_score }
-      : el
-    ));
-  };
-  const setText = (index, text) => {
-    setConclusions(conclusions.map((el, i) => i === index
-      ? { ...el, text }
-      : el
-    ));
-  };
-  const close = index => {
-    setConclusions(conclusions.filter((_, i) => index !== i));
-  };
   const getOptions = () =>
     [...Array(props.max + 1).keys()].map(makeConclusion);
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (data: { conclusions: Conclusion[] }) => {
     try { 
       await setConclusion({
-        variables: { testId: props.testId, conclusions },
+        variables: { testId: props.testId, conclusions: data.conclusions },
       });
       setSaved(true);
     } catch (err) {
@@ -84,37 +66,78 @@ function ConclusionForm(props: { testId: number; initial: Conclusion[]; max: num
   };
 
   return (
-    <form className="conclusion-form" onSubmit={onSubmit}>
-      <h2>Результаты:</h2>
-      {conclusions.map((conclusion, i) => (
-        <div className="conclusion-form__item" key={getKey(conclusion)}>
-          <select value={conclusion.minScore} onBlur={e => setScore(i, e.target.value)}>
-            <option disabled>Кол-во баллов</option>
-            {getOptions().map(val => (
-              <option value={val.minScore} key={getKey(val)}>
-                {`Не менее  ${val.minScore} из ${props.max}`}
-              </option>
+    <Formik className="conclusion-form" initialValues={{ conclusions }} onSubmit={onSubmit}>
+      <Form>
+        <h2>Результаты:</h2>
+        <FieldArray name="conclusions">
+          {conclusionFields => (
+            <div>
+              {conclusions.map((conclusion, i) => (
+                <div className="conclusion-form__item" key={getKey(conclusion)}>
+                  <Field name={`conclusions.${i}.minScore`} as="select">
+                    <option disabled>Кол-во баллов</option>
+                    {getOptions().map(val => (
+                      <option value={val.minScore} key={getKey(val)}>
+                        {`Не менее  ${val.minScore} из ${props.max}`}
+                      </option>
+                    ))}
+                  </Field>
+                  <Field name={`conclusions.${i}.text`} placeholder="Описание" />
+                  <button className="conclusion-form__close" type="button"
+                    onClick={() => conclusionFields.remove(i)}>
+                    <i>close</i>
+                  </button>
+                </div>
+              ))}
+              {conclusions.length <= props.max && (
+                <button className="conclusion-form__add" type="button"
+                  onClick={() => conclusionFields.push('')}>
+                  +
+                </button>
+              )}
+              <Button className="conclusion-form__save" disabled={saved}>
+                {saved ? 'Сохранено' : 'Сохранить'}
+              </Button>
+            </div>
+          )}
+        </FieldArray>
+      </Form>
+    </Formik>
+  );
+}
+
+function Answer(props: { answer: Answer; prefix: string; onRemove?: () => void }) {
+  return (
+    <div>
+      <Field name={`${props.prefix}.text`} />
+      <Field name={`${props.prefix}.correct`} />
+      <button className="test-answer-remove" onClick={props.onRemove}>
+        <i>close</i>
+      </button>
+    </div>
+  );
+}
+
+function Question(props: { question: Question; prefix: string; onRemove?: () => void }) {
+  return (
+    <div className="test-edit__question">
+      <button className="test-edit__question-remove" onClick={props.onRemove}>
+        <i>close</i>
+      </button>
+      <Field name={`${props.prefix}.text`} />
+      <FieldArray name="answers">
+        {answersForm => (
+          <div className="group">
+            {props.question.answers.map((answer, i) => (
+              <Answer answer={answer} prefix={`${props.prefix}.answers.${i}`} key={i} />
             ))}
-          </select>
-          <textarea placeholder="Описание"
-            value={conclusion.text}
-            onChange={e => setText(i, e.target.value)}
-          />
-          <button className="conclusion-form__close" type="button"
-            onClick={() => close(i)}>
-            <i>close</i>
-          </button>
-        </div>
-      ))}
-      {conclusions.length <= props.max && (
-        <button className="conclusion-form__add" type="button" onClick={add}>
-          +
-        </button>
-      )}
-      <Button className="conclusion-form__save" disabled={saved}>
-        {saved ? 'Сохранено' : 'Сохранить'}
-      </Button>
-    </form>
+            <Button className="test-edit__question-add" onClick={() => answersForm.push('')}>
+              Добавить ответ
+            </Button>
+          </div>
+        )}
+      </FieldArray>
+    </div>
   );
 }
 
@@ -176,65 +199,26 @@ export default function TestEdit() {
         value={name}
         onChange={e => setName(e.target.value)}
       />
-      {questions.map((question, questionIndex) => (
-        <div className="test-edit__question" key={getKey(question)}>
-          {questions.length > 1 && (
-            <button className="test-edit__question-remove"
-              onClick={() => dispatch({ type: 'remove-question', index: questionIndex })}>
-              <i>close</i>
-            </button>
-          )}
-          <Input className="test-edit__field"
-            data-type="question"
-            placeholder="Вопрос"
-            required
-            value={question.text}
-            onChange={e => dispatch({
-              type: 'set-question-text',
-              index: questionIndex,
-              text: e.target.value,
-            })}
-          />
-          {question.answers.map((answer, answerIndex) => (
-            <div className="test-edit__question-answer" key={getKey(answer)}>
-              <input type="checkbox" checked={answer.correct}
-                onChange={e => dispatch({
-                  type: 'check-answer',
-                  questionIndex,
-                  answerIndex,
-                  checked: e.target.checked,
-                })}
-              />
-              <Input className="test-edit__field"
-                data-type="answer"
-                placeholder="Ответ"
-                required
-                value={answer.text}
-                onChange={e => dispatch({
-                  type: 'set-answer-text',
-                  questionIndex,
-                  answerIndex,
-                  text: e.target.value,
-                })}
-              />
-              {question.answers.length > 2 && (
-                <button className="test-answer-remove"
-                  onClick={() => dispatch({ type: 'remove-answer', questionIndex, answerIndex })}>
-                  <i>close</i>
-                </button>
-              )}
-            </div>
-          ))}
-          <Button className="test-edit__question-add"
-            onClick={() => dispatch({ type: 'add-answer', questionIndex })}>
-            Добавить ответ
-          </Button>
-        </div>
-      ))}
-      <Button className="test-edit__add"
-        onClick={() => setQuestions([...questions, makeQuestion()])}>
-        Добавить вопрос
-      </Button>
+      <Formik initialValues={{ questions }} onSubmit={() => setQuestions(questions)}>
+        {questionsForm => (
+          <FieldArray name="questions">
+            {questionFields => (
+              <div>
+                {questionsForm.values.questions.map((question, i) => (
+                  <Question key={i}
+                    question={question}
+                    prefix={`questions.${i}`}
+                    onRemove={() => questionFields.remove(i)}
+                  />
+                ))}
+                <Button className="test-edit__add" onClick={() => questionFields.push('')}>
+                  Добавить вопрос
+                </Button>
+              </div>
+            )}
+          </FieldArray>
+        )}
+      </Formik>
       <Button className="test-edit__save" disabled={saved}>
         {saved ? 'Сохранено' : 'Сохранить'}
       </Button>
