@@ -1,11 +1,7 @@
 .button {
   cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  text-align: center;
-  text-decoration: none;
+  font: inherit;
   color: white;
-  display: inline-block;
   padding: 5px 15px;
   border: none;
   border-radius: 8px;

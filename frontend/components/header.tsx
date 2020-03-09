@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Modal } from './modal';
@@ -53,14 +54,18 @@ export function Header() {
       )}
       <a className="header__logo" href="/">Nice header there</a>
       {user ? <>
-        <Button className="header__nav-btn" link="/categories">Категории</Button>
+        <Link href="/categories">
+          <a className="header__nav-link">Категории</a>
+        </Link>
         {user.role === 'admin' && (
-          <Button className="header__nav-btn" link="/moderation">Модерация</Button>
+          <Link href="/moderation">
+            <a className="header__nav-link">Модерация</a>
+          </Link>
         )}
         <nav className="header__auth">
-          <Button className="header__nav-btn" link="/profile">
-            {user.name ? user.name : 'Профиль'}
-          </Button>
+          <Link href="/profile">
+            <a className="header__nav-link">{user.name ? user.name : 'Профиль'}</a>
+          </Link>
           <Button className="header__nav-btn" onClick={handleSignout}>
             Выйти
           </Button>
